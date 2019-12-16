@@ -1,0 +1,7 @@
+# Notes page for handy links and other information to start.
+
+Per cake: polecat built an ios app and reverse engineered a lot of the platform https://github.com/voloshink/GnomeGG/blob/master/GnomeGG/Types/dggAPI.swift
+OAuth endpoint: https://github.com/destinygg/website/blob/master/OAUTH.md
+User Status: https://github.com/destinygg/dggiscord/blob/master/dggiscord/sync.py#L10-L38 (this is behind a static private key)
+Stream status: https://www.destiny.gg/api/info/stream
+Logged in user profile info: https://www.destiny.gg/api/chat/me
