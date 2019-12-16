@@ -1,4 +1,4 @@
-# Notes page for handy links and other information to start.
+Notes page for handy links and other information to start.
 
 Per cake: polecat built an ios app and reverse engineered a lot of the platform https://github.com/voloshink/GnomeGG/blob/master/GnomeGG/Types/dggAPI.swift
 OAuth endpoint: https://github.com/destinygg/website/blob/master/OAUTH.md
