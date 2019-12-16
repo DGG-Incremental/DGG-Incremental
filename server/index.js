@@ -1,12 +1,16 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 const _ = require('lodash')
 var bodyParser = require('body-parser')
 var cors = require('cors');
+var path = require('path')
 
 const LEADERBOARD = {
 }
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../ui/build')));
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))

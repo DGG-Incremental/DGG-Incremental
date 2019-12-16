@@ -4,11 +4,11 @@ import axios from "axios"
 import throttle from "lodash/throttle"
 
 const setScore = throttle(async (name, clicks) => {
-  return axios.put(`http://localhost:3000/leaderboard/${name}`, { clicks })
+  return axios.put(`/leaderboard/${name}`, { clicks })
 }, 5 * 1000)
 
 const getLeaderBoard = async () => {
-	const res = await axios.get('http://localhost:3000/leaderboard')
+	const res = await axios.get('/leaderboard')
 	return res.data
 }
 
