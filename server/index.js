@@ -56,7 +56,8 @@ app.get("/oauth", async (req, res) => {
 
 const MEMES = {
 	MrMouton: -74.02,
-	Destiny: '2/7'
+	Destiny: '2/7',
+	citizenthayne: 2147483648
 }
 app.get("/leaderboard", async (req, res) => {
 	const leaderboard = await getLeaderBoard()
