@@ -6,8 +6,8 @@ import cookies from "browser-cookies"
 
 const sendScore = throttle(async clicks => {
   const token = cookies.get("token")
-  if(!token) {
-	  window.location = '/auth'
+  if (!token) {
+    window.location = "/auth"
   }
   return axios.put(`/leaderboard/`, { clicks })
 }, 5 * 1000)
@@ -19,12 +19,13 @@ const getLeaderBoard = async () => {
 
 const Clicker = ({ name }) => {
   const [clicks, setClicks] = useState(0)
-  useEffect(async () => {
-	const leaderboard = await getLeaderBoard()
-	const pos = leaderboard.find( (l) => l.name === name)
-	if(pos)
-		setClicks(pos.score)
-  }, [])
+  useEffect(() => {
+    ;(async () => {
+      const leaderboard = await getLeaderBoard()
+      const pos = leaderboard.find(l => l.name === name)
+      if (pos) setClicks(pos.score)
+    })()
+  }, [name])
   const clickHandler = () => {
     const c = clicks + 1
     setClicks(c)
@@ -59,16 +60,20 @@ const Leaderboard = () => {
 
   return (
     <table>
-      <th>
-        <td>Name</td>
-        <td>Score</td>
-      </th>
-      {scores.map(s => (
+      <thead>
         <tr>
-          <td>{s.name}</td>
-          <td>{s.score}</td>
+          <th>Name</th>
+          <th>Score</th>
         </tr>
-      ))}
+      </thead>
+      <tbody>
+        {scores.map(s => (
+          <tr>
+            <td>{s.name}</td>
+            <td>{s.score}</td>
+          </tr>
+        ))}
+      </tbody>
     </table>
   )
 }
