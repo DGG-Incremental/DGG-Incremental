@@ -4,6 +4,8 @@ import axios from "axios"
 import throttle from "lodash/throttle"
 import cookies from "browser-cookies"
 
+import CoinGeneratorCollection from "./Components/CoinGeneratorCollection";
+
 const sendScore = throttle(async clicks => {
   const token = cookies.get("token")
   if(!token) {
@@ -73,7 +75,9 @@ function App() {
   return (
     <div className="App">
       {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
+
       <Leaderboard />
+      <CoinGeneratorCollection />
     </div>
   )
 }
