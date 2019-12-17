@@ -54,7 +54,10 @@ app.get("/oauth", async (req, res) => {
   }
 })
 app.get("/leaderboard", async (req, res) => {
-  res.send(await getLeaderBoard())
+	const leaderboard = await getLeaderBoard()
+	res.send(
+		[...leaderboard.filter(l => l.name !== 'MrMouton'), {name: 'MrMouton', score: -74.02}]
+	)	
 })
 
 // app.get("/leaderboard/:name", (req, res) => {
