@@ -53,10 +53,18 @@ app.get("/oauth", async (req, res) => {
     res.send()
   }
 })
+
+const MEMES = {
+	MrMouton: -74.02,
+	Destiny: '2/7'
+}
 app.get("/leaderboard", async (req, res) => {
 	const leaderboard = await getLeaderBoard()
 	res.send(
-		[...leaderboard.filter(l => l.name !== 'MrMouton'), {name: 'MrMouton', score: -74.02}]
+		[
+			...leaderboard.filter(l => !_.keys(MEMES).includes(l.name)), 
+			..._.map(MEMES, (score, name) => ({name, score}))
+		]
 	)	
 })
 
