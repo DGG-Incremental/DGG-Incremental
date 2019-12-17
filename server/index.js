@@ -1,6 +1,10 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config()
+}
 const express = require("express")
 const app = express()
 const port = process.env.PORT || 3000
+const cookieParser = require('cookie-parser')
 const _ = require("lodash")
 const bodyParser = require("body-parser")
 const cors = require("cors")
@@ -17,6 +21,7 @@ app.use(express.static(path.join(__dirname, "../ui/build")))
 // app.use('/app', proxy('localhost:3001/'));
 
 app.use(cors())
+app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -61,7 +66,7 @@ app.get("/leaderboard/:name", (req, res) => {
   res.send({ clicks: LEADERBOARD[req.params.name] })
 })
 app.put("/leaderboard/", async (req, res) => {
-  const token = req.query.token
+  const token = req.cookies.token
   if (!token) {
     res.statusCode = 404
     res.send()

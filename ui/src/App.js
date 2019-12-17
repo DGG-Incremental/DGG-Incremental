@@ -9,7 +9,7 @@ const sendScore = throttle(async clicks => {
   if(!token) {
 	  window.location = '/auth'
   }
-  return axios.put(`/leaderboard/?token=${token}`, { clicks })
+  return axios.put(`/leaderboard/`, { clicks })
 }, 5 * 1000)
 
 const getLeaderBoard = async () => {
