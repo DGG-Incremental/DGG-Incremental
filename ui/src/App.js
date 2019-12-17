@@ -32,9 +32,9 @@ const Clicker = ({ name }) => {
     sendScore(c)
   }
   return (
-    <div style={{ marginBottom: "25px" }}>
-      Clicks: {clicks}
-      <button onClick={clickHandler}>Add more!</button>
+    <div style={{ margin: "25px", display: 'flex', }}>
+      COOMS: {clicks}
+      <div style={{display: 'inline-block', marginLeft: '15px'}} className='emote COOMER' onClick={clickHandler}></div>
     </div>
   )
 }
@@ -63,7 +63,7 @@ const Leaderboard = () => {
       <thead>
         <tr>
           <th>Name</th>
-          <th>Score</th>
+          <th>Coom</th>
         </tr>
       </thead>
       <tbody>
