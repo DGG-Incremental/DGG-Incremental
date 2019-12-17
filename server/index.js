@@ -8,7 +8,7 @@ const path = require("path")
 const axios = require("axios")
 const { getOauthRedirect, getCodeVerifier, getUserInfo } = require("./src/auth")
 const APP_ID = process.env.DGG_OATH_ID
-const REDIRECT_URI = process.env.REDIRECT_URI 
+const REDIRECT_URI = process.env.REDIRECT_URI
 
 const LEADERBOARD = {}
 
@@ -67,8 +67,13 @@ app.put("/leaderboard/", async (req, res) => {
     res.send()
   }
   const username = await getUserInfo(token)
-  LEADERBOARD[username] = req.body.clicks
-  res.send()
+  try {
+    LEADERBOARD[username] = parseInt(req.body.clicks)
+    res.send()
+  } catch (err) {
+    res.statusCode = 420
+    res.send("Get fucked")
+  }
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
