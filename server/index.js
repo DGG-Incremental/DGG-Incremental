@@ -4,17 +4,19 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express")
 const app = express()
 const port = process.env.PORT || 3000
-const cookieParser = require('cookie-parser')
+const cookieParser = require("cookie-parser")
 const _ = require("lodash")
 const bodyParser = require("body-parser")
 const cors = require("cors")
 const path = require("path")
 const axios = require("axios")
 const { getOauthRedirect, getCodeVerifier, getUserInfo } = require("./src/auth")
+const { getLeaderBoard, dbUp, setLeaderBoard } = require("./src/store")
+
+dbUp()
+
 const APP_ID = process.env.DGG_OATH_ID
 const REDIRECT_URI = process.env.REDIRECT_URI
-
-const LEADERBOARD = {}
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../ui/build")))
@@ -51,20 +53,14 @@ app.get("/oauth", async (req, res) => {
     res.send()
   }
 })
-app.get("/leaderboard", (req, res) => {
-  res.send(
-    _(LEADERBOARD)
-      .chain()
-      .toPairs()
-      .orderBy(([name, count]) => count)
-      .reverse()
-      .value()
-  )
+app.get("/leaderboard", async (req, res) => {
+  res.send(await getLeaderBoard())
 })
 
-app.get("/leaderboard/:name", (req, res) => {
-  res.send({ clicks: LEADERBOARD[req.params.name] })
-})
+// app.get("/leaderboard/:name", (req, res) => {
+//   res.send({ clicks: LEADERBOARD[req.params.name] })
+// })
+
 app.put("/leaderboard/", async (req, res) => {
   const token = req.cookies.token
   if (!token) {
@@ -72,13 +68,16 @@ app.put("/leaderboard/", async (req, res) => {
     res.send()
   }
   const username = await getUserInfo(token)
+  let score
   try {
-    LEADERBOARD[username] = parseInt(req.body.clicks)
-    res.send()
+    score = parseInt(req.body.clicks)
   } catch (err) {
     res.statusCode = 420
     res.send("Get fucked")
+    return
   }
+  await setLeaderBoard(username, score)
+  res.send()
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

@@ -19,7 +19,12 @@ const getLeaderBoard = async () => {
 
 const Clicker = ({ name }) => {
   const [clicks, setClicks] = useState(0)
-
+  useEffect(async () => {
+	const leaderboard = await getLeaderBoard()
+	const pos = leaderboard.find( (l) => l.name === name)
+	if(pos)
+		setClicks(pos.score)
+  }, [])
   const clickHandler = () => {
     const c = clicks + 1
     setClicks(c)
@@ -60,8 +65,8 @@ const Leaderboard = () => {
       </th>
       {scores.map(s => (
         <tr>
-          <td>{s[0]}</td>
-          <td>{s[1]}</td>
+          <td>{s.name}</td>
+          <td>{s.score}</td>
         </tr>
       ))}
     </table>
