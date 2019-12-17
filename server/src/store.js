@@ -14,6 +14,7 @@ try {
 	client.connect()
 }
 catch(err) {
+	console.error('Error starting db client: ')
 	console.error(err)
 }
 const dbUp = async () => {
@@ -41,7 +42,6 @@ const getLeaderBoard = async () => {
       `SELECT name, score FROM leaderboard ORDER BY score DESC`,
       (err, results) => {
 		if (err) return rej(err)
-		console.log(results.rows)
         res(results.rows)
       }
     )
