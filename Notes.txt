@@ -5,3 +5,53 @@ OAuth endpoint: https://github.com/destinygg/website/blob/master/OAUTH.md
 User Status: https://github.com/destinygg/dggiscord/blob/master/dggiscord/sync.py#L10-L38 (this is behind a static private key)
 Stream status: https://www.destiny.gg/api/info/stream
 Logged in user profile info: https://www.destiny.gg/api/chat/me
+
+
+Games listed in thread:
+Realm Grinder
+A dark room
+Evolve
+Candy box
+Paperclips
+The idle class
+trimps (?)
+Space plan (?)
+swarm
+level 13
+Heart of galaxy: horizons
+
+Ideas in thread:
+Theme important 
+Specialization: Realm grinder has great specs. Choose x and you'll do 1 and 2 better. Choose y and you'll do 1 really well, but 2 and 3 more poorly.
+"unban mechanic" [lol]
+Stats page
+Clans
+Clan leaderboard
+"dungeon progression"
+areas with a timeout
+"Events"
+Avatars that can unlock on d.gg
+Leaderboard rewards
+Mechanics that help the streamer
+"colonisation of some auto-generated map w/ the points you earn"
+A "grandmapocalypse" type end game like cookie clicker
+Ability to attack/assist others
+Flairs for DGG
+Progression goals
+CPU bosses
+Daily login bonuses
+Resets meaning something, not just a complete loss of all progression
+Missions
+More than one resource
+ReadySetZerg had a decent set of ideas:
+- remove a bullet from the bot gun so you have a higher chance of the gun clicking next time you get muted
+- ability to nuke a word for 1 minute (auto-aegis at end)
+- ability to purchase a name color for dgg (excluding specific ones for VIP/non-sub)
+- ability to purchase a flair of an emote (YEE vs PEPE)
+"gacha system"
+Community paths (whichever item has the most upgrades the next season those would be nerfed etc.)
+bonuses for farming emotes
+Earn points towards chat bans
+Make chatting in dgg generate points
+Achievements
+A fail state
