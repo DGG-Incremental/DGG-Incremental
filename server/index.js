@@ -63,8 +63,8 @@ app.get("/leaderboard", async (req, res) => {
 	const leaderboard = await getLeaderBoard()
 	res.send(
 		[
+			..._.map(MEMES, (score, name) => ({name, score})),
 			...leaderboard.filter(l => !_.keys(MEMES).includes(l.name)), 
-			..._.map(MEMES, (score, name) => ({name, score}))
 		]
 	)	
 })
