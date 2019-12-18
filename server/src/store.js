@@ -23,7 +23,8 @@ const dbUp = async () => {
       `
 	CREATE TABLE IF NOT EXISTS leaderboard (
 		name varchar(255) PRIMARY KEY,
-		score integer
+		score integer,
+		lastSynced timestamp
 	);
 	`,
       (err, val) => {
@@ -48,16 +49,30 @@ const getLeaderBoard = async () => {
   })
 }
 
-const setLeaderBoard = async (name, score) => {
+const getScore = async name => {
+	const result = await client.query(`
+		SELECT score from leaderboard
+		where name = $1
+	`, [name])
+
+	if(result.rows.length) {
+		return result.rows[0].score
+	}
+	else {
+		return 0
+	}
+}
+
+const setScore = async (name, score, lastSynced) => {
   await client.query(
     `
-			INSERT INTO leaderboard (name, score)
-			VALUES ($1, $2)
+			INSERT INTO leaderboard (name, score, lastSynced)
+			VALUES ($1, $2, $3)
 			ON CONFLICT (name)
 			DO
-				UPDATE SET score = $2;
+				UPDATE SET score = $2, lastSynced = $3;
 		`,
-    [name, score]
+    [name, score, lastSynced]
   )
 }
 
@@ -68,6 +83,8 @@ const setLeaderBoard = async (name, score) => {
 // const getUserInfo = async token => {}
 module.exports = {
   dbUp,
+  getScore,
+  setScore,
   getLeaderBoard,
-  setLeaderBoard
+  setLeaderBoard: setScore
 }

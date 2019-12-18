@@ -1,40 +1,92 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import "./App.css"
 import axios from "axios"
-import throttle from "lodash/throttle"
-import cookies from "browser-cookies"
+import debounce from "lodash/debounce"
+import cookies, { set } from "browser-cookies"
+import Game from "./game"
 
-const sendScore = throttle(async clicks => {
-  const token = cookies.get("token")
-  if (!token) {
-    window.location = "/auth"
+function useInterval(callback, delay) {
+  const savedCallback = useRef()
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback
+  }, [callback])
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current()
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay)
+      return () => clearInterval(id)
+    }
+  }, [delay])
+}
+const getInitialState = async () => {
+  try {
+    const { data } = await axios.get("/me/state")
+    return data.state
+  } catch (err) {
+    if (err.response.status === 404) {
+      return undefined
+    }
+    throw err
   }
-  return axios.put(`/leaderboard/`, { clicks })
-}, 5 * 1000)
+}
 
 const getLeaderBoard = async () => {
   const res = await axios.get("/leaderboard")
   return res.data
 }
 
-const Clicker = ({ name }) => {
-  const [clicks, setClicks] = useState(0)
-  useEffect(() => {
-    ;(async () => {
-      const leaderboard = await getLeaderBoard()
-      const pos = leaderboard.find(l => l.name === name)
-      if (pos) setClicks(pos.score)
-    })()
-  }, [name])
-  const clickHandler = () => {
-    const c = clicks + 1
-    setClicks(c)
-    sendScore(c)
+const syncGame = async game => {
+  try {
+    const res = await axios.patch("/me/state", {
+      actions: game.state.actions
+    })
+    return new Game(res.data.state)
+  } catch (err) {
+    if (err.response.status === 404) {
+      //   window.location.replace("/auth")
+    }
   }
+}
+
+const Clicker = ({ name }) => {
+  const [game, setGame] = useState(new Game())
+
+  useEffect(() => {
+    getInitialState().then(state => {
+      setGame(new Game(state))
+    })
+  }, [name])
+
+  useInterval(async () => {
+    const synced = await syncGame(game)
+    // console.log(game.state.initialScore)
+    setGame(game.fastForward(synced))
+  }, 1 * 1000)
+
+  const clickHandler = async () => {
+    game.click()
+    setGame(new Game(game.state))
+    // const synced = await syncGame(game)
+    // const ff = game.fastForward(synced)
+    // console.table([game.state, synced.state, ff.state])
+    // setGame(ff)
+  }
+
+  const state = game.getCurrentState()
   return (
-    <div style={{ margin: "25px", display: 'flex', }}>
-      COOMS: {clicks}
-      <div style={{display: 'inline-block', marginLeft: '15px'}} className='emote COOMER' onClick={clickHandler}></div>
+    <div style={{ margin: "25px", display: "flex" }}>
+      COOMS: {state.score}
+      <div
+        style={{ display: "inline-block", marginLeft: "15px" }}
+        className="emote COOMER"
+        onClick={clickHandler}
+      ></div>
     </div>
   )
 }
@@ -44,7 +96,7 @@ const GetName = ({ onChange }) => {
   if (username) {
     onChange(username)
   }
-  return <a href="auth">Login</a>
+  return <a href="/auth">Login</a>
 }
 
 const Leaderboard = () => {
