@@ -40,7 +40,7 @@ const dbUp = async () => {
 const getLeaderBoard = async () => {
   return new Promise((res, rej) => {
     client.query(
-      `SELECT name, score FROM leaderboard ORDER BY score DESC, name ASC`,
+      `SELECT name, score FROM leaderboard ORDER BY score DESC, name ASC LIMIT 50`,
       (err, results) => {
 		if (err) return rej(err)
         res(results.rows)
