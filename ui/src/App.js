@@ -107,7 +107,7 @@ const Leaderboard = () => {
   }
   useEffect(() => {
     update()
-    setInterval(update, 1 * 1000)
+    setInterval(update, 5 * 1000)
   }, [])
 
   return (
