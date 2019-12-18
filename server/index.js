@@ -3,7 +3,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 const express = require("express")
 const app = express()
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3000
 const cookieParser = require("cookie-parser")
 const _ = require("lodash")
 const bodyParser = require("body-parser")
@@ -57,13 +57,12 @@ app.get("/oauth", async (req, res) => {
 
 const MEMES = {
   MrMouton: -74.02,
-  Destiny: "2/7"
 }
 app.get("/leaderboard", async (req, res) => {
   const leaderboard = await getLeaderBoard()
   res.send([
-    ..._.map(MEMES, (score, name) => ({ name, score })),
-    ...leaderboard.filter(l => !_.keys(MEMES).includes(l.name))
+    ...leaderboard.filter(l => !_.keys(MEMES).includes(l.name)),
+    ..._.map(MEMES, (score, name) => ({ name, score }))
   ])
 })
 
