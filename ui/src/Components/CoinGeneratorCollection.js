@@ -28,8 +28,6 @@ export default class CoinGeneratorCollection extends React.Component {
     }
 
     increaseRate (rate) {
-        console.log("rate defined: ", rate);
-        console.log("totalrate", this.state.totalRate);
         this.setState({totalRate: this.state.totalRate + rate});
     }
 
