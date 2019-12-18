@@ -21,37 +21,45 @@ level 13
 Heart of galaxy: horizons
 
 Ideas in thread:
-Theme important 
-Specialization: Realm grinder has great specs. Choose x and you'll do 1 and 2 better. Choose y and you'll do 1 really well, but 2 and 3 more poorly.
-"unban mechanic" [lol]
-Stats page
-Clans
-Clan leaderboard
-"dungeon progression"
-areas with a timeout
-"Events"
-Avatars that can unlock on d.gg
-Leaderboard rewards
-Mechanics that help the streamer
-"colonisation of some auto-generated map w/ the points you earn"
-A "grandmapocalypse" type end game like cookie clicker
-Ability to attack/assist others
-Flairs for DGG
-Progression goals
-CPU bosses
-Daily login bonuses
-Resets meaning something, not just a complete loss of all progression
-Missions
-More than one resource
+Results:
++ = Definite
+* = Future state
+- = Probs not
+
++ Specialization: Realm grinder has great specs. Choose x and you'll do 1 and 2 better. Choose y and you'll do 1 really well, but 2 and 3 more poorly.
++ "Events"
++ A "grandmapocalypse" type end game like cookie clicker
++ CPU bosses
++ Flairs for leaderboard
++ Daily login bonuses
++ Missions
++ More than one resource
+
+ 
+* Stats page
+* Clans = determined on the leaderboard, less in game 
+* Clan leaderboard
+* "dungeon progression"
+* "gacha system"
+* (user choices affect next season) Community paths (whichever item has the most upgrades the next season those would be nerfed etc.)
+* Achievements
+* Avatars that can unlock on d.gg - Or in the clicker game environment?
+* Leaderboard rewards
+* Mechanics that help the streamer
+* "colonisation of some auto-generated map w/ the points you earn"
+* Ability to attack/assist others
+* Flairs for DGG
+
 ReadySetZerg had a decent set of ideas:
 - remove a bullet from the bot gun so you have a higher chance of the gun clicking next time you get muted
 - ability to nuke a word for 1 minute (auto-aegis at end)
 - ability to purchase a name color for dgg (excluding specific ones for VIP/non-sub)
 - ability to purchase a flair of an emote (YEE vs PEPE)
-"gacha system"
-Community paths (whichever item has the most upgrades the next season those would be nerfed etc.)
-bonuses for farming emotes
-Earn points towards chat bans
-Make chatting in dgg generate points
-Achievements
-A fail state
+
+- bonuses for farming emotes
+- "unban mechanic"
+- Earn points towards chat bans
+- Make chatting in dgg generate points
+
+A fail state (in this case fail state is doing poorly)
+? Progression goals
