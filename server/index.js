@@ -47,8 +47,8 @@ app.get("/oauth", async (req, res) => {
       }
     })
     const username = await getUserInfo(data.access_token)
-    res.cookie("username", username, { maxAge: 3600 })
-    res.cookie("token", data.access_token, { maxAge: 3600 })
+    res.cookie("username", username)
+    res.cookie("token", data.access_token)
     res.redirect("/")
   } catch (err) {
     res.statusCode = 500
