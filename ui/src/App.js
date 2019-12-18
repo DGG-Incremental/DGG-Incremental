@@ -5,6 +5,9 @@ import debounce from "lodash/debounce"
 import cookies, { set } from "browser-cookies"
 import Game from "./game"
 
+import CoinGeneratorCollection from "./Components/CoinGeneratorCollection";
+import Action from "./Action";
+
 function useInterval(callback, delay) {
   const savedCallback = useRef()
 
@@ -71,7 +74,7 @@ const Clicker = ({ name }) => {
   }, 3 * 1000)
 
   const clickHandler = async () => {
-    game.click()
+    game.click(new Action("click", 1, 0, 0, "click"));
     setGame(new Game(game.state))
     // const synced = await syncGame(game)
     // const ff = game.fastForward(synced)
@@ -88,6 +91,7 @@ const Clicker = ({ name }) => {
         className="emote COOMER"
         onClick={clickHandler}
       ></div>
+      <CoinGeneratorCollection click={game.click}/>
     </div>
   )
 }
@@ -137,7 +141,8 @@ function App() {
   const [name, setName] = useState(null)
   return (
     <div className="App">
-      {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
+      {name ? <Clicker name={name} /> : <Clicker name="Alex" />}
+
       <Leaderboard />
     </div>
   )

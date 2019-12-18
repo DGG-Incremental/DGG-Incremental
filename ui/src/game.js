@@ -4,6 +4,7 @@ class Game {
   constructor(state = {}) {
     this.state = defaults({}, state, {
       initialScore: 0,
+      passiveIncome: 0,
       actions: [],
       lastSynced: null
     })
@@ -15,14 +16,18 @@ class Game {
     this.state.actions.push({ action, timestamp })
   }
 
-  click() {
-    this.pushAction("click")
+  click(action) {
+    this.pushAction(action);
   }
 
   getCurrentState() {
+    let passiveIncome = this.state.passiveIncome;
+    this.state.actions.forEach((action) => {
+      passiveIncome += action.incomeGained;
+    });
     const score =
       this.state.initialScore +
-      this.state.actions.filter(a => a.action === "click").length
+      this.state.actions.filter(a => a.action === "click").length;
     return {
       score
     }
