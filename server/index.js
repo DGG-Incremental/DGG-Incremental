@@ -12,7 +12,7 @@ const path = require("path")
 const axios = require("axios")
 const { getOauthRedirect, getCodeVerifier, getUserInfo } = require("./src/auth")
 const { getLeaderBoard, dbUp, setScore, getScore } = require("./src/store")
-const Game = require('./src/game')
+const Game = require("./src/game")
 
 dbUp()
 
@@ -46,8 +46,8 @@ app.get("/oauth", async (req, res) => {
       }
     })
     const username = await getUserInfo(data.access_token)
-    res.cookie("username", username)
-    res.cookie("token", data.access_token)
+    res.cookie("username", username, { maxAge: 3600 })
+    res.cookie("token", data.access_token, { maxAge: 3600 })
     res.redirect("/")
   } catch (err) {
     res.statusCode = 500
@@ -56,7 +56,7 @@ app.get("/oauth", async (req, res) => {
 })
 
 const MEMES = {
-  MrMouton: -74.02,
+  MrMouton: -74.02
 }
 app.get("/leaderboard", async (req, res) => {
   const leaderboard = await getLeaderBoard()
@@ -71,8 +71,8 @@ app.get("/leaderboard", async (req, res) => {
 // })
 
 const getReqUser = async req => {
-	const token = req.cookies.token
-	return await getUserInfo(token)
+  const token = req.cookies.token
+  return await getUserInfo(token)
 }
 
 app.put("/leaderboard/", async (req, res) => {
@@ -98,7 +98,9 @@ app.patch("/me/state", async (req, res) => {
   const username = await getReqUser(req)
 
   if (!username) {
-    res.statusCode = 404
+	res.statusCode = 404
+	res.cookie('token', '', {maxAge: 0})
+	res.cookie('username', '', {maxAge: 0})
     res.send({ message: "username not found", redirect: "/auth" })
   }
   const initialScore = await getScore(username)

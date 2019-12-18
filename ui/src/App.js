@@ -49,7 +49,7 @@ const syncGame = async game => {
     return new Game(res.data.state)
   } catch (err) {
     if (err.response.status === 404) {
-      //   window.location.replace("/auth")
+      window.location.replace("/auth")
     }
   }
 }
