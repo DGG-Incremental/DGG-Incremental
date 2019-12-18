@@ -3,7 +3,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 const express = require("express")
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 const cookieParser = require("cookie-parser")
 const _ = require("lodash")
 const bodyParser = require("body-parser")
@@ -19,9 +19,10 @@ dbUp()
 const APP_ID = process.env.DGG_OATH_ID
 const REDIRECT_URI = process.env.REDIRECT_URI
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, "../ui/build")))
-// app.use('/app', proxy('localhost:3001/'));
+if (process.env.NODE_ENV === "production") {
+  // Serve static files from the React app
+  app.use(express.static(path.join(__dirname, "../ui/build")))
+}
 
 app.use(cors())
 app.use(cookieParser())
@@ -66,9 +67,6 @@ app.get("/leaderboard", async (req, res) => {
   ])
 })
 
-// app.get("/leaderboard/:name", (req, res) => {
-//   res.send({ clicks: LEADERBOARD[req.params.name] })
-// })
 
 const getReqUser = async req => {
   const token = req.cookies.token
@@ -96,12 +94,12 @@ app.get("/me/state", async (req, res) => {
 
 app.patch("/me/state", async (req, res) => {
   const username = await getReqUser(req)
-
   if (!username) {
-	res.statusCode = 404
-	res.cookie('token', '', {maxAge: 0})
-	res.cookie('username', '', {maxAge: 0})
+    res.statusCode = 404
+    res.cookie("token", "", { maxAge: 0 })
+    res.cookie("username", "", { maxAge: 0 })
     res.send({ message: "username not found", redirect: "/auth" })
+    return
   }
   const initialScore = await getScore(username)
   const game = new Game({
