@@ -64,10 +64,11 @@ const Clicker = ({ name }) => {
   }, [name])
 
   useInterval(async () => {
-    const synced = await syncGame(game)
-    // console.log(game.state.initialScore)
-    setGame(game.fastForward(synced))
-  }, 1 * 1000)
+    if (game.state.actions.length) {
+      const synced = await syncGame(game)
+      setGame(game.fastForward(synced))
+    }
+  }, 3 * 1000)
 
   const clickHandler = async () => {
     game.click()
@@ -101,10 +102,12 @@ const GetName = ({ onChange }) => {
 
 const Leaderboard = () => {
   const [scores, setScores] = useState([])
+
   const update = async () => {
     const result = await getLeaderBoard()
     setScores(result)
   }
+
   useEffect(() => {
     update()
     setInterval(update, 5 * 1000)
