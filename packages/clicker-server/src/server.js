@@ -116,6 +116,7 @@ app.patch("/me/state", async (req, res) => {
   const lastSynced = new Date()
   await setScore(username, newScore, lastSynced)
   res.send({ state: { initialScore: newScore, lastSynced } })
+  console.log('Sent game state to ' + username)
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
