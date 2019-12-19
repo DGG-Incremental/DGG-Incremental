@@ -1,6 +1,5 @@
-const defaults = require("lodash/defaults")
-
-class Game {
+import defaults from 'lodash/defaults'
+export default class Game {
   constructor(state = {}) {
     this.state = defaults({}, state, {
       initialScore: 0,
@@ -45,4 +44,3 @@ class Game {
   }
 }
 
-export default Game
