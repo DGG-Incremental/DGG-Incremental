@@ -10,7 +10,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 Node.js (npm and npx)
 
-Dgg Oauth app: https://www.destiny.gg/profile/developer
+Dgg Oauth app: https://www.destiny.gg/profile/developer (Set the url path to /oauth)
 
 Postgres
 
