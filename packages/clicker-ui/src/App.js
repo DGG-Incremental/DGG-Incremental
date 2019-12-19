@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react"
-import {useTransition, animated} from 'react-spring'
+import { useTransition, animated } from "react-spring"
 import "./App.css"
 import axios from "axios"
 import debounce from "lodash/debounce"
 import cookies from "browser-cookies"
-import Game from 'clicker-game'
+import Game from "clicker-game"
 
 function useInterval(callback, delay) {
   const savedCallback = useRef()
@@ -138,20 +138,30 @@ function App() {
   const [name, setName] = useState(null)
   const [showChat, setShowChat] = useState(true)
   const transitions = useTransition(showChat, null, {
-    from: { width: '0px' },
-    enter: { width: '300px' },
-    leave: { width: '0px' },
-    })
+    from: { width: "0px" },
+    enter: { width: "300px" },
+    leave: { width: "0px" }
+  })
   return (
     <div className="App">
       <div className="clicker-main">
         {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
         <Leaderboard />
-        <button className="toggle-chat" onClick={() => setShowChat(s => !s)}>{showChat ? "Hide" : "Show"} Chat</button>
+        <button className="toggle-chat" onClick={() => setShowChat(s => !s)}>
+          {showChat ? "Hide" : "Show"} Chat
+        </button>
       </div>
-      {transitions.map(({ item, key, props }) => item && <animated.div className="chat" key={key} style={props}>
-        <iframe src="https://www.destiny.gg/embed/chat" frameborder="0" style={{height: '100%'}}></iframe>
-      </animated.div>
+      {transitions.map(
+        ({ item, key, props }) =>
+          item && (
+            <animated.div className="chat" key={key} style={props}>
+              <iframe
+                src="https://www.destiny.gg/embed/chat"
+                frameborder="0"
+                style={{ height: "100%" }}
+              ></iframe>
+            </animated.div>
+          )
       )}
     </div>
   )
