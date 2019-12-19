@@ -56,7 +56,7 @@ export default class CoinGeneratorCollection extends React.Component {
                 <Card body className="text-left">
                     <CardHeader>COOM emporium</CardHeader>
                     <CardBody>
-                        <CardTitle>Coin Generators</CardTitle>
+                        <CardTitle>COOM Generators</CardTitle>
                         <CardSubtitle>You currently have {this.props.score} COOMS.</CardSubtitle>
                         <Button onClick={this.props.clickHandler}>Click this to get one COOM!</Button>
                         <CardText>These are all of the different things you can buy to generate coins. You generate {this.props.passiveIncome} per second.</CardText>
