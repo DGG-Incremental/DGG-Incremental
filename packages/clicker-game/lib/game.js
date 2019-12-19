@@ -8,7 +8,7 @@ class Game {
 	  initialScore: 0,
 	  generators: 0,
       actions: [],
-      lastSynced: null
+      lastSynced: new Date(0)
     })
     this.state.lastSynced = new Date(this.state.lastSynced)
   }
