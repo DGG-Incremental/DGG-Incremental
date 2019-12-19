@@ -81,7 +81,7 @@ const Clicker = ({ name }) => {
     setGame(new Game(game.state));
   }, 1000)
 
-  const actionHandler = async(action) => {
+  const clickHandler = async (action) => {
     game.click(action);
     setGame(new Game(game.state))
   }
@@ -92,7 +92,7 @@ const Clicker = ({ name }) => {
         style={{ display: "inline-block", marginLeft: "15px" }}
         className="emote COOMER"
       ></div>
-      <CoinGeneratorCollection click={actionHandler} score={game.state.initialScore} passiveIncome={game.state.passiveIncome}/>
+      <CoinGeneratorCollection click={clickHandler} score={game.state.initialScore} passiveIncome={game.state.passiveIncome}/>
     </div>
   )
 }
