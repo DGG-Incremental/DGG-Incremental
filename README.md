@@ -8,25 +8,17 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-Node.js
+Node.js (npm and npx)
 
 Dgg Oauth app: https://www.destiny.gg/profile/developer
 
 Postgres
 
 ### Installing
-
-Install Server modules
+Lerna will install all the submodule packages 
 
 ```
-cd server/
-npm install
-```
-
-Install UI Modules
-```
-cd ui/
-npm install
+npx lerna bootstrap
 ```
 
 ### Setup environment
@@ -52,13 +44,7 @@ DATABASE_NAME=
 
 ### Start development processes
 ```
-cd server/
-node index.js
-```
-
-```
-cd ui/
-npm start
+npx lerna run start
 ```
 
 ### Open App

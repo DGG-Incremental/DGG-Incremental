@@ -3,7 +3,7 @@ import "./App.css"
 import axios from "axios"
 import debounce from "lodash/debounce"
 import cookies from "browser-cookies"
-import Game from 'game'
+import Game from 'clicker-game'
 
 function useInterval(callback, delay) {
   const savedCallback = useRef()

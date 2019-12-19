@@ -7,7 +7,7 @@ import path from 'path';
 import axios from 'axios';
 import { getOauthRedirect, getCodeVerifier, getUserInfo } from './auth';
 import { dbUp, getLeaderBoard, getScore, setScore } from './store';
-import Game from 'game'
+import Game from 'clicker-game'
 
 
 
