@@ -137,8 +137,11 @@ function App() {
   const [name, setName] = useState(null)
   return (
     <div className="App">
-      {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
-      <Leaderboard />
+      <div className="clicker-main">
+        {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
+        <Leaderboard />
+      </div>
+      <iframe src="https://www.destiny.gg/embed/chat" frameborder="0" style={{height: '100%'}}></iframe>
     </div>
   )
 }
