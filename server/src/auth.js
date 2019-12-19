@@ -1,11 +1,11 @@
+import { Buffer } from 'buffer';
+import axios from 'axios';
+import crypto from 'crypto';
+import uuid from 'uuid/v4';
+
 const APP_ID = process.env.DGG_OATH_ID
 const APP_SECRET = process.env.DGG_OATH_SECRET
-const REDIRECT_URI = process.env.REDIRECT_URI 
-
-const { Buffer } = require("buffer")
-const axios = require("axios")
-const crypto = require("crypto")
-const uuid = require("uuid/v4")
+const REDIRECT_URI = process.env.REDIRECT_URI
 
 const hash = val =>
   crypto
@@ -19,30 +19,26 @@ const secret = hash(APP_SECRET)
 const CHALLENGES = {}
 const USERS = {}
 
-function getOauthRedirect() {
+export const getOauthRedirect = () => {
   const code_verifier = encode(uuid())
   const code_challenge = encode(hash(code_verifier + secret))
   const state = uuid()
   CHALLENGES[state] = code_verifier
-  return `https://www.destiny.gg/oauth/authorize?response_type=code&client_id=${APP_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&state=${state}&code_challenge=${code_challenge}`
+  return `https://www.destiny.gg/oauth/authorize?response_type=code&client_id=${APP_ID}&redirect_uri=${encodeURIComponent(
+    REDIRECT_URI
+  )}&state=${state}&code_challenge=${code_challenge}`
 }
 
-function getCodeVerifier(state) {
-	return CHALLENGES[state]
+export const getCodeVerifier = (state) => {
+  return CHALLENGES[state]
 }
 
-async function getUserInfo(token) {
-	if(USERS[token]) {
-		return USERS[token]
-	}
-	const {data} = await axios.get('https://www.destiny.gg/api/userinfo?token='+token)
-	const {username} = data
-	USERS[token] = username
-	return username	
+export const getUserInfo = async token => {
+  console.log("looking up user", token)
+  const { data } = await axios.get(
+    "https://www.destiny.gg/api/userinfo?token=" + token
+  )
+  const { username } = data
+  return username
 }
 
-module.exports = {
-	getOauthRedirect,
-	getCodeVerifier,
-	getUserInfo
-}

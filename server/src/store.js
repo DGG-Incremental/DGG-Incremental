@@ -1,5 +1,5 @@
-const { Client } = require("pg")
-const _ = require("lodash")
+import { Client } from "pg"
+import _ from "lodash"
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
@@ -9,15 +9,14 @@ const client = new Client({
   ssl: true
 })
 
-
 try {
-	client.connect()
+  client.connect()
+} catch (err) {
+  console.error("Error starting db client: ")
+  console.error(err)
 }
-catch(err) {
-	console.error('Error starting db client: ')
-	console.error(err)
-}
-const dbUp = async () => {
+
+export const dbUp = async () => {
   return new Promise((res, rej) => {
     client.query(
       `
@@ -37,33 +36,35 @@ const dbUp = async () => {
   })
 }
 
-const getLeaderBoard = async () => {
+export const getLeaderBoard = async () => {
   return new Promise((res, rej) => {
     client.query(
       `SELECT name, score FROM leaderboard ORDER BY score DESC, name ASC LIMIT 50`,
       (err, results) => {
-		if (err) return rej(err)
+        if (err) return rej(err)
         res(results.rows)
       }
     )
   })
 }
 
-const getScore = async name => {
-	const result = await client.query(`
+export const getScore = async name => {
+  const result = await client.query(
+    `
 		SELECT score from leaderboard
 		where name = $1
-	`, [name])
+	`,
+    [name]
+  )
 
-	if(result.rows.length) {
-		return result.rows[0].score
-	}
-	else {
-		return 0
-	}
+  if (result.rows.length) {
+    return result.rows[0].score
+  } else {
+    return 0
+  }
 }
 
-const setScore = async (name, score, lastSynced) => {
+export const setScore = async (name, score, lastSynced) => {
   await client.query(
     `
 			INSERT INTO leaderboard (name, score, lastSynced)
@@ -81,10 +82,11 @@ const setScore = async (name, score, lastSynced) => {
 // const setOauthChallenge = async (state, challenge) => {}
 
 // const getUserInfo = async token => {}
-module.exports = {
-  dbUp,
-  getScore,
-  setScore,
-  getLeaderBoard,
-  setLeaderBoard: setScore
-}
+
+// export default {
+//   dbUp,
+//   getScore,
+//   setScore,
+//   getLeaderBoard,
+//   setLeaderBoard: setScore
+// }
