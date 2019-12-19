@@ -17,24 +17,27 @@ class Game {
   }
 
   click(action) {
+
+    if(!this.validate(action)) return false;
+    this.state.passiveIncome += action.incomeGained;
+    this.state.initialScore += action.moneyAdded - action.cost;
     this.pushAction(action);
+    return true;
+  }
+
+
+
+  applyIncome() {
+
   }
 
   getCurrentState() {
-    let passiveIncome = this.state.passiveIncome;
-    this.state.actions.forEach((action) => {
-      passiveIncome += action.incomeGained;
-    });
-    const score =
-      this.state.initialScore +
-      this.state.actions.filter(a => a.action === "click").length;
-    return {
-      score
-    }
+    return this.state.initialScore;
   }
 
-  validate() {
-    return true
+  validate(action) {
+    if(action.cost === 0) return true;
+    if(action.cost > this.state.initialScore) return false;
   }
 
   fastForward(game) {

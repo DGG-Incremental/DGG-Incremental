@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react"
+import { useTransition, animated } from "react-spring"
 import "./App.css"
 import axios from "axios"
 import debounce from "lodash/debounce"
-import cookies, { set } from "browser-cookies"
-import Game from "./game"
+import cookies from "browser-cookies"
+import Game from "clicker-game"
 
 import CoinGeneratorCollection from "./Components/CoinGeneratorCollection";
 import Action from "./Action";
@@ -66,12 +67,19 @@ const Clicker = ({ name }) => {
     })
   }, [name])
 
+  // Updates Action Stack
   useInterval(async () => {
     if (game.state.actions.length) {
       const synced = await syncGame(game)
       setGame(game.fastForward(synced))
     }
   }, 3 * 1000)
+
+  // Increments score based on passive income, once per second
+  useInterval(async () => {
+    game.applyIncome();
+    setGame(new Game(game.state));
+  }, 1000)
 
   const clickHandler = async () => {
     game.click(new Action("click", 1, 0, 0, "click"));
@@ -82,16 +90,19 @@ const Clicker = ({ name }) => {
     // setGame(ff)
   }
 
-  const state = game.getCurrentState()
+  const actionHandler = async(action) => {
+    game.click(action);
+    setGame(new Game(game.state))
+  }
+
+  const state = game.getCurrentState();
   return (
     <div style={{ margin: "25px", display: "flex" }}>
-      COOMS: {state.score}
       <div
         style={{ display: "inline-block", marginLeft: "15px" }}
         className="emote COOMER"
-        onClick={clickHandler}
       ></div>
-      <CoinGeneratorCollection click={game.click}/>
+      <CoinGeneratorCollection click={actionHandler} clickHandler= {clickHandler} score={game.state.initialScore} passiveIncome={game.state.passiveIncome}/>
     </div>
   )
 }
@@ -139,11 +150,33 @@ const Leaderboard = () => {
 
 function App() {
   const [name, setName] = useState(null)
+  const [showChat, setShowChat] = useState(true)
+  const transitions = useTransition(showChat, null, {
+    from: { width: "0px" },
+    enter: { width: "300px" },
+    leave: { width: "0px" }
+  })
   return (
     <div className="App">
-      {name ? <Clicker name={name} /> : <Clicker name="Alex" />}
-
-      <Leaderboard />
+      <div className="clicker-main">
+        {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
+        <Leaderboard />
+        <button className="toggle-chat" onClick={() => setShowChat(s => !s)}>
+          {showChat ? "Hide" : "Show"} Chat
+        </button>
+      </div>
+      {transitions.map(
+        ({ item, key, props }) =>
+          item && (
+            <animated.div className="chat" key={key} style={props}>
+              <iframe
+                src="https://www.destiny.gg/embed/chat"
+                frameborder="0"
+                style={{ height: "100%" }}
+              ></iframe>
+            </animated.div>
+          )
+      )}
     </div>
   )
 }

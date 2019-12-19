@@ -7,7 +7,7 @@ import {
 
 import 'bootstrap/dist/css/bootstrap.css';
 
-import Action from "../game";
+import Action from "../Action";
 import CoinGenerator from "./CoinGenerator";
 
 export default class CoinGeneratorCollection extends React.Component {
@@ -21,7 +21,7 @@ export default class CoinGeneratorCollection extends React.Component {
         this.increaseRate = this.increaseRate.bind(this);
         this.update = this.update.bind(this);
         this.click = this.click.bind(this);
-        this.coinClick = this.coinClick.bind(this);
+        //this.coinClick = this.coinClick.bind(this);
     }
 
     deduct (cost) {
@@ -40,43 +40,36 @@ export default class CoinGeneratorCollection extends React.Component {
         this.setState({currencyCount: this.state.currencyCount + this.state.totalRate});
     }
 
-    coinClick () {
-        this.setState({currencyCount: this.state.currencyCount + 1});
-    }
+    /*coinClick () {
+        this.props.click(new Action("click", 1, 0, 0, "click"));
+        this.setState({});
+    }*/
 
     click (action) {
-        this.props.click(action);
-    }
-
-    componentDidMount () {
-        this.interval = setInterval(() => this.update(), 1000);
-    }
-
-    componentWillUnmount () {
-        clearInterval(this.interval);
+        return this.props.click(action);
+        this.setState({});
     }
 
     render () {
-        console.log(this.state.currencyCount, this.state.totalRate);
         return (
             <div>
                 <Card body className="text-left">
-                    <CardHeader>Store</CardHeader>
+                    <CardHeader>COOM emporium</CardHeader>
                     <CardBody>
                         <CardTitle>Coin Generators</CardTitle>
-                        <CardSubtitle>You currently have {this.state.currencyCount} coins.</CardSubtitle>
-                        <Button onClick={this.coinClick}>Click this to get one coin!</Button>
-                        <CardText>These are all of the different things you can buy to generate coins. You generate {this.state.totalRate} per second.</CardText>
-                        <CoinGenerator generatorName="Weak Generator"
+                        <CardSubtitle>You currently have {this.props.score} COOMS.</CardSubtitle>
+                        <Button onClick={this.props.clickHandler}>Click this to get one COOM!</Button>
+                        <CardText>These are all of the different things you can buy to generate coins. You generate {this.props.passiveIncome} per second.</CardText>
+                        <CoinGenerator generatorName="cucklord"
                                        rate={1} cost={50}
-                                       generatorDescription="Generates 1 coin per second, costs 50 money"
+                                       generatorDescription="Generates 1 COOM per second, costs 50 COOM"
                                        deduct={this.deduct} increaseRate={this.increaseRate} executeAction={this.click}/>
                     </CardBody>
                     <br></br>
                     <CardBody>
-                        <CoinGenerator generatorName="Medium Generator"
+                        <CoinGenerator generatorName="full harem"
                                        rate={10} cost={500}
-                                       generatorDescription="Generates 10 coin per second, costs 500 money"
+                                       generatorDescription="Generates 10 COOM per second, costs 500 COOMS"
                                        deduct={this.deduct} increaseRate={this.increaseRate} executeAction={this.click}/>
 
                     </CardBody>

@@ -16,7 +16,10 @@ export default class CoinGenerator extends React.Component {
     }
 
     onPurchase () {
-       this.props.executeAction(new Action("click", 0, this.props.rate, this.props.cost, this.props.generatorName));
+       if(this.props.executeAction(new Action("click", 0, this.props.rate, this.props.cost, this.props.generatorName))) {
+           this.setState({count: this.state.count + 1});
+           this.props.increaseRate(this.props.rate);
+       };
     }
 
     render(){
