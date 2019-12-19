@@ -20,7 +20,7 @@ const REDIRECT_URI = process.env.REDIRECT_URI
 
 if (process.env.NODE_ENV === "production") {
   // Serve static files from the React app
-  app.use(express.static(path.join(__dirname, "../../clicker-ui/build")))
+  app.use(express.static(path.join(__dirname, process.env.STATIC_ASSET_DIR)))
 }
 
 app.use(cors())
