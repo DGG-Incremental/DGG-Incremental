@@ -2,7 +2,7 @@
   "name": "dgg-clicker",
   "version": "0.1.0",
   "scripts": {
-    "postinstall": "lerna bootstrap && lerna run build"
+    "postinstall": "npx lerna bootstrap && lerna run build"
   },
   "devDependencies": {
     "lerna": "^3.19.0"
