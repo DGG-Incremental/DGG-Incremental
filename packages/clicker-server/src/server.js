@@ -1,15 +1,13 @@
-import express from 'express';
-import cookieParser from 'cookie-parser';
-import _ from 'lodash';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import path from 'path';
-import axios from 'axios';
-import { getOauthRedirect, getCodeVerifier, getUserInfo } from './auth';
-import { dbUp, getLeaderBoard, getScore, setScore } from './store';
-import Game from 'clicker-game'
-
-
+import express from "express"
+import cookieParser from "cookie-parser"
+import _ from "lodash"
+import bodyParser from "body-parser"
+import cors from "cors"
+import path from "path"
+import axios from "axios"
+import { getOauthRedirect, getCodeVerifier, getUserInfo } from "./auth"
+import { dbUp, getLeaderBoard, getScore, setScore } from "./store"
+import Game from "clicker-game"
 
 const app = express()
 const port = process.env.PORT || 3001
@@ -66,7 +64,6 @@ app.get("/leaderboard", async (req, res) => {
   ])
 })
 
-
 const getReqUser = async req => {
   const token = req.cookies.token
   return await getUserInfo(token)
@@ -101,10 +98,16 @@ app.patch("/me/state", async (req, res) => {
     return
   }
   const initialScore = await getScore(username)
+  const rawActions = req.body.actions
+
   const game = new Game({
     initialScore,
-    actions: req.body.actions
+    actions: rawActions.map(ra => ({
+      ...ra,
+      timestamp: new Date(ra.timestamp)
+    }))
   })
+  
   try {
     game.validate()
   } catch (err) {
@@ -116,7 +119,7 @@ app.patch("/me/state", async (req, res) => {
   const lastSynced = new Date()
   await setScore(username, newScore, lastSynced)
   res.send({ state: { initialScore: newScore, lastSynced } })
-  console.log('Sent game state to ' + username)
+  console.log("Updated game state for " + username)
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
