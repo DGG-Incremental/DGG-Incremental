@@ -34,10 +34,11 @@ class Game {
 
 	const addGeneratorActions = currentActions.filter(a => a.action === 'addGenerator') 
 	const generatorCount = addGeneratorActions.length + generators
+
 	const generatorClickProduction = sum(addGeneratorActions.map(ga => {
 		const interval = timestamp - ga.timestamp
 		return toInteger(interval / 1000) // One click per second
-	}))
+	})) + (timestamp - lastSynced) * generators / 1000
 
 
 	const score = initialScore + clicks + generatorClickProduction

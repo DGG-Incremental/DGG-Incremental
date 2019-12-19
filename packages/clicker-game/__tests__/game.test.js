@@ -41,3 +41,11 @@ test("addGenerator adds 1 to generators", () => {
 
   expect(game.getCurrentState(new Date(now.getTime() + 1000)).score).toBe(1)
 })
+
+test("generators produce passsive score", () => {
+  const now = new Date()
+  const game = new Game({generators: 1, lastSynced: now})
+  expect(game.getCurrentState().generators).toBe(1)
+
+  expect(game.getCurrentState(new Date(now.getTime() + 1000)).score).toBe(1)
+})
