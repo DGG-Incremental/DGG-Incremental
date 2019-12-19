@@ -81,28 +81,18 @@ const Clicker = ({ name }) => {
     setGame(new Game(game.state));
   }, 1000)
 
-  const clickHandler = async () => {
-    game.click(new Action("click", 1, 0, 0, "click"));
-    setGame(new Game(game.state))
-    // const synced = await syncGame(game)
-    // const ff = game.fastForward(synced)
-    // console.table([game.state, synced.state, ff.state])
-    // setGame(ff)
-  }
-
   const actionHandler = async(action) => {
     game.click(action);
     setGame(new Game(game.state))
   }
 
-  const state = game.getCurrentState();
   return (
     <div style={{ margin: "25px", display: "flex" }}>
       <div
         style={{ display: "inline-block", marginLeft: "15px" }}
         className="emote COOMER"
       ></div>
-      <CoinGeneratorCollection click={actionHandler} clickHandler= {clickHandler} score={game.state.initialScore} passiveIncome={game.state.passiveIncome}/>
+      <CoinGeneratorCollection click={actionHandler} score={game.state.initialScore} passiveIncome={game.state.passiveIncome}/>
     </div>
   )
 }

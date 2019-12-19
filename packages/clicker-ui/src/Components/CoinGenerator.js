@@ -16,7 +16,7 @@ export default class CoinGenerator extends React.Component {
     }
 
     onPurchase () {
-       if(this.props.executeAction(new Action("click", 0, this.props.rate, this.props.cost, this.props.generatorName))) {
+       if(this.props.click(new Action("click", 0, this.props.rate, this.props.cost, this.props.generatorName))) {
            this.setState({count: this.state.count + 1});
            this.props.increaseRate(this.props.rate);
        };
@@ -29,7 +29,6 @@ export default class CoinGenerator extends React.Component {
                     <CardBody>
                         <CardTitle>{this.props.generatorName}</CardTitle>
                         <CardText>{this.props.generatorDescription}, you own {this.state.count}.</CardText>
-
                         <Button onClick={this.onPurchase}>Buy 1, costs {this.props.cost}</Button>
                     </CardBody>
                 </Card>

@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src -d build",
-	"start": "npm run build && node build/index.js",
-	"serve": "node build/index.js"
+    "start": "npm run build && node build/index.js",
+    "serve": "node build/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -30,10 +30,10 @@
     "lodash": "^4.17.15",
     "pg": "^7.14.0",
     "uuid": "^3.3.3",
-    "@babel/cli": "^7.7.7",
-    "@babel/core": "^7.7.7",
-    "@babel/preset-env": "^7.7.7"
+    "@babel/cli": "^7.7.7"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7"
   }
 }
