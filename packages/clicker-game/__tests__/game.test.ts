@@ -1,4 +1,5 @@
-const Game = require("../lib/game")
+const {test, expect} = require('jest')
+import Game from '../lib/game'
 
 test("click adds 1 to score", () => {
   const game = new Game()
