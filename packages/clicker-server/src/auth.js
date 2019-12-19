@@ -1,7 +1,7 @@
-import { Buffer } from 'buffer';
-import axios from 'axios';
-import crypto from 'crypto';
-import uuid from 'uuid/v4';
+import { Buffer } from "buffer"
+import axios from "axios"
+import crypto from "crypto"
+import uuid from "uuid/v4"
 
 const APP_ID = process.env.DGG_OATH_ID
 const APP_SECRET = process.env.DGG_OATH_SECRET
@@ -29,16 +29,20 @@ export const getOauthRedirect = () => {
   )}&state=${state}&code_challenge=${code_challenge}`
 }
 
-export const getCodeVerifier = (state) => {
+export const getCodeVerifier = state => {
   return CHALLENGES[state]
 }
 
+const USER_INFO = {}
+
 export const getUserInfo = async token => {
-  console.log("looking up user", token)
+  if (USER_INFO[token]) {
+    return USER_INFO[token]
+  }
   const { data } = await axios.get(
     "https://www.destiny.gg/api/userinfo?token=" + token
   )
   const { username } = data
+  USER_INFO[token] = username
   return username
 }
-
