@@ -3,8 +3,8 @@ import {useTransition, animated} from 'react-spring'
 import "./App.css"
 import axios from "axios"
 import debounce from "lodash/debounce"
-import cookies, { set } from "browser-cookies"
-import Game from "./game"
+import cookies from "browser-cookies"
+import Game from 'clicker-game'
 
 function useInterval(callback, delay) {
   const savedCallback = useRef()

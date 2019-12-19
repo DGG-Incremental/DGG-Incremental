@@ -1,4 +1,4 @@
-const defaults = require("lodash/defaults")
+const defaults = require('lodash/defaults')
 
 class Game {
   constructor(state = {}) {
@@ -45,4 +45,5 @@ class Game {
   }
 }
 
-export default Game
+
+module.exports = Game

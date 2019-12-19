@@ -1,1 +1,1 @@
-web: node server/index.js
+web: node packages/clicker-server/index.js

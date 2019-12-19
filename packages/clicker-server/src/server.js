@@ -1,19 +1,18 @@
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config()
-}
-const express = require("express")
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import _ from 'lodash';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import path from 'path';
+import axios from 'axios';
+import { getOauthRedirect, getCodeVerifier, getUserInfo } from './auth';
+import { dbUp, getLeaderBoard, getScore, setScore } from './store';
+import Game from 'clicker-game'
+
+
+
 const app = express()
 const port = process.env.PORT || 3001
-const cookieParser = require("cookie-parser")
-const _ = require("lodash")
-const bodyParser = require("body-parser")
-const cors = require("cors")
-const path = require("path")
-const axios = require("axios")
-const { getOauthRedirect, getCodeVerifier, getUserInfo } = require("./src/auth")
-const { getLeaderBoard, dbUp, setScore, getScore } = require("./src/store")
-const Game = require("./src/game")
-
 dbUp()
 
 const APP_ID = process.env.DGG_OATH_ID
