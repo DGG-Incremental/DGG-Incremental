@@ -25,11 +25,11 @@
     "lerna": "^3.19.0",
     "lodash": "^4.17.15",
     "pg": "^7.14.0",
-    "uuid": "^3.3.3"
-  },
-  "devDependencies": {
+    "uuid": "^3.3.3",
     "@babel/core": "^7.7.5",
     "@babel/preset-env": "^7.7.7",
     "@babel/register": "^7.7.7"
+  },
+  "devDependencies": {
   }
 }
