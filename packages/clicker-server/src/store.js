@@ -1,92 +1,33 @@
-import { Client } from "pg"
 import _ from "lodash"
+import redis from 'redis'
+import {promisifyAll} from 'bluebird'
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  user: process.env.DATABASE_USER,
-  database: process.env.DATABASE_NAME,
-  password: process.env.DATABASE_PASSWORD,
-  ssl: true
-})
+promisifyAll(redis);
 
-try {
-  client.connect()
-} catch (err) {
-  console.error("Error starting db client: ")
-  console.error(err)
-}
 
-export const dbUp = async () => {
-  return new Promise((res, rej) => {
-    client.query(
-      `
-	CREATE TABLE IF NOT EXISTS leaderboard (
-		name varchar(255) PRIMARY KEY,
-		score integer,
-		lastSynced timestamp
-	);
-	`,
-      (err, val) => {
-        if (err) {
-          return rej(err)
-        }
-        res(val)
-      }
-    )
-  })
-}
+
+const client = redis.createClient()
 
 export const getLeaderBoard = async () => {
-  return new Promise((res, rej) => {
-    client.query(
-      `SELECT name, score FROM leaderboard ORDER BY score DESC, name ASC LIMIT 50`,
-      (err, results) => {
-        if (err) return rej(err)
-        res(results.rows)
-      }
-    )
-  })
+	const raw = await client.zrangeAsync('leaderboard', -2, -1, 'withscores')
+	return _(raw)
+		.chunk(2)
+		.reverse()
+		.map(([name, score]) => ({name, score}))
+		.value()
 }
 
-export const getScore = async name => {
-  const result = await client.query(
-    `
-		SELECT score from leaderboard
-		where name = $1
-	`,
-    [name]
-  )
-
-  if (result.rows.length) {
-    return result.rows[0].score
-  } else {
-    return 0
-  }
+export const getGameState = async name => {
+	console.log('Got game state: ', await client.getAsync(`gamestate:${name}`))
+  return JSON.parse(await client.getAsync(`gamestate:${name}`))
 }
 
-export const setScore = async (name, score, lastSynced) => {
-  await client.query(
-    `
-			INSERT INTO leaderboard (name, score, lastSynced)
-			VALUES ($1, $2, $3)
-			ON CONFLICT (name)
-			DO
-				UPDATE SET score = $2, lastSynced = $3;
-		`,
-    [name, score, lastSynced]
-  )
+export const setGameState = async (name, state) => {
+	console.log('Setting state: ', state)
+	await Promise.all([
+		client.setAsync(`gamestate:${name}`, JSON.stringify(state)),
+		client.zaddAsync('leaderboard', state.initialScore, name)
+	])
+	return
 }
 
-// const getOauthChallenge = async state => {}
-
-// const setOauthChallenge = async (state, challenge) => {}
-
-// const getUserInfo = async token => {}
-
-// export default {
-//   dbUp,
-//   getScore,
-//   setScore,
-//   getLeaderBoard,
-//   setLeaderBoard: setScore
-// }

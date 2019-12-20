@@ -1,12 +1,13 @@
 const defaults = require("lodash/defaults")
-const sum = require('lodash/sum')
-const toInteger = require('lodash/toInteger')
+const sum = require("lodash/sum")
+const toInteger = require("lodash/toInteger")
+const maxBy = require("lodash/maxBy")
 
 class Game {
   constructor(state = {}) {
     this.state = defaults({}, state, {
-	  initialScore: 0,
-	  generators: 0,
+      initialScore: 0,
+      generators: 0,
       actions: [],
       lastSynced: new Date(0)
     })
@@ -14,7 +15,9 @@ class Game {
   }
 
   pushAction(action) {
-    const timestamp = new Date()
+    const timestamp = maxBy([new Date(), this.state.lastSynced], d =>
+      d.getTime()
+    )
     this.state.actions.push({ action, timestamp })
   }
 
@@ -23,28 +26,38 @@ class Game {
   }
 
   addGenerator() {
-	  this.pushAction('addGenerator')
+    this.pushAction("addGenerator")
   }
 
   getCurrentState(timestamp) {
-	timestamp = timestamp || new Date()
-	const {lastSynced, actions, initialScore, generators} = this.state	
-	const currentActions = actions.filter(a => a.timestamp > lastSynced && a.timestamp <= timestamp)
-	const clicks = currentActions.filter(a => a.action === 'click').length
+    timestamp = timestamp || new Date()
+    const { lastSynced, actions, initialScore, generators } = this.state
+    const currentActions = actions.filter(
+      a =>
+        a.timestamp.getTime() >= lastSynced.getTime() &&
+        a.timestamp.getTime() <= timestamp.getTime()
+    )
 
-	const addGeneratorActions = currentActions.filter(a => a.action === 'addGenerator') 
-	const generatorCount = addGeneratorActions.length + generators
+    const clicks = currentActions.filter(a => a.action === "click").length
 
-	const generatorClickProduction = sum(addGeneratorActions.map(ga => {
-		const interval = timestamp - ga.timestamp
-		return toInteger(interval / 1000) // One click per second
-	})) + (timestamp - lastSynced) * generators / 1000
+    const addGeneratorActions = currentActions.filter(
+      a => a.action === "addGenerator"
+    )
+    const generatorCount = addGeneratorActions.length + generators
 
+    const generatorClickProduction =
+      sum(
+        addGeneratorActions.map(ga => {
+          const interval = timestamp - ga.timestamp
+          return toInteger(interval / 1000) // One click per second
+        })
+      ) +
+      ((timestamp - lastSynced) * generators) / 1000
 
-	const score = initialScore + clicks + generatorClickProduction
+    const score = initialScore + clicks + generatorClickProduction
     return {
-	  score,
-	  generators: generatorCount
+      score,
+      generators: generatorCount
     }
   }
 

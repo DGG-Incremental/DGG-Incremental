@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import { useTransition, animated } from "react-spring"
 import "./App.css"
+import maxBy from "lodash/maxBy"
 import axios from "axios"
 import debounce from "lodash/debounce"
 import cookies from "browser-cookies"
@@ -74,13 +75,11 @@ const Clicker = ({ name }) => {
   const clickHandler = async () => {
     game.click()
     setGame(new Game(game.state))
-    // const synced = await syncGame(game)
-    // const ff = game.fastForward(synced)
-    // console.table([game.state, synced.state, ff.state])
-    // setGame(ff)
   }
 
-  const state = game.getCurrentState()
+  const now = maxBy([new Date(), game.state.lastSynced], d => d.getTime()) // Avoids some de-sync issues
+  const state = game.getCurrentState(now)
+
   return (
     <div style={{ margin: "25px", display: "flex" }}>
       COOMS: {state.score}
@@ -126,7 +125,10 @@ const Leaderboard = () => {
         {scores.map(s => (
           <tr>
             <td>{s.name}</td>
-            <td>{s.score}</td>
+            <td>{s.score} </td>
+            <td>
+              {s.name === "cake" ? <div className="emote SOY"></div> : null}
+            </td>
           </tr>
         ))}
       </tbody>

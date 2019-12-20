@@ -6,12 +6,11 @@ import cors from "cors"
 import path from "path"
 import axios from "axios"
 import { getOauthRedirect, getCodeVerifier, getUserInfo } from "./auth"
-import { dbUp, getLeaderBoard, getScore, setScore } from "./store"
+import { getLeaderBoard, getGameState, setGameState } from "./store"
 import Game from "clicker-game"
 
 const app = express()
 const port = process.env.PORT || 3001
-dbUp()
 
 const APP_ID = process.env.DGG_OATH_ID
 const REDIRECT_URI = process.env.REDIRECT_URI
@@ -56,12 +55,15 @@ app.get("/oauth", async (req, res) => {
 const MEMES = {
   MrMouton: -74.02
 }
+
 app.get("/leaderboard", async (req, res) => {
   const leaderboard = await getLeaderBoard()
-  res.send([
-    ...leaderboard.filter(l => !_.keys(MEMES).includes(l.name)),
-    ..._.map(MEMES, (score, name) => ({ name, score }))
-  ])
+  console.log("Leaderboard: ", leaderboard)
+  res.send(leaderboard)
+  //   res.send([
+  //     ...leaderboard.filter(l => !_.keys(MEMES).includes(l.name)),
+  //     ..._.map(MEMES, (score, name) => ({ name, score }))
+  //   ])
 })
 
 const getReqUser = async req => {
@@ -84,7 +86,7 @@ app.get("/me/state", async (req, res) => {
     res.send()
     return
   }
-  const initialScore = await getScore(username)
+  const { initialScore } = await getGameState(username)
   res.send({ state: { initialScore } })
 })
 
@@ -97,17 +99,17 @@ app.patch("/me/state", async (req, res) => {
     res.send({ message: "username not found", redirect: "/auth" })
     return
   }
-  const initialScore = await getScore(username)
+  const state = await getGameState(username)
   const rawActions = req.body.actions
 
   const game = new Game({
-    initialScore,
+    ...state,
     actions: rawActions.map(ra => ({
       ...ra,
       timestamp: new Date(ra.timestamp)
     }))
   })
-  
+
   try {
     game.validate()
   } catch (err) {
@@ -117,7 +119,7 @@ app.patch("/me/state", async (req, res) => {
   }
   const newScore = game.getCurrentState().score
   const lastSynced = new Date()
-  await setScore(username, newScore, lastSynced)
+  await setGameState(username, { initialScore: newScore, lastSynced })
   res.send({ state: { initialScore: newScore, lastSynced } })
   console.log("Updated game state for " + username)
 })
