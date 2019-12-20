@@ -9,7 +9,7 @@ promisifyAll(redis);
 const client = redis.createClient()
 
 export const getLeaderBoard = async () => {
-	const raw = await client.zrangeAsync('leaderboard', -2, -1, 'withscores')
+	const raw = await client.zrangeAsync('leaderboard', -50, -1, 'withscores')
 	return _(raw)
 		.chunk(2)
 		.reverse()
