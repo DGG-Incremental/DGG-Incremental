@@ -147,7 +147,7 @@ const Leaderboard = () => {
           <th>{state.totals.yees}</th>
           <th>{state.totals.pepes}</th>
           <th></th>
-          <th>{state.totals.pepes === state.totals.yees ? "" : (state.totals.pepes > state.totals.yees ? "Pepe" : "Yee")}</th>
+          <th>{parseInt(state.totals.pepes) === parseInt(state.totals.yees) ? "" : (parseInt(state.totals.pepes) > parseInt(state.totals.yees) ? "Pepe" : "Yee")}</th>
         </tr>
       </thead>
       <tbody>
@@ -160,9 +160,9 @@ const Leaderboard = () => {
               {s.name === "cake" ? <div className="emote SOY"></div> : null}
             </td>
             <td>
-              {s.yees === s.pepes ?
+              {parseInt(s.yees) === parseInt(s.pepes) ?
                 <div class="emote Shrugstiny" style={{ margin: "auto" }}></div> :
-                (s.yees > s.pepes ? <div class="emote YEE" style={{ margin: "auto" }}></div> : <div class="emote PEPE" style={{ margin: "auto" }}></div>)}
+                (parseInt(s.yees) > parseInt(s.pepes) ? <div class="emote YEE" style={{ margin: "auto" }}></div> : <div class="emote PEPE" style={{ margin: "auto" }}></div>)}
             </td>
           </tr>
         ))}
