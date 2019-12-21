@@ -72,22 +72,36 @@ const Clicker = ({ name }) => {
     }
   }, 3 * 1000)
 
-  const clickHandler = async () => {
-    game.click()
+  const pepeClickHandler = async () => {
+    game.clickPepe()
+    setGame(new Game(game.state))
+  }
+
+  const yeeClickHandler = async () => {
+    game.clickYee()
     setGame(new Game(game.state))
   }
 
   const now = maxBy([new Date(), game.state.lastSynced], d => d.getTime()) // Avoids some de-sync issues
   const state = game.getCurrentState(now)
-
   return (
-    <div style={{ margin: "25px", display: "flex" }}>
-      COOMS: {state.score}
-      <div
-        style={{ display: "inline-block", marginLeft: "15px" }}
-        className="emote COOMER"
-        onClick={clickHandler}
-      ></div>
+    <div
+      style={{
+        margin: "25px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <div style={{ display: "inline-block", margin: "15px" }}>
+        <div className="emote YEE" onClick={yeeClickHandler}></div>
+        <div>{state.yees}</div>
+      </div>
+      <div>VS</div>
+      <div style={{ display: "inline-block", margin: "15px" }}>
+        <div className="emote PEPE" onClick={pepeClickHandler}></div>
+        <div>{state.pepes}</div>
+      </div>
     </div>
   )
 }
@@ -101,11 +115,14 @@ const GetName = ({ onChange }) => {
 }
 
 const Leaderboard = () => {
-  const [scores, setScores] = useState([])
+  const [state, setState] = useState({
+    leaderboard: [],
+    totals: {}
+  })
 
   const update = async () => {
     const result = await getLeaderBoard()
-    setScores(result)
+    setState(result)
   }
 
   useEffect(() => {
@@ -114,18 +131,29 @@ const Leaderboard = () => {
   }, [])
 
   return (
-    <table>
+    <table style={{ borderSpacing: "15px 10px" }}>
       <thead>
         <tr>
           <th>Name</th>
-          <th>Coom</th>
+          <th>
+            <div class="emote YEE" style={{ margin: "auto" }}></div>
+          </th>
+          <th>
+            <div class="emote PEPE" style={{ margin: "auto" }}></div>
+          </th>
+        </tr>
+        <tr>
+          <th>Total</th>
+          <th>{state.totals.yees}</th>
+          <th>{state.totals.pepes}</th>
         </tr>
       </thead>
       <tbody>
-        {scores.map(s => (
+        {state.leaderboard.map(s => (
           <tr>
             <td>{s.name}</td>
-            <td>{s.score} </td>
+            <td>{s.yees} </td>
+            <td>{s.pepes} </td>
             <td>
               {s.name === "cake" ? <div className="emote SOY"></div> : null}
             </td>

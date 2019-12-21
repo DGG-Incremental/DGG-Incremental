@@ -6,7 +6,8 @@ const maxBy = require("lodash/maxBy")
 class Game {
   constructor(state = {}) {
     this.state = defaults({}, state, {
-      initialScore: 0,
+      pepes: 0,
+      yees: 0,
       generators: 0,
       actions: [],
       lastSynced: new Date(0)
@@ -21,8 +22,12 @@ class Game {
     this.state.actions.push({ action, timestamp })
   }
 
-  click() {
-    this.pushAction("click")
+  clickPepe() {
+    this.pushAction("clickPepe")
+  }
+
+  clickYee() {
+    this.pushAction("clickYee")
   }
 
   addGenerator() {
@@ -31,33 +36,22 @@ class Game {
 
   getCurrentState(timestamp) {
     timestamp = timestamp || new Date()
-    const { lastSynced, actions, initialScore, generators } = this.state
+    const { lastSynced, actions } = this.state
     const currentActions = actions.filter(
       a =>
-        a.timestamp.getTime() >= lastSynced.getTime() &&
-        a.timestamp.getTime() <= timestamp.getTime()
+        a.timestamp.getTime() >= lastSynced.getTime() && true
+        // a.timestamp.getTime() <= timestamp.getTime()
     )
 
-    const clicks = currentActions.filter(a => a.action === "click").length
+    const pepeClicks = currentActions.filter(a => a.action === "clickPepe")
+      .length
+    const yeeClicks = currentActions.filter(a => a.action === "clickYee").length
 
-    const addGeneratorActions = currentActions.filter(
-      a => a.action === "addGenerator"
-    )
-    const generatorCount = addGeneratorActions.length + generators
-
-    const generatorClickProduction =
-      sum(
-        addGeneratorActions.map(ga => {
-          const interval = timestamp - ga.timestamp
-          return toInteger(interval / 1000) // One click per second
-        })
-      ) +
-      ((timestamp - lastSynced) * generators) / 1000
-
-    const score = initialScore + clicks + generatorClickProduction
+    const pepeScore = this.state.pepes + pepeClicks
+    const yeeScore = this.state.yees + yeeClicks
     return {
-      score,
-      generators: generatorCount
+      pepes: pepeScore,
+      yees: yeeScore
     }
   }
 
@@ -67,10 +61,10 @@ class Game {
 
   fastForward(game) {
     // Return a game object that is passed game + actions in current game that
-    // have a time stamp after passed game
+	// have a time stamp after passed game
     const actions = this.state.actions.filter(
       a => a.timestamp > game.state.lastSynced
-    )
+	)
     return new Game({
       ...game.state,
       actions

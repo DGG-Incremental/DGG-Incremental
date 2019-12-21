@@ -1,33 +1,88 @@
 import _ from "lodash"
-import redis from 'redis'
-import {promisifyAll} from 'bluebird'
+// import redis from "redis"
+import { promisifyAll } from "bluebird"
+import Postgres from "pg"
 
-promisifyAll(redis);
+// promisifyAll(redis)
 
+const dbClient = new Postgres.Client({
+  connectionString: process.env.DATABASE_URL,
+  user: process.env.DATABASE_USER,
+  database: process.env.DATABASE_NAME,
+  password: process.env.DATABASE_PASSWORD,
+  ssl: true
+})
 
+// const redisClient = redis.createClient()
 
-const client = redis.createClient()
+export const dbUp = async () => {
+  try {
+    await dbClient.query(
+      `
+	  CREATE TABLE IF NOT EXISTS game_state (
+		  name varchar(255) PRIMARY KEY,
+		  state jsonb NOT NULL,
+		  lastSynced timestamp NOT NULL
+	  );
+	  `
+    )
+  } catch (err) {
+    console.error("Failed to bring DP up: ")
+    console.error(err)
+  }
+}
+dbClient.connect().then(dbUp)
 
-export const getLeaderBoard = async () => {
-	const raw = await client.zrangeAsync('leaderboard', -50, -1, 'withscores')
-	return _(raw)
-		.chunk(2)
-		.reverse()
-		.map(([name, score]) => ({name, score}))
-		.value()
+export const getLeaderboard = async () => {
+	const results = await dbClient.query(`
+	select
+		name,
+		state->>'yees' as yees,
+		state->>'pepes' as pepes
+	from
+		game_state
+	order by
+		(cast(state->>'yees' as int) + cast(state->>'pepes' as int)) desc
+	limit 50
+	`)
+	return results.rows
+}
+
+export const getTotals = async () => {
+  const result = await dbClient.query(`
+	select
+		sum(cast(state->>'pepes' as int)) as pepes,
+		sum(cast(state->>'yees' as int)) as yees
+	from
+		game_state
+	`)
+	return result.rows[0]
 }
 
 export const getGameState = async name => {
-	console.log('Got game state: ', await client.getAsync(`gamestate:${name}`))
-  return JSON.parse(await client.getAsync(`gamestate:${name}`))
+  const result = await dbClient.query(
+    `
+		SELECT state, lastSynced
+		FROM game_state
+		WHERE name = $1
+	`,
+    [name]
+  )
+  if (result.rows.length) {
+    return result.rows[0].state
+  }
+  //   return JSON.parse(await redisClient.getAsync(`gamestate:${name}`))
 }
 
-export const setGameState = async (name, state) => {
-	console.log('Setting state: ', state)
-	await Promise.all([
-		client.setAsync(`gamestate:${name}`, JSON.stringify(state)),
-		client.zaddAsync('leaderboard', state.initialScore, name)
-	])
-	return
+export const setGameState = async (name, state, lastSynced) => {
+  await dbClient.query(
+    `
+		INSERT INTO game_state (name, state, lastSynced)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (name)
+		DO
+			UPDATE SET state = $2, lastSynced = $3
+	`,
+    [name, state, lastSynced]
+  )
 }
-

@@ -6,7 +6,7 @@ import cors from "cors"
 import path from "path"
 import axios from "axios"
 import { getOauthRedirect, getCodeVerifier, getUserInfo } from "./auth"
-import { getLeaderBoard, getGameState, setGameState } from "./store"
+import { getLeaderboard, getGameState, setGameState, getTotals } from "./store"
 import Game from "clicker-game"
 
 const app = express()
@@ -57,13 +57,11 @@ const MEMES = {
 }
 
 app.get("/leaderboard", async (req, res) => {
-  const leaderboard = await getLeaderBoard()
-  console.log("Leaderboard: ", leaderboard)
-  res.send(leaderboard)
-  //   res.send([
-  //     ...leaderboard.filter(l => !_.keys(MEMES).includes(l.name)),
-  //     ..._.map(MEMES, (score, name) => ({ name, score }))
-  //   ])
+  const [totals, leaderboard] = await Promise.all([
+    getTotals(),
+    getLeaderboard()
+  ])
+  res.send({ totals, leaderboard })
 })
 
 const getReqUser = async req => {
@@ -86,8 +84,8 @@ app.get("/me/state", async (req, res) => {
     res.send()
     return
   }
-  const { initialScore } = await getGameState(username)
-  res.send({ state: { initialScore } })
+  const state = await getGameState(username)
+  res.send({ state })
 })
 
 app.patch("/me/state", async (req, res) => {
@@ -101,7 +99,6 @@ app.patch("/me/state", async (req, res) => {
   }
   const state = await getGameState(username)
   const rawActions = req.body.actions
-
   const game = new Game({
     ...state,
     actions: rawActions.map(ra => ({
@@ -117,11 +114,10 @@ app.patch("/me/state", async (req, res) => {
     res.send("Invalid state")
     return
   }
-  const newScore = game.getCurrentState().score
+  const newState = game.getCurrentState()
   const lastSynced = new Date()
-  await setGameState(username, { initialScore: newScore, lastSynced })
-  res.send({ state: { initialScore: newScore, lastSynced } })
-  console.log("Updated game state for " + username)
+  await setGameState(username, newState, lastSynced)
+  res.send({ state: { ...newState, lastSynced } })
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
