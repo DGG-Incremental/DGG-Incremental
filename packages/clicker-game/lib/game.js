@@ -68,12 +68,12 @@ class Game {
     }
   }
 
-  fastForward(game, target) {
+  fastForward(game) {
     // Return a game object that is passed game + actions in current game that
-    // have a time stamp after passed game
+	// have a time stamp after passed game
     const actions = this.state.actions.filter(
-      a => a.timestamp > target || game.state.lastSynced
-    )
+      a => a.timestamp > game.state.lastSynced
+	)
     return new Game({
       ...game.state,
       actions

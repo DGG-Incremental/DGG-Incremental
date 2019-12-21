@@ -98,10 +98,10 @@ app.patch("/me/state", async (req, res) => {
     return
   }
 
-  const { gameState, lastSynced } = await getGameState(username)
+  const { state, lastSynced } = await getGameState(username)
   const rawActions = req.body.actions
   const game = new Game({
-    ...gameState,
+    ...state,
     actions: rawActions.map(ra => ({
       ...ra,
       timestamp: new Date(ra.timestamp)
@@ -123,7 +123,7 @@ app.patch("/me/state", async (req, res) => {
     return
   }
 
-  const newState = game.getCurrentState()
+  const newState = game.getStateAt(syncTime)
   await setGameState(username, newState, syncTime)
   res.send({ state: { ...newState, lastSynced: syncTime } })
 })

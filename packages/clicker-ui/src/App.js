@@ -45,9 +45,10 @@ const getLeaderBoard = async () => {
 
 const syncGame = async game => {
   try {
+    const sentAt = new Date()
     const res = await axios.patch("/me/state", {
-	  actions: game.state.actions,
-	  sentAt: new Date()
+      actions: game.state.actions,
+      sentAt
     })
     return new Game(res.data.state)
   } catch (err) {
@@ -71,7 +72,7 @@ const Clicker = ({ name }) => {
   useInterval(async () => {
     if (game.state.actions.length) {
       try {
-        const synced = await syncGame(game)
+		const synced = await syncGame(game)
         setGame(game.fastForward(synced))
       } catch (err) {
         setErrors([err])
