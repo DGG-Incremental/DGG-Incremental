@@ -84,10 +84,9 @@ app.get("/me/state", async (req, res) => {
     res.send()
     return
   }
-  const { gameState, lastSynced } = await getGameState(username)
-  res.send({ state: { ...gameState, lastSynced } })
+  const { state, lastSynced } = await getGameState(username)
+  res.send({ state: { ...state, lastSynced } })
 })
-
 
 app.patch("/me/state", async (req, res) => {
   const username = await getReqUser(req)
