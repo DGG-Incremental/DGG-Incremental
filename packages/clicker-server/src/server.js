@@ -110,8 +110,8 @@ app.patch("/me/state", async (req, res) => {
   try {
     game.validate()
   } catch (err) {
-    res.statusCode = 400
-    res.send("Invalid state")
+    res.statusCode = 420
+    res.send(err)
     return
   }
   const newState = game.getCurrentState()

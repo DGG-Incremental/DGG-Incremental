@@ -51,3 +51,7 @@
   background: #111;
   position: relative;
 }
+
+.errors {
+  color: red;
+}

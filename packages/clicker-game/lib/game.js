@@ -2,6 +2,9 @@ const defaults = require("lodash/defaults")
 const sum = require("lodash/sum")
 const toInteger = require("lodash/toInteger")
 const maxBy = require("lodash/maxBy")
+const { exceedsRateLimit } = require("./validations")
+
+const _ = require("lodash")
 
 class Game {
   constructor(state = {}) {
@@ -15,11 +18,12 @@ class Game {
     this.state.lastSynced = new Date(this.state.lastSynced)
   }
 
-  pushAction(action) {
-    const timestamp = maxBy([new Date(), this.state.lastSynced], d =>
-      d.getTime()
+  pushAction(action, timestamp) {
+    const _timestamp = maxBy(
+      [timestamp || new Date(), this.state.lastSynced],
+      d => d.getTime()
     )
-    this.state.actions.push({ action, timestamp })
+    this.state.actions.push({ action, timestamp: _timestamp })
   }
 
   clickPepe() {
@@ -39,8 +43,8 @@ class Game {
     const { lastSynced, actions } = this.state
     const currentActions = actions.filter(
       a =>
-        a.timestamp.getTime() >= lastSynced.getTime() && true
-        // a.timestamp.getTime() <= timestamp.getTime()
+        a.timestamp.getTime() >= lastSynced.getTime() &&
+        a.timestamp.getTime() <= timestamp.getTime()
     )
 
     const pepeClicks = currentActions.filter(a => a.action === "clickPepe")
@@ -56,15 +60,17 @@ class Game {
   }
 
   validate() {
-    return true
+    if (exceedsRateLimit(this)) {
+      throw "Too many actions"
+    }
   }
 
   fastForward(game) {
     // Return a game object that is passed game + actions in current game that
-	// have a time stamp after passed game
+    // have a time stamp after passed game
     const actions = this.state.actions.filter(
       a => a.timestamp > game.state.lastSynced
-	)
+    )
     return new Game({
       ...game.state,
       actions

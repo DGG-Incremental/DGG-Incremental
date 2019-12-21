@@ -34,7 +34,7 @@ const getInitialState = async () => {
     if (err.response.status === 404) {
       return undefined
     }
-    throw err
+    throw err.response.data
   }
 }
 
@@ -53,11 +53,13 @@ const syncGame = async game => {
     if (err.response.status === 404) {
       window.location.replace("/auth")
     }
+    throw err.response.data
   }
 }
 
 const Clicker = ({ name }) => {
   const [game, setGame] = useState(new Game())
+  const [errors, setErrors] = useState([])
 
   useEffect(() => {
     getInitialState().then(state => {
@@ -67,8 +69,12 @@ const Clicker = ({ name }) => {
 
   useInterval(async () => {
     if (game.state.actions.length) {
-      const synced = await syncGame(game)
-      setGame(game.fastForward(synced))
+      try {
+        const synced = await syncGame(game)
+        setGame(game.fastForward(synced))
+      } catch (err) {
+        setErrors([err])
+      }
     }
   }, 3 * 1000)
 
@@ -85,22 +91,29 @@ const Clicker = ({ name }) => {
   const now = maxBy([new Date(), game.state.lastSynced], d => d.getTime()) // Avoids some de-sync issues
   const state = game.getCurrentState(now)
   return (
-    <div
-      style={{
-        margin: "25px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-      }}
-    >
-      <div style={{ display: "inline-block", margin: "15px" }}>
-        <div className="emote YEE" onClick={yeeClickHandler}></div>
-        <div>{state.yees}</div>
+    <div>
+      <div
+        style={{
+          margin: "25px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <div style={{ display: "inline-block", margin: "15px" }}>
+          <div className="emote YEE" onClick={yeeClickHandler}></div>
+          <div>{state.yees}</div>
+        </div>
+        <div>VS</div>
+        <div style={{ display: "inline-block", margin: "15px" }}>
+          <div className="emote PEPE" onClick={pepeClickHandler}></div>
+          <div>{state.pepes}</div>
+        </div>
       </div>
-      <div>VS</div>
-      <div style={{ display: "inline-block", margin: "15px" }}>
-        <div className="emote PEPE" onClick={pepeClickHandler}></div>
-        <div>{state.pepes}</div>
+      <div className="errors">
+        {errors.map(e => (
+          <p>{e}</p>
+        ))}
       </div>
     </div>
   )
@@ -135,7 +148,7 @@ const Leaderboard = () => {
       <thead>
         <tr>
           <th>Name</th>
-          <th >
+          <th>
             <div class="emote YEE" style={{ margin: "auto" }}></div>
           </th>
           <th>
@@ -147,7 +160,13 @@ const Leaderboard = () => {
           <th>{state.totals.yees}</th>
           <th>{state.totals.pepes}</th>
           <th></th>
-          <th>{parseInt(state.totals.pepes) === parseInt(state.totals.yees) ? "" : (parseInt(state.totals.pepes) > parseInt(state.totals.yees) ? "Pepe" : "Yee")}</th>
+          <th>
+            {parseInt(state.totals.pepes) === parseInt(state.totals.yees)
+              ? ""
+              : parseInt(state.totals.pepes) > parseInt(state.totals.yees)
+              ? "Pepe"
+              : "Yee"}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -160,9 +179,13 @@ const Leaderboard = () => {
               {s.name === "cake" ? <div className="emote SOY"></div> : null}
             </td>
             <td>
-              {parseInt(s.yees) === parseInt(s.pepes) ?
-                <div class="emote Shrugstiny" style={{ margin: "auto" }}></div> :
-                (parseInt(s.yees) > parseInt(s.pepes) ? <div class="emote YEE" style={{ margin: "auto" }}></div> : <div class="emote PEPE" style={{ margin: "auto" }}></div>)}
+              {parseInt(s.yees) === parseInt(s.pepes) ? (
+                <div class="emote Shrugstiny" style={{ margin: "auto" }}></div>
+              ) : parseInt(s.yees) > parseInt(s.pepes) ? (
+                <div class="emote YEE" style={{ margin: "auto" }}></div>
+              ) : (
+                <div class="emote PEPE" style={{ margin: "auto" }}></div>
+              )}
             </td>
           </tr>
         ))}
@@ -187,7 +210,6 @@ function App() {
         </button>
       </div>
 
-              
       <div className="clicker-main">
         <Leaderboard />
         <div className="center">
