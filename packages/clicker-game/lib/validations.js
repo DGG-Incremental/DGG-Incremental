@@ -1,7 +1,7 @@
 const some = require("lodash/some")
 const orderBy = require("lodash/orderBy")
 
-const exceedsRateLimit = (game, rateLimit = 15) => {
+const exceedsRateLimit = (game, rateLimit = 15000) => {
   const timeline = orderBy(game.state.actions, ["timestamp"])
   return some(timeline, (action, i, actions) => {
     const start = action.timestamp

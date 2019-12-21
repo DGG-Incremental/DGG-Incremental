@@ -34,7 +34,7 @@ export const dbUp = async () => {
 dbClient.connect().then(dbUp)
 
 export const getLeaderboard = async () => {
-	const results = await dbClient.query(`
+  const results = await dbClient.query(`
 	select
 		name,
 		state->>'yees' as yees,
@@ -45,7 +45,7 @@ export const getLeaderboard = async () => {
 		(cast(state->>'yees' as int) + cast(state->>'pepes' as int)) desc
 	limit 50
 	`)
-	return results.rows
+  return results.rows
 }
 
 export const getTotals = async () => {
@@ -56,7 +56,7 @@ export const getTotals = async () => {
 	from
 		game_state
 	`)
-	return result.rows[0]
+  return result.rows[0]
 }
 
 export const getGameState = async name => {
@@ -69,9 +69,15 @@ export const getGameState = async name => {
     [name]
   )
   if (result.rows.length) {
-    return result.rows[0].state
+    return {
+      state: result.rows[0].state,
+      lastSynced: result.rows[0].lastsynced
+    }
   }
-  //   return JSON.parse(await redisClient.getAsync(`gamestate:${name}`))
+  return {
+    state: {},
+    lastSynced: new Date(0)
+  }
 }
 
 export const setGameState = async (name, state, lastSynced) => {

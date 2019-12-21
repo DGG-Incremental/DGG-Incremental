@@ -38,8 +38,11 @@ class Game {
     this.pushAction("addGenerator")
   }
 
-  getCurrentState(timestamp) {
-    timestamp = timestamp || new Date()
+  getCurrentState() {
+    return this.getStateAt(new Date())
+  }
+
+  getStateAt(timestamp) {
     const { lastSynced, actions } = this.state
     const currentActions = actions.filter(
       a =>
@@ -65,11 +68,11 @@ class Game {
     }
   }
 
-  fastForward(game) {
+  fastForward(game, target) {
     // Return a game object that is passed game + actions in current game that
     // have a time stamp after passed game
     const actions = this.state.actions.filter(
-      a => a.timestamp > game.state.lastSynced
+      a => a.timestamp > target || game.state.lastSynced
     )
     return new Game({
       ...game.state,

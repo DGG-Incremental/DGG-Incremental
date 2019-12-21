@@ -46,7 +46,8 @@ const getLeaderBoard = async () => {
 const syncGame = async game => {
   try {
     const res = await axios.patch("/me/state", {
-      actions: game.state.actions
+	  actions: game.state.actions,
+	  sentAt: new Date()
     })
     return new Game(res.data.state)
   } catch (err) {

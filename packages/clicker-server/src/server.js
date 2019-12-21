@@ -84,9 +84,10 @@ app.get("/me/state", async (req, res) => {
     res.send()
     return
   }
-  const state = await getGameState(username)
-  res.send({ state })
+  const { gameState, lastSynced } = await getGameState(username)
+  res.send({ state: { ...gameState, lastSynced } })
 })
+
 
 app.patch("/me/state", async (req, res) => {
   const username = await getReqUser(req)
@@ -97,10 +98,11 @@ app.patch("/me/state", async (req, res) => {
     res.send({ message: "username not found", redirect: "/auth" })
     return
   }
-  const state = await getGameState(username)
+
+  const { gameState, lastSynced } = await getGameState(username)
   const rawActions = req.body.actions
   const game = new Game({
-    ...state,
+    ...gameState,
     actions: rawActions.map(ra => ({
       ...ra,
       timestamp: new Date(ra.timestamp)
@@ -114,10 +116,17 @@ app.patch("/me/state", async (req, res) => {
     res.send(err)
     return
   }
+
+  const syncTime = new Date(req.body.sentAt)
+  if (!_.range(syncTime.getTime(), lastSynced.getTime(), Date.now() + 1)) {
+    res.statusCode = 400
+    res.send("Timestamp not in range")
+    return
+  }
+
   const newState = game.getCurrentState()
-  const lastSynced = new Date()
-  await setGameState(username, newState, lastSynced)
-  res.send({ state: { ...newState, lastSynced } })
+  await setGameState(username, newState, syncTime)
+  res.send({ state: { ...newState, lastSynced: syncTime } })
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
