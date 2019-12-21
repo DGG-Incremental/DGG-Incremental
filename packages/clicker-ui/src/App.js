@@ -131,11 +131,11 @@ const Leaderboard = () => {
   }, [])
 
   return (
-    <table style={{ borderSpacing: "15px 10px" }}>
+    <table className="leaderboard" style={{ borderSpacing: "15px 10px" }}>
       <thead>
         <tr>
           <th>Name</th>
-          <th>
+          <th >
             <div class="emote YEE" style={{ margin: "auto" }}></div>
           </th>
           <th>
@@ -146,6 +146,8 @@ const Leaderboard = () => {
           <th>Total</th>
           <th>{state.totals.yees}</th>
           <th>{state.totals.pepes}</th>
+          <th></th>
+          <th>{state.totals.pepes === state.totals.yees ? "" : (state.totals.pepes > state.totals.yees ? "Pepe" : "Yee")}</th>
         </tr>
       </thead>
       <tbody>
@@ -156,6 +158,11 @@ const Leaderboard = () => {
             <td>{s.pepes} </td>
             <td>
               {s.name === "cake" ? <div className="emote SOY"></div> : null}
+            </td>
+            <td>
+              {s.yees === s.pepes ?
+                <div class="emote Shrugstiny" style={{ margin: "auto" }}></div> :
+                (s.yees > s.pepes ? <div class="emote YEE" style={{ margin: "auto" }}></div> : <div class="emote PEPE" style={{ margin: "auto" }}></div>)}
             </td>
           </tr>
         ))}
@@ -168,18 +175,24 @@ function App() {
   const [name, setName] = useState(null)
   const [showChat, setShowChat] = useState(true)
   const transitions = useTransition(showChat, null, {
-    from: { width: "0px" },
-    enter: { width: "300px" },
-    leave: { width: "0px" }
+    from: { right: "-300px" },
+    enter: { right: "0px" },
+    leave: { right: "-300px" }
   })
   return (
     <div className="App">
-      <div className="clicker-main">
-        {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
-        <Leaderboard />
+      <div className="topbar">
         <button className="toggle-chat" onClick={() => setShowChat(s => !s)}>
           {showChat ? "Hide" : "Show"} Chat
         </button>
+      </div>
+
+              
+      <div className="clicker-main">
+        <Leaderboard />
+        <div className="center">
+          {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
+        </div>
       </div>
       {transitions.map(
         ({ item, key, props }) =>

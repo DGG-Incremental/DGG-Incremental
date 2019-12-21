@@ -11,37 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-.App {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  height: 100vh;
-}
-
-.clicker-main {
-  position: relative;
-}
-
-.toggle-chat {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-}
-
-@keyframes slideIn {
-  0% {
-    width: 0;
-  }
-  100% {
-    width: 300%;
-  }
-}
-
-@keyframes slideOut {
-  0% {
-    width: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
