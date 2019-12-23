@@ -178,7 +178,7 @@ const Leaderboard = () => {
             <td>{s.yees} </td>
             <td>{s.pepes} </td>
             <td>
-              {s.name === "cake" ? <div className="emote SOY"></div> : null}
+              {s.name === "Cake" ? <div className="emote SOY"></div> : null}
             </td>
             <td>
               {parseInt(s.yees) === parseInt(s.pepes) ? (
