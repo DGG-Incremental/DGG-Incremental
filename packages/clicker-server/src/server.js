@@ -6,12 +6,11 @@ import cors from "cors"
 import path from "path"
 import axios from "axios"
 import { getOauthRedirect, getCodeVerifier, getUserInfo } from "./auth"
-import { dbUp, getLeaderBoard, getScore, setScore } from "./store"
+import { getLeaderboard, getGameState, setGameState, getTotals } from "./store"
 import Game from "clicker-game"
 
 const app = express()
 const port = process.env.PORT || 3001
-dbUp()
 
 const APP_ID = process.env.DGG_OATH_ID
 const REDIRECT_URI = process.env.REDIRECT_URI
@@ -56,12 +55,13 @@ app.get("/oauth", async (req, res) => {
 const MEMES = {
   MrMouton: -74.02
 }
+
 app.get("/leaderboard", async (req, res) => {
-  const leaderboard = await getLeaderBoard()
-  res.send([
-    ...leaderboard.filter(l => !_.keys(MEMES).includes(l.name)),
-    ..._.map(MEMES, (score, name) => ({ name, score }))
+  const [totals, leaderboard] = await Promise.all([
+    getTotals(),
+    getLeaderboard()
   ])
+  res.send({ totals, leaderboard })
 })
 
 const getReqUser = async req => {
@@ -84,8 +84,8 @@ app.get("/me/state", async (req, res) => {
     res.send()
     return
   }
-  const initialScore = await getScore(username)
-  res.send({ state: { initialScore } })
+  const { state, lastSynced } = await getGameState(username)
+  res.send({ state: { ...state, lastSynced } })
 })
 
 app.patch("/me/state", async (req, res) => {
@@ -97,29 +97,35 @@ app.patch("/me/state", async (req, res) => {
     res.send({ message: "username not found", redirect: "/auth" })
     return
   }
-  const initialScore = await getScore(username)
-  const rawActions = req.body.actions
 
+  const { state, lastSynced } = await getGameState(username)
+  const rawActions = req.body.actions
   const game = new Game({
-    initialScore,
+    ...state,
     actions: rawActions.map(ra => ({
       ...ra,
       timestamp: new Date(ra.timestamp)
     }))
   })
-  
+
   try {
     game.validate()
   } catch (err) {
-    res.statusCode = 400
-    res.send("Invalid state")
+    res.statusCode = 420
+    res.send(err)
     return
   }
-  const newScore = game.getCurrentState().score
-  const lastSynced = new Date()
-  await setScore(username, newScore, lastSynced)
-  res.send({ state: { initialScore: newScore, lastSynced } })
-  console.log("Updated game state for " + username)
+
+  const syncTime = new Date(req.body.sentAt)
+  if (!_.range(syncTime.getTime(), lastSynced.getTime(), Date.now() + 1)) {
+    res.statusCode = 400
+    res.send("Timestamp not in range")
+    return
+  }
+
+  const newState = game.getStateAt(syncTime)
+  await setGameState(username, newState, syncTime)
+  res.send({ state: { ...newState, lastSynced: syncTime } })
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

@@ -1,17 +1,20 @@
-import _ from 'lodash'
+import { exceedsRateLimit } from "./validations"
+import defaults from "lodash/defaults"
 
-enum ActionType {
-	click = 'click',
-	addGenerator = 'addGenerator'
+export enum ActionType {
+  addGenerator = "addGenerator",
+  clickPepe = "clickPepe",
+  clickYee = "clickYee"
 }
 
 interface Action {
-	action: ActionType
-	timestamp: Date
+  action: ActionType
+  timestamp: Date
 }
 
 interface GameState {
-  initialScore: number
+  pepes: number
+  yees: number
   generators: number
   actions: Action[]
   lastSynced: Date
@@ -22,7 +25,8 @@ export default class Game {
 
   constructor(state: Partial<GameState> = {}) {
     this.state = defaults({}, state, {
-      initialScore: 0,
+      pepes: 0,
+      yees: 0,
       generators: 0,
       actions: [],
       lastSynced: new Date(0)
@@ -33,50 +37,55 @@ export default class Game {
     }
   }
 
-  pushAction(type: ActionType) {
-    const timestamp = new Date()
-    this.state.actions.push({ action: type, timestamp })
+  pushAction(type: ActionType, timestamp?: Date) {
+    this.state.actions.push({
+      action: type,
+      timestamp: timestamp || new Date()
+    })
   }
 
-  click() {
-    this.pushAction(ActionType.click)
+  clickPepe() {
+    this.pushAction(ActionType.clickPepe)
+  }
+
+  clickYee() {
+    this.pushAction(ActionType.clickYee)
   }
 
   addGenerator() {
     this.pushAction(ActionType.addGenerator)
   }
 
-  getCurrentState(timestamp?: Date) {
-    const ts = timestamp || new Date()
-    const { lastSynced, actions, initialScore, generators } = this.state
+  getCurrentState() {
+    return this.getStateAt(new Date())
+  }
+
+  getStateAt(timestamp: Date) {
+    const { lastSynced, actions } = this.state
+
     const currentActions = actions.filter(
-      a => a.timestamp > lastSynced && a.timestamp <= ts
+      a =>
+        a.timestamp.getTime() >= lastSynced.getTime() &&
+        a.timestamp.getTime() <= timestamp.getTime()
     )
-    const clicks = currentActions.filter(a => a.action === ActionType.click).length
 
-    const addGeneratorActions = currentActions.filter(
-      a => a.action === ActionType.addGenerator
-    )
-    const generatorCount = addGeneratorActions.length + generators
+    const pepeClicks = currentActions.filter(a => a.action === "clickPepe")
+      .length
+    const yeeClicks = currentActions.filter(a => a.action === "clickYee").length
 
-    const generatorClickProduction =
-      sum(
-        addGeneratorActions.map(ga => {
-          const interval = ts.getTime() - ga.timestamp.getTime()
-          return toInteger(interval / 1000) // One click per second
-        })
-      ) +
-      ((ts.getTime() - lastSynced.getTime()) * generators) / 1000
+    const pepeScore = this.state.pepes + pepeClicks
+    const yeeScore = this.state.yees + yeeClicks
 
-    const score = initialScore + clicks + generatorClickProduction
     return {
-      score,
-      generators: generatorCount
+      pepes: pepeScore,
+      yees: yeeScore
     }
   }
 
   validate() {
-    return true
+    if (exceedsRateLimit(this)) {
+      throw "Too many actions"
+    }
   }
 
   fastForward(game: Game) {

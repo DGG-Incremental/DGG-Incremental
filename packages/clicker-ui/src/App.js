@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import { useTransition, animated } from "react-spring"
 import "./App.css"
+import maxBy from "lodash/maxBy"
 import axios from "axios"
 import debounce from "lodash/debounce"
 import cookies from "browser-cookies"
@@ -33,7 +34,7 @@ const getInitialState = async () => {
     if (err.response.status === 404) {
       return undefined
     }
-    throw err
+    throw err.response.data
   }
 }
 
@@ -44,19 +45,23 @@ const getLeaderBoard = async () => {
 
 const syncGame = async game => {
   try {
+    const sentAt = new Date()
     const res = await axios.patch("/me/state", {
-      actions: game.state.actions
+      actions: game.state.actions,
+      sentAt
     })
     return new Game(res.data.state)
   } catch (err) {
     if (err.response.status === 404) {
       window.location.replace("/auth")
     }
+    throw err.response.data
   }
 }
 
 const Clicker = ({ name }) => {
   const [game, setGame] = useState(new Game())
+  const [errors, setErrors] = useState([])
 
   useEffect(() => {
     getInitialState().then(state => {
@@ -66,29 +71,52 @@ const Clicker = ({ name }) => {
 
   useInterval(async () => {
     if (game.state.actions.length) {
-      const synced = await syncGame(game)
-      setGame(game.fastForward(synced))
+      try {
+		const synced = await syncGame(game)
+        setGame(game.fastForward(synced))
+      } catch (err) {
+        setErrors([err])
+      }
     }
   }, 3 * 1000)
 
-  const clickHandler = async () => {
-    game.click()
+  const pepeClickHandler = async () => {
+    game.clickPepe()
     setGame(new Game(game.state))
-    // const synced = await syncGame(game)
-    // const ff = game.fastForward(synced)
-    // console.table([game.state, synced.state, ff.state])
-    // setGame(ff)
   }
 
-  const state = game.getCurrentState()
+  const yeeClickHandler = async () => {
+    game.clickYee()
+    setGame(new Game(game.state))
+  }
+
+  const now = maxBy([new Date(), game.state.lastSynced], d => d.getTime()) // Avoids some de-sync issues
+  const state = game.getCurrentState(now)
   return (
-    <div style={{ margin: "25px", display: "flex" }}>
-      COOMS: {state.score}
+    <div>
       <div
-        style={{ display: "inline-block", marginLeft: "15px" }}
-        className="emote COOMER"
-        onClick={clickHandler}
-      ></div>
+        style={{
+          margin: "25px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <div style={{ display: "inline-block", margin: "15px" }}>
+          <div className="emote YEE" onClick={yeeClickHandler}></div>
+          <div>{state.yees}</div>
+        </div>
+        <div>VS</div>
+        <div style={{ display: "inline-block", margin: "15px" }}>
+          <div className="emote PEPE" onClick={pepeClickHandler}></div>
+          <div>{state.pepes}</div>
+        </div>
+      </div>
+      <div className="errors">
+        {errors.map(e => (
+          <p>{e}</p>
+        ))}
+      </div>
     </div>
   )
 }
@@ -102,11 +130,14 @@ const GetName = ({ onChange }) => {
 }
 
 const Leaderboard = () => {
-  const [scores, setScores] = useState([])
+  const [state, setState] = useState({
+    leaderboard: [],
+    totals: {}
+  })
 
   const update = async () => {
     const result = await getLeaderBoard()
-    setScores(result)
+    setState(result)
   }
 
   useEffect(() => {
@@ -115,18 +146,49 @@ const Leaderboard = () => {
   }, [])
 
   return (
-    <table>
+    <table className="leaderboard" style={{ borderSpacing: "15px 10px" }}>
       <thead>
         <tr>
           <th>Name</th>
-          <th>Coom</th>
+          <th>
+            <div class="emote YEE" style={{ margin: "auto" }}></div>
+          </th>
+          <th>
+            <div class="emote PEPE" style={{ margin: "auto" }}></div>
+          </th>
+        </tr>
+        <tr>
+          <th>Total</th>
+          <th>{state.totals.yees}</th>
+          <th>{state.totals.pepes}</th>
+          <th></th>
+          <th>
+            {parseInt(state.totals.pepes) === parseInt(state.totals.yees)
+              ? ""
+              : parseInt(state.totals.pepes) > parseInt(state.totals.yees)
+              ? "Pepe"
+              : "Yee"}
+          </th>
         </tr>
       </thead>
       <tbody>
-        {scores.map(s => (
+        {state.leaderboard.map(s => (
           <tr>
             <td>{s.name}</td>
-            <td>{s.score}</td>
+            <td>{s.yees} </td>
+            <td>{s.pepes} </td>
+            <td>
+              {s.name === "cake" ? <div className="emote SOY"></div> : null}
+            </td>
+            <td>
+              {parseInt(s.yees) === parseInt(s.pepes) ? (
+                <div class="emote Shrugstiny" style={{ margin: "auto" }}></div>
+              ) : parseInt(s.yees) > parseInt(s.pepes) ? (
+                <div class="emote YEE" style={{ margin: "auto" }}></div>
+              ) : (
+                <div class="emote PEPE" style={{ margin: "auto" }}></div>
+              )}
+            </td>
           </tr>
         ))}
       </tbody>
@@ -138,18 +200,23 @@ function App() {
   const [name, setName] = useState(null)
   const [showChat, setShowChat] = useState(true)
   const transitions = useTransition(showChat, null, {
-    from: { width: "0px" },
-    enter: { width: "300px" },
-    leave: { width: "0px" }
+    from: { right: "-300px" },
+    enter: { right: "0px" },
+    leave: { right: "-300px" }
   })
   return (
     <div className="App">
-      <div className="clicker-main">
-        {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
-        <Leaderboard />
+      <div className="topbar">
         <button className="toggle-chat" onClick={() => setShowChat(s => !s)}>
           {showChat ? "Hide" : "Show"} Chat
         </button>
+      </div>
+
+      <div className="clicker-main">
+        <Leaderboard />
+        <div className="center">
+          {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
+        </div>
       </div>
       {transitions.map(
         ({ item, key, props }) =>
