@@ -1,6 +1,6 @@
 import _ from "lodash"
 // import redis from "redis"
-import { promisifyAll } from "bluebird"
+// import { promisifyAll } from "bluebird"
 import Postgres from "pg"
 
 // promisifyAll(redis)
@@ -33,7 +33,8 @@ export const dbUp = async () => {
 }
 dbClient.connect().then(dbUp)
 
-export const getLeaderboard = async () => {
+export const getLeaderboard = _.memoize(async () => {
+  console.log('getting leaderboard')
   const results = await dbClient.query(`
 	select
 		name,
@@ -46,7 +47,7 @@ export const getLeaderboard = async () => {
 	limit 50
 	`)
   return results.rows
-}
+}, () => parseInt(Date.now() / (5 * 1000)))  // ttl: 5 seconds
 
 export const getTotals = async () => {
   const result = await dbClient.query(`
