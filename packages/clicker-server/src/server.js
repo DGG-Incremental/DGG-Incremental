@@ -74,13 +74,7 @@ app.put("/leaderboard/", async (req, res) => {
   if (!token) {
     return null
   }
-  try {
-    return await getUserInfo(token)
-  }
-  catch (err) {
-    res.statusCode = 500
-    res.send()
-  }
+  return await getUserInfo(token)
 })
 
 app.get("/me/state", async (req, res) => {
@@ -104,75 +98,34 @@ app.patch("/me/state", async (req, res) => {
     return
   }
 
-  try {
-    const { actions, sentAt } = Joi.attempt(req.body, syncActionsRequestSchema)
-    await queueActions(username, actions, sentAt)
-    res.statusCode = 202 // Accepted
-    res.send()
-  } catch (error) {
-    if (error instanceof Joi.ValidationError) {
-      res.statusCode = 400
-      res.send({ errors: error })
-    } else {
-      res.statusCode = 500
-      console.error(error)
-      res.send()
-    }
-  }
-})
-
-
-const syncGameState = async (name, newActions, timestamp) => {
-  const { state, lastSynced } = await getGameState(name)
-  const { actions, syncTime } = Joi.attempt({ lastSynced, actions: newActions, syncTime: timestamp }, gameSyncValidationSchema)
-  console.log(newActions)
+  const { state, lastSynced } = await getGameState(username)
+  const rawActions = req.body.actions
   const game = new Game({
     ...state,
-    actions
+    actions: rawActions.map(ra => ({
+      ...ra,
+      timestamp: new Date(ra.timestamp)
+    }))
   })
 
-  game.validate()
+  try {
+    game.validate()
+  } catch (err) {
+    res.statusCode = 420
+    res.send(err)
+    return
+  }
+
+  const syncTime = new Date(req.body.sentAt)
+  if (!_.range(syncTime.getTime(), lastSynced.getTime(), Date.now() + 1)) {
+    res.statusCode = 400
+    res.send("Timestamp not in range")
+    return
+  }
 
   const newState = game.getStateAt(syncTime)
-  console.log(newState)
-  await setGameState(name, newState, syncTime)
-  return newState
-}
-
-
-const SYNCS = {}
-
-const batchAndSyncGameState = async (name, actions, syncTime) => {
-  let currentSync = SYNCS[name]
-
-  if (!currentSync) {
-    const queue = actions
-    currentSync = {
-      queue,
-      timestamp: syncTime,
-    }
-    currentSync.promise = new Promise((res, rej) => {
-      setTimeout(async () => {
-        try {
-          const currentSync = SYNCS[name]
-          delete SYNCS[name]
-          const state = await syncGameState(name, currentSync.queue, currentSync.timestamp)
-          res({ newState: state, lastSynced: currentSync.timestamp })
-        } catch (err) {
-          rej(err)
-        }
-      }, 0)
-    })
-    SYNCS[name] = currentSync
-    return currentSync.promise
-  }
-  else {
-    currentSync.timestamp = _.max([currentSync.timestamp, syncTime])
-    actions.forEach(a => currentSync.queue.push(a))
-    return currentSync.promise
-  }
-
-
-}
+  await setGameState(username, newState, syncTime)
+  res.send({ state: { ...newState, lastSynced: syncTime } })
+})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
