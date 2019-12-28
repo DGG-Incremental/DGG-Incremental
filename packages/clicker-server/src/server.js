@@ -122,7 +122,7 @@ app.patch("/me/state", async (req, res) => {
     res.send("Timestamp not in range")
     return
   }
-
+  console.log(game.actions)
   const newState = game.getStateAt(syncTime)
   await setGameState(username, newState, syncTime)
   res.send({ state: { ...newState, lastSynced: syncTime } })
