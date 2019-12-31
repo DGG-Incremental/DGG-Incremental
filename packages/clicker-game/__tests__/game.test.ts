@@ -1,4 +1,4 @@
-const Game = require("../lib/game")
+import Game, {ActionType} from '../lib/game'
 
 test("click adds 1 to score", () => {
   const game = new Game()
@@ -12,7 +12,7 @@ test("click pushes a click action to actions queue", () => {
   expect(game.state.actions).toEqual([])
   game.clickPepe()
   expect(game.state.actions.length).toBe(1)
-  expect(game.state.actions[0].action).toBe("clickPepe")
+  expect(game.state.actions[0].action).toBe(ActionType.clickPepe)
   // expect(game.state.actions[0].timestamp).toBeCloseTo(Date.now(), 10000)
 })
 
@@ -25,7 +25,7 @@ test("init with state sets score", () => {
 
 test("init with state set actions", () => {
   const game = new Game({
-    actions: [{ action: "clickPepe", timestamp: new Date() }]
+    actions: [{ action: ActionType.clickPepe, timestamp: new Date() }]
   })
   expect(game.getCurrentState().pepes).toBe(1)
   game.clickPepe()

@@ -1,13 +1,29 @@
-const defaults = require("lodash/defaults")
-const sum = require("lodash/sum")
-const toInteger = require("lodash/toInteger")
-const maxBy = require("lodash/maxBy")
-const { exceedsRateLimit } = require("./validations")
+import { exceedsRateLimit } from "./validations"
+import defaults from "lodash/defaults"
 
-const _ = require("lodash")
+export enum ActionType {
+  addGenerator = "addGenerator",
+  clickPepe = "clickPepe",
+  clickYee = "clickYee"
+}
 
-class Game {
-  constructor(state = {}) {
+interface Action {
+  action: ActionType
+  timestamp: Date
+}
+
+interface GameState {
+  pepes: number
+  yees: number
+  generators: number
+  actions: Action[]
+  lastSynced: Date
+}
+
+export default class Game {
+  state: GameState
+
+  constructor(state: Partial<GameState> = {}) {
     this.state = defaults({}, state, {
       pepes: 0,
       yees: 0,
@@ -15,35 +31,38 @@ class Game {
       actions: [],
       lastSynced: new Date(0)
     })
-    this.state.lastSynced = new Date(this.state.lastSynced)
+
+    if (this.state.lastSynced) {
+      this.state.lastSynced = new Date(this.state.lastSynced)
+    }
   }
 
-  pushAction(action, timestamp) {
-    const _timestamp = maxBy(
-      [timestamp || new Date(), this.state.lastSynced],
-      d => d.getTime()
-    )
-    this.state.actions.push({ action, timestamp: _timestamp })
+  pushAction(type: ActionType, timestamp?: Date) {
+    this.state.actions.push({
+      action: type,
+      timestamp: timestamp || new Date()
+    })
   }
 
   clickPepe() {
-    this.pushAction("clickPepe")
+    this.pushAction(ActionType.clickPepe)
   }
 
   clickYee() {
-    this.pushAction("clickYee")
+    this.pushAction(ActionType.clickYee)
   }
 
   addGenerator() {
-    this.pushAction("addGenerator")
+    this.pushAction(ActionType.addGenerator)
   }
 
   getCurrentState() {
     return this.getStateAt(new Date())
   }
 
-  getStateAt(timestamp) {
+  getStateAt(timestamp: Date) {
     const { lastSynced, actions } = this.state
+
     const currentActions = actions.filter(
       a =>
         a.timestamp.getTime() >= lastSynced.getTime() &&
@@ -56,6 +75,7 @@ class Game {
 
     const pepeScore = this.state.pepes + pepeClicks
     const yeeScore = this.state.yees + yeeClicks
+
     return {
       pepes: pepeScore,
       yees: yeeScore
@@ -68,12 +88,12 @@ class Game {
     }
   }
 
-  fastForward(game) {
+  fastForward(game: Game) {
     // Return a game object that is passed game + actions in current game that
-	// have a time stamp after passed game
+    // have a time stamp after passed game
     const actions = this.state.actions.filter(
       a => a.timestamp > game.state.lastSynced
-	)
+    )
     return new Game({
       ...game.state,
       actions
@@ -81,4 +101,4 @@ class Game {
   }
 }
 
-module.exports = Game
+// module.exports = Game
