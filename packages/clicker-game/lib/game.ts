@@ -1,18 +1,19 @@
 import { exceedsRateLimit } from "./validations"
 import defaults from "lodash/defaults"
 
+
 export enum ActionType {
   addGenerator = "addGenerator",
   clickPepe = "clickPepe",
   clickYee = "clickYee"
 }
 
-interface Action {
+export interface Action {
   action: ActionType
   timestamp: Date
 }
 
-interface GameState {
+export interface GameState {
   pepes: number
   yees: number
   generators: number
@@ -60,7 +61,7 @@ export default class Game {
     return this.getStateAt(new Date())
   }
 
-  getStateAt(timestamp: Date) {
+  getStateAt(timestamp: Date): GameState {
     const { lastSynced, actions } = this.state
 
     const currentActions = actions.filter(
@@ -77,8 +78,11 @@ export default class Game {
     const yeeScore = this.state.yees + yeeClicks
 
     return {
+      actions: [],
+      generators: 0,
       pepes: pepeScore,
-      yees: yeeScore
+      yees: yeeScore,
+      lastSynced: timestamp
     }
   }
 

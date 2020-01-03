@@ -5,9 +5,9 @@ import maxBy from "lodash/maxBy"
 import axios from "axios"
 import debounce from "lodash/debounce"
 import cookies from "browser-cookies"
-import Game from "clicker-game"
+import Game, { GameState } from "clicker-game"
 
-function useInterval(callback, delay) {
+function useInterval(callback: any, delay: number) {
   const savedCallback = useRef()
 
   // Remember the latest callback.
@@ -18,6 +18,7 @@ function useInterval(callback, delay) {
   // Set up the interval.
   useEffect(() => {
     function tick() {
+      // @ts-ignore
       savedCallback.current()
     }
     if (delay !== null) {
@@ -26,10 +27,17 @@ function useInterval(callback, delay) {
     }
   }, [delay])
 }
+
+interface IApiResponseData {
+  name: string
+  version: number
+  gameState: GameState
+}
+
 const getInitialState = async () => {
   try {
-    const { data } = await axios.get("/me/state")
-    return data.state
+    const res = await axios.get("/me/state")
+    return res.data as IApiResponseData
   } catch (err) {
     if (err.response.status === 404) {
       return undefined
@@ -43,14 +51,19 @@ const getLeaderBoard = async () => {
   return res.data
 }
 
-const syncGame = async game => {
+const syncGame = async (game: Game, version: number) => {
   try {
     const sentAt = new Date()
     const res = await axios.patch("/me/state", {
       actions: game.state.actions,
-      sentAt
+      sentAt,
+      version
     })
-    return new Game(res.data.state)
+    const data = res.data as IApiResponseData
+    return {
+      game: new Game(data.gameState),
+      version: data.version
+    }
   } catch (err) {
     if (err.response.status === 404) {
       window.location.replace("/auth")
@@ -59,21 +72,32 @@ const syncGame = async game => {
   }
 }
 
-const Clicker = ({ name }) => {
+interface ClickerProps {
+  name: string
+}
+
+const Clicker = ({ name }: ClickerProps) => {
   const [game, setGame] = useState(new Game())
-  const [errors, setErrors] = useState([])
+  const [version, setVersion] = useState(0)
+  const [errors, setErrors] = useState<any[]>([])
 
   useEffect(() => {
-    getInitialState().then(state => {
-      setGame(new Game(state))
+    getInitialState().then(data => {
+      if (data) {
+        setGame(new Game(data.gameState))
+        setVersion(data.version)
+      } else {
+        window.location.replace("/auth")
+      }
     })
   }, [name])
 
   useInterval(async () => {
     if (game.state.actions.length) {
       try {
-		const synced = await syncGame(game)
-        setGame(game.fastForward(synced))
+        const synced = await syncGame(game, version)
+        setGame(game.fastForward(synced.game))
+        setVersion(synced.version)
       } catch (err) {
         setErrors([err])
       }
@@ -90,8 +114,10 @@ const Clicker = ({ name }) => {
     setGame(new Game(game.state))
   }
 
-  const now = maxBy([new Date(), game.state.lastSynced], d => d.getTime()) // Avoids some de-sync issues
-  const state = game.getCurrentState(now)
+  const now = maxBy([new Date(), game.state.lastSynced], d =>
+    d.getTime()
+  ) as Date // Avoids some de-sync issues
+  const state = game.getStateAt(now)
   return (
     <div>
       <div
@@ -114,14 +140,17 @@ const Clicker = ({ name }) => {
       </div>
       <div className="errors">
         {errors.map(e => (
-          <p>{e}</p>
+          <p>{e.toString()}</p>
         ))}
       </div>
     </div>
   )
 }
 
-const GetName = ({ onChange }) => {
+interface GetNameProps {
+  onChange: (s: string) => void
+}
+const GetName = ({ onChange }: GetNameProps) => {
   const username = cookies.get("username")
   if (username) {
     onChange(username)
@@ -131,8 +160,8 @@ const GetName = ({ onChange }) => {
 
 const Leaderboard = () => {
   const [state, setState] = useState({
-    leaderboard: [],
-    totals: {}
+    leaderboard: [] as any[],
+    totals: {} as any
   })
 
   const update = async () => {
@@ -151,10 +180,10 @@ const Leaderboard = () => {
         <tr>
           <th>Name</th>
           <th>
-            <div class="emote YEE" style={{ margin: "auto" }}></div>
+            <div className="emote YEE" style={{ margin: "auto" }}></div>
           </th>
           <th>
-            <div class="emote PEPE" style={{ margin: "auto" }}></div>
+            <div className="emote PEPE" style={{ margin: "auto" }}></div>
           </th>
         </tr>
         <tr>
@@ -182,11 +211,14 @@ const Leaderboard = () => {
             </td>
             <td>
               {parseInt(s.yees) === parseInt(s.pepes) ? (
-                <div class="emote Shrugstiny" style={{ margin: "auto" }}></div>
+                <div
+                  className="emote Shrugstiny"
+                  style={{ margin: "auto" }}
+                ></div>
               ) : parseInt(s.yees) > parseInt(s.pepes) ? (
-                <div class="emote YEE" style={{ margin: "auto" }}></div>
+                <div className="emote YEE" style={{ margin: "auto" }}></div>
               ) : (
-                <div class="emote PEPE" style={{ margin: "auto" }}></div>
+                <div className="emote PEPE" style={{ margin: "auto" }}></div>
               )}
             </td>
           </tr>
@@ -197,7 +229,7 @@ const Leaderboard = () => {
 }
 
 function App() {
-  const [name, setName] = useState(null)
+  const [name, setName] = useState<string | null>(null)
   const [showChat, setShowChat] = useState(true)
   const transitions = useTransition(showChat, null, {
     from: { right: "-300px" },
@@ -224,6 +256,7 @@ function App() {
             <animated.div className="chat" key={key} style={props}>
               <iframe
                 src="https://www.destiny.gg/embed/chat"
+                // @ts-ignore
                 frameborder="0"
                 style={{ height: "100%" }}
               ></iframe>

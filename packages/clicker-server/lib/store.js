@@ -1,7 +1,9 @@
 import _ from "lodash"
+import PlayerGameState from './db/entity/PlayerGameState'
 // import redis from "redis"
 // import { promisifyAll } from "bluebird"
 import Postgres from "pg"
+import { getConnection } from "typeorm"
 
 // promisifyAll(redis)
 
@@ -31,7 +33,15 @@ export const dbUp = async () => {
     console.error(err)
   }
 }
-dbClient.connect().then(dbUp)
+
+// export const createPlayerGamestate = async name => {
+//   const state = new PlayerGameState()
+//   state.name = name
+//   state.gameState = {pepes: 0, yees: 0}
+//   state.lastSynced = new Date()
+//   state.save({reload: true})
+//   return state
+// }
 
 export const getLeaderboard = _.memoize(async () => {
   console.log('getting leaderboard')
@@ -61,24 +71,7 @@ export const getTotals = async () => {
 }
 
 export const getGameState = async name => {
-  const result = await dbClient.query(
-    `
-		SELECT state, lastSynced
-		FROM game_state
-		WHERE name = $1
-	`,
-    [name]
-  )
-  if (result.rows.length) {
-    return {
-      state: result.rows[0].state,
-      lastSynced: result.rows[0].lastsynced
-    }
-  }
-  return {
-    state: {},
-    lastSynced: new Date(0)
-  }
+  return await PlayerGameState.findOne(name)
 }
 
 export const setGameState = async (name, state, lastSynced) => {
