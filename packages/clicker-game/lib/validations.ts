@@ -7,7 +7,6 @@ export const exceedsRateLimit = (game: Game, rateLimit = 15000) => {
   const timeline = orderBy(game.state.actions, ["timestamp"])
   return some(timeline, (action, i, actions) => {
     const start = action.timestamp
-    console.log(start)
     const end = new Date(start.getTime() + 1000)
     let k: number
     for (k = i + 1; k < actions.length; k++) {

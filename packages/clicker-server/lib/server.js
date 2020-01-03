@@ -6,14 +6,11 @@ import cors from "cors"
 import path from "path"
 import axios from "axios"
 import { getOauthRedirect, getCodeVerifier, getUserInfo } from "./auth"
-import { getLeaderboard, getGameState, setGameState, getTotals, createPlayerGamestate } from "./store"
-import Game from "clicker-game"
 import "reflect-metadata";
 import { createConnection } from 'typeorm'
 import PlayerGameState from './db/entity/PlayerGameState'
 import { syncPlayerGameState } from "./syncService"
 import Joi from '@hapi/joi'
-import { version } from "punycode"
 
 const app = express()
 const port = process.env.PORT || 3001
@@ -64,14 +61,13 @@ const MEMES = {
 
 app.get("/leaderboard", async (req, res) => {
   const [totals, leaderboard] = await Promise.all([
-    getTotals(),
-    getLeaderboard()
+    PlayerGameState.getTotals(),
+    PlayerGameState.getLeaderboard()
   ])
   res.send({ totals, leaderboard })
 })
 
 const getReqUser = async req => {
-  return 'citizenthayne'
   const token = req.cookies.token
   return await getUserInfo(token)
 }
