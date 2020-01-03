@@ -202,7 +202,7 @@ const Leaderboard = () => {
       </thead>
       <tbody>
         {state.leaderboard.map(s => (
-          <tr>
+          <tr key={s.name}>
             <td>{s.name}</td>
             <td>{s.yees} </td>
             <td>{s.pepes} </td>
@@ -256,8 +256,7 @@ function App() {
             <animated.div className="chat" key={key} style={props}>
               <iframe
                 src="https://www.destiny.gg/embed/chat"
-                // @ts-ignore
-                frameborder="0"
+                frameBorder="0"
                 style={{ height: "100%" }}
               ></iframe>
             </animated.div>

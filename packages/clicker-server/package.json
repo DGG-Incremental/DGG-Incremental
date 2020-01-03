@@ -5,8 +5,8 @@
    "main": "index.js",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "build": "tsc",
-      "start": "nodemon -e js,ts --watch ../clicker-game/lib --watch lib --exec ts-node lib/index.js",
+      "build": "tsc --build",
+      "start": "nodemon -e js,ts --watch ../clicker-game/lib --watch lib --exec ts-node lib/index.ts",
       "serve": "node build/index.js",
       "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"
    },

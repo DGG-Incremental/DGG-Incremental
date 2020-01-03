@@ -119,7 +119,6 @@ app.patch("/me/state", async (req, res) => {
     res.send(playerState)
 
   } catch (err) {
-    console.log(err)
     if (err instanceof Joi.ValidationError) {
       res.statusCode = 400
       res.send(err.details)

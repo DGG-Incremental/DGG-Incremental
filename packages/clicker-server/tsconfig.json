@@ -16,12 +16,12 @@
 		"isolatedModules": true,
 		// Import non-ES modules as default imports.
       "esModuleInterop": true,
-      "outDir": "build",
+      "outDir": "./build/",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "strictPropertyInitialization": false
 	},
 	"include": [
-		"lib/*"
+		"./lib"
 	]
 }

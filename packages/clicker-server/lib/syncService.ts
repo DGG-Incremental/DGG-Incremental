@@ -43,7 +43,6 @@ export const syncPlayerGameState = async (
   game.validate()
   const newState = game.getStateAt(syncTime)
   playerState.gameState = newState
-  console.log(playerState)
   playerState.version = version
 
   return await playerState.save()

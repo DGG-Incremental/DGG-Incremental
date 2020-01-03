@@ -1,10 +1,6 @@
 module.exports = {
    "type": "postgres",
-   "host": "localhost",
-   "port": 5432,
-   "username": process.env.DATABASE_USER || "dgg",
-   "password": "password",
-   "database": "dgg-clicker-server",
+   "url": process.env.DATABASE_URL,
    "synchronize": true,
    "logging": false,
    "entities": [
