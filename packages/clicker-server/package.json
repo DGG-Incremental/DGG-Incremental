@@ -5,7 +5,7 @@
    "main": "index.js",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "build": "babel src -d build",
+      "build": "tsc",
       "start": "nodemon -e js,ts --watch ../clicker-game/lib --watch lib --exec ts-node lib/index.js",
       "serve": "node build/index.js",
       "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"
@@ -52,7 +52,6 @@
       "@types/lodash": "^4.14.149",
       "@types/node": "^8.0.29",
       "ts-node": "^3.3.0",
-      "tslint": "^5.20.1",
-      "typescript": "3.3.3333"
+      "tslint": "^5.20.1"
    }
 }
