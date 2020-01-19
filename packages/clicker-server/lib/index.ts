@@ -1,4 +1,3 @@
-import "regenerator-runtime/runtime"
 import { config } from "dotenv"
 
 if (process.env.NODE_ENV !== "production") {

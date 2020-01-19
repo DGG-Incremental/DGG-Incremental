@@ -5,9 +5,8 @@
    "main": "index.js",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "build": "tsc --build",
       "start": "nodemon -e js,ts --watch ../clicker-game/lib --watch lib --exec ts-node lib/index.ts",
-      "serve": "node build/index.js",
+      "serve": "ts-node lib/index.ts",
       "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"
    },
    "author": "",
@@ -45,6 +44,7 @@
       "pg": "^7.15.1",
       "redis": "^2.8.0",
       "reflect-metadata": "^0.1.10",
+      "timesync": "^1.0.4",
       "ts-node": "^8.5.4",
       "typeorm": "0.2.22",
       "typescript": "^3.7.4",

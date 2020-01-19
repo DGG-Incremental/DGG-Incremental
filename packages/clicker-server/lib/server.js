@@ -1,4 +1,5 @@
 import express from "express"
+import timesyncServer from 'timesync/server'
 import cookieParser from "cookie-parser"
 import _ from "lodash"
 import bodyParser from "body-parser"
@@ -6,8 +7,8 @@ import cors from "cors"
 import path from "path"
 import axios from "axios"
 import { getOauthRedirect, getCodeVerifier, getUserInfo } from "./auth"
-import "reflect-metadata";
 import { createConnection } from 'typeorm'
+import "reflect-metadata";
 import PlayerGameState from './db/entity/PlayerGameState'
 import { syncPlayerGameState } from "./syncService"
 import Joi from '@hapi/joi'
@@ -60,11 +61,16 @@ const MEMES = {
 }
 
 app.get("/leaderboard", async (req, res) => {
-  const [totals, leaderboard] = await Promise.all([
-    PlayerGameState.getTotals(),
-    PlayerGameState.getLeaderboard()
-  ])
-  res.send({ totals, leaderboard })
+  try {
+    const [totals, leaderboard] = await Promise.all([
+      PlayerGameState.getTotals(),
+      PlayerGameState.getLeaderboard()
+    ])
+    res.send({ totals, leaderboard })
+  } catch (err) {
+    res.statusCode = 500
+    return
+  }
 })
 
 const getReqUser = async req => {
@@ -131,6 +137,8 @@ app.patch("/me/state", async (req, res) => {
 
 })
 
-createConnection().then(() => {
-  app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-}).catch(err => console.error(err))
+createConnection()
+app.use('/timesync', timesyncServer.requestHanlder)
+
+export default app
+  .listen(port, () => console.log(`Example app listening on port ${port}!`))
