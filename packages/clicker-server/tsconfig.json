@@ -22,6 +22,6 @@
       "strictPropertyInitialization": false
 	},
 	"include": [
-		"./lib/**/*"
+		"./lib/**/*", "../clicker-ui/src/tick/module.d.ts"
 	]
 }

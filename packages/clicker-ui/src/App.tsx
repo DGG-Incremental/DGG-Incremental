@@ -3,9 +3,9 @@ import { useTransition, animated } from "react-spring"
 import "./App.css"
 import maxBy from "lodash/maxBy"
 import axios from "axios"
-import debounce from "lodash/debounce"
 import cookies from "browser-cookies"
 import Game, { GameState } from "clicker-game"
+import { TimeSyncContext, TickProvider } from "./tick/TickContext"
 
 function useInterval(callback: any, delay: number) {
   const savedCallback = useRef()

@@ -138,7 +138,7 @@ app.patch("/me/state", async (req, res) => {
 })
 
 createConnection()
-app.use('/timesync', timesyncServer.requestHanlder)
+app.use('/timesync', timesyncServer.requestHandler)
 
 export default app
   .listen(port, () => console.log(`Example app listening on port ${port}!`))
