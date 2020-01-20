@@ -34,6 +34,8 @@ export default class PlayerGameState extends BaseEntity {
       .select("name")
       .addSelect(`"gameState"->>'yees'`, "yees")
       .addSelect(`"gameState"->>'pepes'`, "pepes")
+      .where(`"gameState"->>'pepes' IS NOT NULL`)
+      .where(`"gameState"->>'yees' IS NOT NULL`)
       .orderBy(
         `(cast("gameState"->>'yees' as int) + cast("gameState"->>'pepes' as int))`,
         "DESC"
