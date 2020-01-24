@@ -13,6 +13,16 @@ export interface Action {
   timestamp: Date
 }
 
+export enum EventType {
+  return = "return"
+}
+
+export interface Event {
+  event: EventType
+  text: string
+  timestamp: Date
+}
+
 export interface GameState {
   pepes: number
   yees: number
