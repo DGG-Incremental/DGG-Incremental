@@ -1,75 +1,17 @@
-import React, { useState, useEffect, useRef } from "react"
-import { useTransition, animated } from "react-spring"
-import "./App.css"
-import maxBy from "lodash/maxBy"
 import axios from "axios"
 import cookies from "browser-cookies"
 import Game, { GameState } from "clicker-game"
-import { TimeSyncContext, TickProvider } from "./tick/TickContext"
-
-function useInterval(callback: any, delay: number) {
-  const savedCallback = useRef()
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback
-  }, [callback])
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      // @ts-ignore
-      savedCallback.current()
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay)
-      return () => clearInterval(id)
-    }
-  }, [delay])
-}
-
-interface IApiResponseData {
-  name: string
-  version: number
-  gameState: GameState
-}
-
-const getInitialState = async () => {
-  try {
-    const res = await axios.get("/me/state")
-    return res.data as IApiResponseData
-  } catch (err) {
-    if (err.response.status === 404) {
-      return undefined
-    }
-    throw err.response.data
-  }
-}
+import maxBy from "lodash/maxBy"
+import React, { useContext, useEffect, useState } from "react"
+import { animated, useTransition } from "react-spring"
+import "./App.css"
+import { TickContext, TickProvider, TimeSyncContext } from "./tick/TickContext"
+import { useInterval } from "./useInterval"
+import { GameStateProvider, GameStateContext } from "./gameStateContext"
 
 const getLeaderBoard = async () => {
   const res = await axios.get("/leaderboard")
   return res.data
-}
-
-const syncGame = async (game: Game, version: number) => {
-  try {
-    const sentAt = new Date()
-    const res = await axios.patch("/me/state", {
-      actions: game.state.actions,
-      sentAt,
-      version
-    })
-    const data = res.data as IApiResponseData
-    return {
-      game: new Game(data.gameState),
-      version: data.version
-    }
-  } catch (err) {
-    if (err.response.status === 404) {
-      window.location.replace("/auth")
-    }
-    throw err.response.data
-  }
 }
 
 interface ClickerProps {
@@ -77,44 +19,19 @@ interface ClickerProps {
 }
 
 const Clicker = ({ name }: ClickerProps) => {
-  const [game, setGame] = useState(new Game())
-  const [version, setVersion] = useState(0)
-  const [errors, setErrors] = useState<any[]>([])
-
-  useEffect(() => {
-    getInitialState().then(data => {
-      if (data) {
-        setGame(new Game(data.gameState))
-        setVersion(data.version)
-      } else {
-        window.location.replace("/auth")
-      }
-    })
-  }, [name])
-
-  useInterval(async () => {
-    if (game.state.actions.length) {
-      try {
-        const synced = await syncGame(game, version)
-        setGame(game.fastForward(synced.game))
-        setVersion(synced.version)
-      } catch (err) {
-        setErrors([err])
-      }
-    }
-  }, 3 * 1000)
-
+  const { game, setGame, error } = useContext(GameStateContext)
+  const timeSync = useContext(TimeSyncContext)
   const pepeClickHandler = async () => {
-    game.clickPepe()
+    game.clickPepe(new Date(timeSync.now()))
     setGame(new Game(game.state))
   }
 
   const yeeClickHandler = async () => {
-    game.clickYee()
+    game.clickYee(new Date(timeSync.now()))
     setGame(new Game(game.state))
   }
 
-  const now = maxBy([new Date(), game.state.lastSynced], d =>
+  const now = maxBy([new Date(timeSync.now()), game.state.lastSynced], d =>
     d.getTime()
   ) as Date // Avoids some de-sync issues
   const state = game.getStateAt(now)
@@ -139,9 +56,7 @@ const Clicker = ({ name }: ClickerProps) => {
         </div>
       </div>
       <div className="errors">
-        {errors.map(e => (
-          <p>{e.toString()}</p>
-        ))}
+        <p>{error ? error.toString(): null}</p>
       </div>
     </div>
   )
@@ -247,7 +162,9 @@ function App() {
       <div className="clicker-main">
         <Leaderboard />
         <div className="center">
-          {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
+          <TickProvider>
+            {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
+          </TickProvider>
         </div>
       </div>
       {transitions.map(
@@ -266,4 +183,10 @@ function App() {
   )
 }
 
-export default App
+export default () => (
+  <TickProvider>
+    <GameStateProvider>
+      <App />
+    </GameStateProvider>
+  </TickProvider>
+)

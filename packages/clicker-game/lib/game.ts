@@ -45,16 +45,16 @@ export default class Game {
     })
   }
 
-  clickPepe() {
-    this.pushAction(ActionType.clickPepe)
+  clickPepe(timestamp?: Date) {
+    this.pushAction(ActionType.clickPepe, timestamp)
   }
 
-  clickYee() {
-    this.pushAction(ActionType.clickYee)
+  clickYee(timestamp?: Date) {
+    this.pushAction(ActionType.clickYee, timestamp)
   }
 
-  addGenerator() {
-    this.pushAction(ActionType.addGenerator)
+  addGenerator(timestamp?: Date) {
+    this.pushAction(ActionType.addGenerator, timestamp)
   }
 
   getCurrentState() {
