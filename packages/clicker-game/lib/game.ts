@@ -1,11 +1,8 @@
 import { exceedsRateLimit } from "./validations"
 import defaults from "lodash/defaults"
 
-
 export enum ActionType {
-  addGenerator = "addGenerator",
-  clickPepe = "clickPepe",
-  clickYee = "clickYee"
+  scavenge = "scavenge"
 }
 
 export interface Action {
@@ -14,9 +11,8 @@ export interface Action {
 }
 
 export interface GameState {
-  pepes: number
-  yees: number
-  generators: number
+  scrap: number
+  food: number
   actions: Action[]
   lastSynced: Date
 }
@@ -26,9 +22,8 @@ export default class Game {
 
   constructor(state: Partial<GameState> = {}) {
     this.state = defaults({}, state, {
-      pepes: 0,
-      yees: 0,
-      generators: 0,
+      scrap: 0,
+      food: 0,
       actions: [],
       lastSynced: new Date(0)
     })
@@ -45,16 +40,8 @@ export default class Game {
     })
   }
 
-  clickPepe(timestamp?: Date) {
-    this.pushAction(ActionType.clickPepe, timestamp)
-  }
-
-  clickYee(timestamp?: Date) {
-    this.pushAction(ActionType.clickYee, timestamp)
-  }
-
-  addGenerator(timestamp?: Date) {
-    this.pushAction(ActionType.addGenerator, timestamp)
+  scavenge(timestamp?: Date) {
+    this.pushAction(ActionType.scavenge, timestamp)
   }
 
   getCurrentState() {
@@ -70,20 +57,7 @@ export default class Game {
         a.timestamp.getTime() <= timestamp.getTime()
     )
 
-    const pepeClicks = currentActions.filter(a => a.action === "clickPepe")
-      .length
-    const yeeClicks = currentActions.filter(a => a.action === "clickYee").length
-
-    const pepeScore = this.state.pepes + pepeClicks
-    const yeeScore = this.state.yees + yeeClicks
-
-    return {
-      actions: [],
-      generators: 0,
-      pepes: pepeScore,
-      yees: yeeScore,
-      lastSynced: timestamp
-    }
+    return reduceState(this.state, currentActions)
   }
 
   validate() {
@@ -105,3 +79,24 @@ export default class Game {
   }
 }
 
+interface ActionReducer {
+  (state: GameState, action: ActionType): GameState
+}
+
+type ActionReducerMap = {
+  [t in ActionType]: ActionReducer
+}
+
+const actionReducers: ActionReducerMap = {
+  scavenge(state) {
+    state.scrap = state.scrap + 1
+    return state
+  }
+}
+
+const reduceState = (state: GameState, actions: Action[]) => {
+  return actions.reduce(
+    (state, action) => actionReducers[action.action](state, action.action),
+    state
+  )
+}
