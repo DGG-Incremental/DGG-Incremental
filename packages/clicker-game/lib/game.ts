@@ -1,47 +1,58 @@
+import merge from "lodash/merge"
+import cloneDeep from "lodash/cloneDeep"
+import { Action, ActionType, MakeSpearAction, reduceState } from "./actions"
 import { exceedsRateLimit } from "./validations"
-import defaults from "lodash/defaults"
-
-export enum ActionType {
-  scavenge = "scavenge"
-}
-
-export interface Action {
-  action: ActionType
-  timestamp: Date
-}
 
 export interface GameState {
   scrap: number
   food: number
+  hunger: number
+  spears: number
   actions: Action[]
   lastSynced: Date
 }
 
 export default class Game {
-  state: GameState
+  state: GameState = {
+    spears: 0,
+    scrap: 0,
+    hunger: 1,
+    food: 0,
+    actions: [],
+    lastSynced: new Date(0)
+  }
 
   constructor(state: Partial<GameState> = {}) {
-    this.state = defaults({}, state, {
-      scrap: 0,
-      food: 0,
-      actions: [],
-      lastSynced: new Date(0)
-    })
+    merge(this.state, state)
 
     if (this.state.lastSynced) {
       this.state.lastSynced = new Date(this.state.lastSynced)
     }
   }
 
-  pushAction(type: ActionType, timestamp?: Date) {
-    this.state.actions.push({
-      action: type,
-      timestamp: timestamp || new Date()
-    })
+  pushAction(action: Action) {
+    this.state.actions.push(action)
   }
 
-  scavenge(timestamp?: Date) {
-    this.pushAction(ActionType.scavenge, timestamp)
+  scavenge(timestamp: Date) {
+    this.pushAction({ action: ActionType.scavenge, timestamp })
+  }
+
+  eat(timestamp: Date) {
+    this.pushAction({ action: ActionType.eat, timestamp })
+  }
+
+  hunt(timestamp: Date) {
+    this.pushAction({ action: ActionType.hunt, timestamp })
+  }
+
+  makeSpear(count: number, timestamp: Date) {
+    const action: MakeSpearAction = {
+      action: ActionType.makeSpear,
+      timestamp,
+      count
+    }
+    this.pushAction(action)
   }
 
   getCurrentState() {
@@ -56,8 +67,7 @@ export default class Game {
         a.timestamp.getTime() >= lastSynced.getTime() &&
         a.timestamp.getTime() <= timestamp.getTime()
     )
-
-    return reduceState(this.state, currentActions)
+    return reduceState(cloneDeep(this.state), currentActions)
   }
 
   validate() {
@@ -79,24 +89,4 @@ export default class Game {
   }
 }
 
-interface ActionReducer {
-  (state: GameState, action: ActionType): GameState
-}
 
-type ActionReducerMap = {
-  [t in ActionType]: ActionReducer
-}
-
-const actionReducers: ActionReducerMap = {
-  scavenge(state) {
-    state.scrap = state.scrap + 1
-    return state
-  }
-}
-
-const reduceState = (state: GameState, actions: Action[]) => {
-  return actions.reduce(
-    (state, action) => actionReducers[action.action](state, action.action),
-    state
-  )
-}
