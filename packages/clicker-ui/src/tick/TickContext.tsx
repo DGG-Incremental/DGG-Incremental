@@ -1,16 +1,19 @@
-import React, { createContext, useState, ReactNode, useContext, ReactElement } from "react"
-import {create as TimeSync} from "timesync"
 import useInterval from "@use-it/interval"
-console.log({TimeSync})
+import toInteger from "lodash/toInteger"
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  PropsWithChildren,
+  useEffect
+} from "react"
+import { create as TimeSync } from "timesync"
 
 export const TimeSyncContext = createContext(TimeSync({ server: "/timesync" }))
 export const TickContext = createContext(Date.now())
 
-interface Props {
-  children(tick: number): ReactNode
-}
-export const TickProvider = ({ children }: Props) => {
-
+export const TickProvider = ({ children }: PropsWithChildren<{}>) => {
   const [tick, setTick] = useState(Date.now())
   const timesync = useContext(TimeSyncContext)
 
@@ -18,5 +21,13 @@ export const TickProvider = ({ children }: Props) => {
     setTick(timesync.now())
   }, 100)
 
-  return children(tick) as ReactElement<any>
+  useEffect(() => {
+    timesync.sync()
+  }, [])
+
+  // Sometimes the ticks are decimals and for simplicity, keep them ints
+  const wholeTick = toInteger(tick)
+  return (
+    <TickContext.Provider value={wholeTick}>{children}</TickContext.Provider>
+  )
 }

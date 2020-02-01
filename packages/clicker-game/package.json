@@ -2,7 +2,7 @@
   "name": "clicker-game",
   "version": "0.0.0",
   "description": "> TODO: description",
-  "main": "lib/game.ts",
+  "main": "lib/index.ts",
   "scripts": {
     "test": "jest"
   },

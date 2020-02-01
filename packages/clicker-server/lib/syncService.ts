@@ -1,4 +1,4 @@
-import Game, { GameState, Action } from "clicker-game"
+import Game, { GameState, QueueAction } from "clicker-game"
 import PlayerGameState from "./db/entity/PlayerGameState"
 import Joi from "@hapi/joi"
 
@@ -23,7 +23,7 @@ const syncSchema = Joi.object({
 
 export const syncPlayerGameState = async (
   name: string,
-  actions: Action[],
+  actions: QueueAction[],
   syncTime: Date,
   version: number
 ) => {

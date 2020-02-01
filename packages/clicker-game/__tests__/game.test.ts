@@ -1,51 +1,46 @@
-import Game, {ActionType} from '../lib/game'
+import { Game, ActionType } from "../lib"
 
-test("click adds 1 to score", () => {
+const dateGen = function*() {
+  let current = 0
+  while(true) {
+    yield new Date(current++)
+  }
+}
+
+test("first scavenge gives one scrap", () => {
   const game = new Game()
-  expect(game.getCurrentState().pepes).toBe(0)
-  game.clickPepe()
-  expect(game.getCurrentState().pepes).toBe(1)
+  expect(game.getCurrentState().scrap).toBe(0)
+  game.scavenge(new Date())
+  expect(game.getCurrentState().scrap).toBe(1)
 })
 
-test("click pushes a click action to actions queue", () => {
+test("scavenge ads scavenge action to queue", () => {
   const game = new Game()
-  expect(game.state.actions).toEqual([])
-  game.clickPepe()
+  const timestamp = new Date()
+
+  game.scavenge(timestamp)
+
   expect(game.state.actions.length).toBe(1)
-  expect(game.state.actions[0].action).toBe(ActionType.clickPepe)
-  // expect(game.state.actions[0].timestamp).toBeCloseTo(Date.now(), 10000)
+  expect(game.state.actions[0].action).toBe(ActionType.scavenge)
+  expect(game.state.actions[0].timestamp).toBe(timestamp)
 })
 
-test("init with state sets score", () => {
-  const game = new Game({ pepes: 1 })
-  expect(game.getCurrentState().pepes).toBe(1)
-  game.clickPepe()
-  expect(game.getCurrentState().pepes).toBe(2)
+test("each scavenge gives gives one scrap", () => {
+  const game = new Game()
+  game.scavenge(new Date())
+  game.scavenge(new Date())
+
+  expect(game.getCurrentState().scrap).toBe(2)
 })
 
 test("init with state set actions", () => {
+  const [a, b, c, d, e] = dateGen()
   const game = new Game({
-    actions: [{ action: ActionType.clickPepe, timestamp: new Date() }]
+    actions: [{ action: ActionType.scavenge, timestamp: b }],
+    lastSynced: a
   })
-  expect(game.getCurrentState().pepes).toBe(1)
-  game.clickPepe()
-  expect(game.getCurrentState().pepes).toBe(2)
+  expect(game.getStateAt(c).scrap).toBe(1)
+  game.scavenge(d)
+  expect(game.state.actions.length).toBe(2)
+  expect(game.getStateAt(e).scrap).toBe(2)
 })
-
-// test("addGenerator adds 1 to generators", () => {
-//   const now = new Date()
-//   const game = new Game()
-//   expect(game.getCurrentState().generators).toBe(0)
-//   game.addGenerator()
-//   expect(game.getCurrentState().generators).toBe(1)
-
-//   expect(game.getCurrentState(new Date(now.getTime() + 1000)).score).toBe(1)
-// })
-
-// test("generators produce passsive score", () => {
-//   const now = new Date()
-//   const game = new Game({generators: 1, lastSynced: now})
-//   expect(game.getCurrentState().generators).toBe(1)
-
-//   expect(game.getCurrentState(new Date(now.getTime() + 1000)).score).toBe(1)
-// })

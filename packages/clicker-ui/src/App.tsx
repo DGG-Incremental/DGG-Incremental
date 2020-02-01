@@ -1,14 +1,86 @@
-import React, { useState, useEffect, useRef } from "react"
-import Game, { GameState, Location, Event, EventType } from "clicker-game"
-import factory from './factory.jpg';
-import grocery from './grocery.jpg';
+import axios from "axios";
+import cookies from "browser-cookies";
+import {Game, ActionType} from "clicker-game";
+import maxBy from "lodash/maxBy";
+import React, { useContext, useState } from "react";
 import apartment from './apartment.jpg';
-
-import Log from './components/Log';
+import "./App.css";
 import Leaderboard from './components/Leaderboard';
+import Log from './components/Log';
+import factory from './factory.jpg';
+import { GameStateContext, GameStateProvider } from "./gameStateContext";
+import grocery from './grocery.jpg';
+import { TickProvider, TimeSyncContext } from "./tick/TickContext";
 
-import "./App.css"
-import { min } from "moment";
+
+
+const getLeaderBoard = async () => {
+  const res = await axios.get("/leaderboard")
+  return res.data
+}
+
+interface ClickerProps {
+  name: string
+}
+
+const Clicker = ({ name }: ClickerProps) => {
+  const { game, setGame, error } = useContext(GameStateContext)
+  const timeSync = useContext(TimeSyncContext)
+  const pepeClickHandler = async () => {
+    game.clickPepe(new Date(timeSync.now()))
+    setGame(new Game(game.state))
+  }
+
+  const yeeClickHandler = async () => {
+    game.clickYee(new Date(timeSync.now()))
+    setGame(new Game(game.state))
+  }
+
+  const now = maxBy([new Date(timeSync.now()), game.state.lastSynced], d =>
+    d.getTime()
+  ) as Date // Avoids some de-sync issues
+  const state = game.getStateAt(now)
+  return (
+    <div>
+      <div
+        style={{
+          margin: "25px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <div style={{ display: "inline-block", margin: "15px" }}>
+          <div className="emote YEE" onClick={yeeClickHandler}></div>
+          <div>{state.yees}</div>
+        </div>
+        <div>VS</div>
+        <div style={{ display: "inline-block", margin: "15px" }}>
+          <div className="emote PEPE" onClick={pepeClickHandler}></div>
+          <div>{state.pepes}</div>
+        </div>
+      </div>
+      <div className="errors">
+        <p>{error ? error.toString(): null}</p>
+      </div>
+    </div>
+  )
+}
+
+interface GetNameProps {
+  onChange: (s: string) => void
+}
+const GetName = ({ onChange }: GetNameProps) => {
+  const username = cookies.get("username")
+  if (username) {
+    onChange(username)
+  }
+  return <a href="/auth">Login</a>
+}
+
+enum EventType {
+  login = "login"
+}
 
 const testEntries = [
   new Event(EventType.login, "test"),
@@ -72,4 +144,10 @@ function App() {
   )
 }
 
-export default App
+export default () => (
+  <TickProvider>
+    <GameStateProvider>
+      <App />
+    </GameStateProvider>
+  </TickProvider>
+)

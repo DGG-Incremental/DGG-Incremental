@@ -127,6 +127,7 @@ app.patch("/me/state", async (req, res) => {
   } catch (err) {
     if (err instanceof Joi.ValidationError) {
       res.statusCode = 400
+      console.info(err)
       res.send(err.details)
     } else {
       res.statusCode = 500

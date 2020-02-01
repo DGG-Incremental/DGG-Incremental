@@ -1,17 +1,7 @@
+import merge from "lodash/merge"
+import cloneDeep from "lodash/cloneDeep"
+import { Action, ActionType, MakeSpearAction, reduceState } from "./actions"
 import { exceedsRateLimit } from "./validations"
-import defaults from "lodash/defaults"
-
-
-export enum ActionType {
-  addGenerator = "addGenerator",
-  clickPepe = "clickPepe",
-  clickYee = "clickYee"
-}
-
-export interface Action {
-  action: ActionType
-  timestamp: Date
-}
 
 export enum EventType {
   login = "login"
@@ -30,47 +20,55 @@ export class Location {
 
 
 export interface GameState {
-  pepes: number
-  yees: number
-  generators: number
+  scrap: number
+  food: number
+  hunger: number
+  spears: number
   actions: Action[]
   lastSynced: Date
 }
 
 export default class Game {
-  state: GameState
+  state: GameState = {
+    spears: 0,
+    scrap: 0,
+    hunger: 1,
+    food: 0,
+    actions: [],
+    lastSynced: new Date(0)
+  }
 
   constructor(state: Partial<GameState> = {}) {
-    this.state = defaults({}, state, {
-      pepes: 0,
-      yees: 0,
-      generators: 0,
-      actions: [],
-      lastSynced: new Date(0)
-    })
+    merge(this.state, state)
 
     if (this.state.lastSynced) {
       this.state.lastSynced = new Date(this.state.lastSynced)
     }
   }
 
-  pushAction(type: ActionType, timestamp?: Date) {
-    this.state.actions.push({
-      action: type,
-      timestamp: timestamp || new Date()
-    })
+  pushAction(action: Action) {
+    this.state.actions.push(action)
   }
 
-  clickPepe() {
-    this.pushAction(ActionType.clickPepe)
+  scavenge(timestamp: Date) {
+    this.pushAction({ action: ActionType.scavenge, timestamp })
   }
 
-  clickYee() {
-    this.pushAction(ActionType.clickYee)
+  eat(timestamp: Date) {
+    this.pushAction({ action: ActionType.eat, timestamp })
   }
 
-  addGenerator() {
-    this.pushAction(ActionType.addGenerator)
+  hunt(timestamp: Date) {
+    this.pushAction({ action: ActionType.hunt, timestamp })
+  }
+
+  makeSpear(count: number, timestamp: Date) {
+    const action: MakeSpearAction = {
+      action: ActionType.makeSpear,
+      timestamp,
+      count
+    }
+    this.pushAction(action)
   }
 
   getCurrentState() {
@@ -85,21 +83,7 @@ export default class Game {
         a.timestamp.getTime() >= lastSynced.getTime() &&
         a.timestamp.getTime() <= timestamp.getTime()
     )
-
-    const pepeClicks = currentActions.filter(a => a.action === "clickPepe")
-      .length
-    const yeeClicks = currentActions.filter(a => a.action === "clickYee").length
-
-    const pepeScore = this.state.pepes + pepeClicks
-    const yeeScore = this.state.yees + yeeClicks
-
-    return {
-      actions: [],
-      generators: 0,
-      pepes: pepeScore,
-      yees: yeeScore,
-      lastSynced: timestamp
-    }
+    return reduceState(cloneDeep(this.state), currentActions)
   }
 
   validate() {
@@ -120,4 +104,5 @@ export default class Game {
     })
   }
 }
+
 
