@@ -14,14 +14,20 @@ export interface Action {
 }
 
 export enum EventType {
-  return = "return"
+  login = "login"
 }
 
-export interface Event {
-  event: EventType
-  text: string
+export class Event {
   timestamp: Date
+  constructor(public event: EventType, public text: string) {
+    this.timestamp = new Date()
+  }
 }
+
+export class Location {
+  constructor(public name: string, public info: string, public description: string, public image: string) {}
+}
+
 
 export interface GameState {
   pepes: number

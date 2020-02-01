@@ -1,267 +1,73 @@
 import React, { useState, useEffect, useRef } from "react"
-import { useTransition, animated } from "react-spring"
+import Game, { GameState, Location, Event, EventType } from "clicker-game"
+import factory from './factory.jpg';
+import grocery from './grocery.jpg';
+import apartment from './apartment.jpg';
+
+import Log from './components/Log';
+import Leaderboard from './components/Leaderboard';
+
 import "./App.css"
-import maxBy from "lodash/maxBy"
-import axios from "axios"
-import cookies from "browser-cookies"
-import Game, { GameState } from "clicker-game"
-import { TimeSyncContext, TickProvider } from "./tick/TickContext"
+import { min } from "moment";
 
-function useInterval(callback: any, delay: number) {
-  const savedCallback = useRef()
+const testEntries = [
+  new Event(EventType.login, "test"),
+  new Event(EventType.login, "Lorem ipsum <b>dolor</b> sit amet, <font color='Red'>consectetur</font> adipiscing elit."),
+  new Event(EventType.login, "Donec ut nunc vehicula nulla molestie porta quis ac nisl. Ut malesuada pretium nisl, et vehicula nisi placerat a."),
+  new Event(EventType.login, "test"),
+  new Event(EventType.login, "Maecenas <em>eleifend</em> malesuada commodo. Suspendisse potenti. Duis sagittis dapibus arcu ac volutpat. Nulla ac mi id urna ornare eleifend at et est. Vivamus placerat, felis nec varius ullamcorper, urna massa ultricies mauris, a tristique leo libero a nibh. Fusce consequat vehicula sodales."),
+  new Event(EventType.login, "test"),
+  new Event(EventType.login, "test"),
+  new Event(EventType.login, "test"),
+  new Event(EventType.login, "test"),
+]
 
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback
-  }, [callback])
 
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      // @ts-ignore
-      savedCallback.current()
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay)
-      return () => clearInterval(id)
-    }
-  }, [delay])
-}
-
-interface IApiResponseData {
-  name: string
-  version: number
-  gameState: GameState
-}
-
-const getInitialState = async () => {
-  try {
-    const res = await axios.get("/me/state")
-    return res.data as IApiResponseData
-  } catch (err) {
-    if (err.response.status === 404) {
-      return undefined
-    }
-    throw err.response.data
-  }
-}
-
-const getLeaderBoard = async () => {
-  const res = await axios.get("/leaderboard")
-  return res.data
-}
-
-const syncGame = async (game: Game, version: number) => {
-  try {
-    const sentAt = new Date()
-    const res = await axios.patch("/me/state", {
-      actions: game.state.actions,
-      sentAt,
-      version
-    })
-    const data = res.data as IApiResponseData
-    return {
-      game: new Game(data.gameState),
-      version: data.version
-    }
-  } catch (err) {
-    if (err.response.status === 404) {
-      window.location.replace("/auth")
-    }
-    throw err.response.data
-  }
-}
-
-interface ClickerProps {
-  name: string
-}
-
-const Clicker = ({ name }: ClickerProps) => {
-  const [game, setGame] = useState(new Game())
-  const [version, setVersion] = useState(0)
-  const [errors, setErrors] = useState<any[]>([])
-
-  useEffect(() => {
-    getInitialState().then(data => {
-      if (data) {
-        setGame(new Game(data.gameState))
-        setVersion(data.version)
-      } else {
-        window.location.replace("/auth")
-      }
-    })
-  }, [name])
-
-  useInterval(async () => {
-    if (game.state.actions.length) {
-      try {
-        const synced = await syncGame(game, version)
-        setGame(game.fastForward(synced.game))
-        setVersion(synced.version)
-      } catch (err) {
-        setErrors([err])
-      }
-    }
-  }, 3 * 1000)
-
-  const pepeClickHandler = async () => {
-    game.clickPepe()
-    setGame(new Game(game.state))
-  }
-
-  const yeeClickHandler = async () => {
-    game.clickYee()
-    setGame(new Game(game.state))
-  }
-
-  const now = maxBy([new Date(), game.state.lastSynced], d =>
-    d.getTime()
-  ) as Date // Avoids some de-sync issues
-  const state = game.getStateAt(now)
-  return (
-    <div>
-      <div
-        style={{
-          margin: "25px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center"
-        }}
-      >
-        <div style={{ display: "inline-block", margin: "15px" }}>
-          <div className="emote YEE" onClick={yeeClickHandler}></div>
-          <div>{state.yees}</div>
-        </div>
-        <div>VS</div>
-        <div style={{ display: "inline-block", margin: "15px" }}>
-          <div className="emote PEPE" onClick={pepeClickHandler}></div>
-          <div>{state.pepes}</div>
-        </div>
-      </div>
-      <div className="errors">
-        {errors.map(e => (
-          <p>{e.toString()}</p>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-interface GetNameProps {
-  onChange: (s: string) => void
-}
-const GetName = ({ onChange }: GetNameProps) => {
-  const username = cookies.get("username")
-  if (username) {
-    onChange(username)
-  }
-  return <a href="/auth">Login</a>
-}
-
-const Leaderboard = () => {
-  const [state, setState] = useState({
-    leaderboard: [] as any[],
-    totals: {} as any
-  })
-
-  const update = async () => {
-    const result = await getLeaderBoard()
-    setState(result)
-  }
-
-  useEffect(() => {
-    update()
-    setInterval(update, 5 * 1000)
-  }, [])
-
-  return (
-    <table className="leaderboard" style={{ borderSpacing: "15px 10px" }}>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>
-            <div className="emote YEE" style={{ margin: "auto" }}></div>
-          </th>
-          <th>
-            <div className="emote PEPE" style={{ margin: "auto" }}></div>
-          </th>
-        </tr>
-        <tr>
-          <th>Total</th>
-          <th>{state.totals.yees}</th>
-          <th>{state.totals.pepes}</th>
-          <th></th>
-          <th>
-            {parseInt(state.totals.pepes) === parseInt(state.totals.yees)
-              ? ""
-              : parseInt(state.totals.pepes) > parseInt(state.totals.yees)
-              ? "Pepe"
-              : "Yee"}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {state.leaderboard.map(s => (
-          <tr key={s.name}>
-            <td>{s.name}</td>
-            <td>{s.yees} </td>
-            <td>{s.pepes} </td>
-            <td>
-              {s.name === "Cake" ? <div className="emote SOY"></div> : null}
-            </td>
-            <td>
-              {parseInt(s.yees) === parseInt(s.pepes) ? (
-                <div
-                  className="emote Shrugstiny"
-                  style={{ margin: "auto" }}
-                ></div>
-              ) : parseInt(s.yees) > parseInt(s.pepes) ? (
-                <div className="emote YEE" style={{ margin: "auto" }}></div>
-              ) : (
-                <div className="emote PEPE" style={{ margin: "auto" }}></div>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
-}
 
 function App() {
   const [name, setName] = useState<string | null>(null)
-  const [showChat, setShowChat] = useState(true)
-  const transitions = useTransition(showChat, null, {
-    from: { right: "-300px" },
-    enter: { right: "0px" },
-    leave: { right: "-300px" }
-  })
+  const [location, setLocation] = useState<Location | null>(null)
+  const possibleLocations = [
+    new Location("Factory", "The Factory is a place", "The rusted carcases of old machines huddle around the concrete floor.", factory), 
+    new Location("Apartment Complex", "Test", "", apartment), 
+    new Location("Grocery Store", "Test", "", grocery)
+  ]
   return (
     <div className="App">
-      <div className="topbar">
-        <button className="toggle-chat" onClick={() => setShowChat(s => !s)}>
-          {showChat ? "Hide" : "Show"} Chat
-        </button>
-      </div>
-
-      <div className="clicker-main">
-        <Leaderboard />
-        <div className="center">
-          {name ? <Clicker name={name} /> : <GetName onChange={setName} />}
+      <div className="modules">
+        <div className="modules__column">
+          <Log entries={testEntries} />
+          <Leaderboard updateRate={5000} />
+        </div>
+        <div className="modules__column">
         </div>
       </div>
-      {transitions.map(
-        ({ item, key, props }) =>
-          item && (
-            <animated.div className="chat" key={key} style={props}>
-              <iframe
-                src="https://www.destiny.gg/embed/chat"
-                frameBorder="0"
-                style={{ height: "100%" }}
-              ></iframe>
-            </animated.div>
-          )
-      )}
+      <div className="map">
+        {location === null && <div className="location-list">
+          {possibleLocations.map((location, i) => (
+            <button key={i} className="location-list__location" onClick={() => setLocation(location)}>
+              <h2>{location.name}</h2>
+              <div className="location-list__hover"><h2>{location.name}</h2></div>
+              <div className="location-list__info">{location.info}</div>
+            </button>
+          ))}
+        </div>}
+        {location !== null && (
+          <div className="location" style={{backgroundImage: `url(${location.image}`}}></div>
+        )}
+        <div className={"location-menu" + (location === null ? '' : " active")}>
+          <h2>{location !== null ? location.name : 'Transient'}</h2>
+          <div className="location-menu__content">
+            <div className="location-menu__description">
+              {location !== null ? location.description : "You aren't currently at a location"}
+            </div>
+            <div className="location-menu__progress">
+              <div className="location-menu__progress-bar"></div>
+            </div>
+            <button className="location-menu__leave" onClick={() => setLocation(null)}>Leave</button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
