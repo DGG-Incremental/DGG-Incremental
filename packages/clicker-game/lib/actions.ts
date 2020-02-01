@@ -21,7 +21,7 @@ export type EatAction = Action
 export type ScavengAction = Action
 export type HuntAction = Action
 export interface GoToLocation extends Action {
-  location: GameLocation
+  location: GameLocation | null
 }
 export interface MakeSpearAction extends Action {
   count: number

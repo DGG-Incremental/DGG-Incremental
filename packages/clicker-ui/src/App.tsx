@@ -109,10 +109,12 @@ function App() {
   const timeSync = useContext(TimeSyncContext)
   const { currentLocation } = gameState
 
-  const setLocationHandler = (location: GameLocation) => {
+  const setLocationHandler = (location: GameLocation | null) => {
     gameContext.game.goToLocation(location, new Date(timeSync.now()))
     gameContext.setGame(gameContext.game)
   }
+
+  const leaveLocation = () => setLocationHandler(null)
 
   return (
     <div className="App">
@@ -159,7 +161,7 @@ function App() {
           </h2>
           <div className="location-menu__content">
             <div className="location-menu__description">
-              {location !== null
+              {currentLocation !== null
                 ? currentLocation.description
                 : "You aren't currently at a location"}
             </div>
@@ -168,7 +170,7 @@ function App() {
             </div>
             <button
               className="location-menu__leave"
-              onClick={() => setLocationHandler(gameState.locations[0])}
+              onClick={leaveLocation}
             >
               Leave
             </button>

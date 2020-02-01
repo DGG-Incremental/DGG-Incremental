@@ -15,7 +15,7 @@ export interface GameState {
   hunger: number
   spears: number
   locations: GameLocation[]
-  currentLocation: GameLocation
+  currentLocation: GameLocation | null
   actions: Action[]
   lastSynced: Date
 }
@@ -86,7 +86,7 @@ export class Game {
     this.pushAction(action)
   }
 
-  goToLocation(location: GameLocation, timestamp: Date) {
+  goToLocation(location: GameLocation | null, timestamp: Date) {
     const action: GoToLocation = {
       action: ActionType.goToLocation,
       location,
