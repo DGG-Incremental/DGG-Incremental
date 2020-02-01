@@ -107,13 +107,11 @@ function App() {
   const { game, setGame } = useContext(GameStateContext)
   const timeSync = useContext(TimeSyncContext)
   const now = new Date(timeSync.now())
-  console.log("Getting game state at ", now)
   const gameState = game.getStateAt(now)
   const { currentLocation } = gameState
 
   const setLocationHandler = (location: GameLocation | null) => {
     const time = new Date(timeSync.now())
-    console.log("Action at: ", time)
     game.goToLocation(location, time)
     setGame(game)
   }
