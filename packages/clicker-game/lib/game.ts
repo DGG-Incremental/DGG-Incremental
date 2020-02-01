@@ -1,39 +1,58 @@
 import merge from "lodash/merge"
 import cloneDeep from "lodash/cloneDeep"
-import { Action, ActionType, MakeSpearAction, reduceState } from "./actions"
+import { Action, ActionType, MakeSpearAction, reduceState, GoToLocation } from "./actions"
 import { exceedsRateLimit } from "./validations"
 
-export enum EventType {
-  login = "login"
+export interface GameLocation {
+  name: string
+  info: string
+  description: string
+  imageUrl: string
 }
-
-export class Event {
-  timestamp: Date
-  constructor(public event: EventType, public text: string) {
-    this.timestamp = new Date()
-  }
-}
-
-export class Location {
-  constructor(public name: string, public info: string, public description: string, public image: string) {}
-}
-
 
 export interface GameState {
   scrap: number
   food: number
   hunger: number
   spears: number
+  locations: GameLocation[]
+  currentLocation: GameLocation
   actions: Action[]
   lastSynced: Date
 }
 
-export default class Game {
+const INIT_LOCATIONS: GameLocation[] = [
+  {
+    name: "Factory",
+    info: "The Factory is a place",
+    description:
+      "The rusted carcases of old machines huddle around the concrete floor.",
+    imageUrl: ""
+  },
+  {
+    name: "Apartment Complex",
+    info: "",
+    description:
+      "",
+    imageUrl: ""
+  },
+  {
+    name: "Grocery Store",
+    info: "",
+    description: "",
+    imageUrl: ""
+  },
+]
+
+export class Game {
   state: GameState = {
     spears: 0,
     scrap: 0,
     hunger: 1,
     food: 0,
+    locations: cloneDeep(INIT_LOCATIONS),
+    // TODO: Fix cloneDeep mess here
+    currentLocation: cloneDeep(INIT_LOCATIONS)[0],
     actions: [],
     lastSynced: new Date(0)
   }
@@ -71,6 +90,15 @@ export default class Game {
     this.pushAction(action)
   }
 
+  goToLocation(location: GameLocation, timestamp: Date) {
+    const action: GoToLocation = {
+      action: ActionType.goToLocation,
+      location,
+      timestamp
+    }
+    this.pushAction(action)
+  }
+
   getCurrentState() {
     return this.getStateAt(new Date())
   }
@@ -104,5 +132,3 @@ export default class Game {
     })
   }
 }
-
-

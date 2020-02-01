@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react"
-import { Event, EventType } from "clicker-game"
+// import { Event, EventType } from "clicker-game"
 import moment from 'moment';
 
 import './Log.css'
@@ -41,11 +41,11 @@ const Log = ({ entries }: LogProps) => {
             <div ref={logRef} className="log__entries">
                 {entries.map((entry, i) => (
                     <div className="log__entry" key={i}>
-                        <span className="log__timestamp">[{moment(entry.timestamp).format("HH:mm:ss")}]</span>
+                        {/* <span className="log__timestamp">[{moment(entry.timestamp).format("HH:mm:ss")}]</span>
                         <span className="log__text"
                             dangerouslySetInnerHTML={{
                                 __html: entry.text
-                            }}></span>
+                            }}></span> */}
                     </div>
                 ))}
             </div>

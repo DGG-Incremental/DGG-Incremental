@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from "react"
-import { Event, EventType } from "clicker-game"
 import moment from 'moment';
 
 import './Module.css'
