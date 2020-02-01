@@ -6,9 +6,9 @@ import React, {
   useContext
 } from "react"
 import { getInitialState, syncGame } from "./api"
-import Game from "clicker-game"
 import { useInterval } from "./useInterval"
 import { TimeSyncContext } from "./tick/TickContext"
+import { Game } from "clicker-game/lib/game"
 
 interface IGameStateContext {
   game: Game
@@ -59,9 +59,9 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
   }, 3 * 1000)
 
   const context: IGameStateContext = {
-      game,
-      setGame,
-      error
+    game,
+    setGame,
+    error
   }
 
   return (

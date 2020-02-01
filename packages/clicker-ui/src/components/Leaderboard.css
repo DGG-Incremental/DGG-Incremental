@@ -1,0 +1,12 @@
+.leaderboard__player {
+    display: flex;
+    padding: 10px;
+}
+
+.leaderboard__player:nth-child(even)  {
+    background: #f4f4f4;
+}
+
+.leaderboard__name {
+    flex: 1;
+}

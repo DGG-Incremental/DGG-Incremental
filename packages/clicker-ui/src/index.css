@@ -1,13 +1,69 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,700&display=swap');
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: var(--black);
+}
+
+button {
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+h1, h2 {
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+h2 {
+  background: var(--black);
+  color: var(--white);
+  padding: 5px 10px;
+  margin: 0;
+}
+
+html {
+  background: var(--off-white);
+}
+
+.overlay {
+  background-image: url('./digital-overlay2-01.png');
+  background-repeat: repeat;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.02;
+  pointer-events: none;
+}
+
+/* .overlay {
+  background-image: url('./digital-overlay-01.png');
+  background-repeat: repeat;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.05;
+  pointer-events: none;
+} */
+
+:root {
+  --black: #222;
+  --white: #fff;
+  --off-white: #f2f2f2;
+  --grey: #dfdfdf;
 }

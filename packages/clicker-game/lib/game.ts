@@ -1,23 +1,54 @@
 import merge from "lodash/merge"
 import cloneDeep from "lodash/cloneDeep"
-import { Action, ActionType, MakeSpearAction, reduceState } from "./actions"
+import { Action, ActionType, MakeSpearAction, reduceState, GoToLocation } from "./actions"
 import { exceedsRateLimit } from "./validations"
+
+export interface GameLocation {
+  name: string
+  info: string
+  description: string
+}
 
 export interface GameState {
   scrap: number
   food: number
   hunger: number
   spears: number
+  locations: GameLocation[]
+  currentLocation: GameLocation | null
   actions: Action[]
   lastSynced: Date
 }
 
-export default class Game {
+const INIT_LOCATIONS: GameLocation[] = [
+  {
+    name: "Factory",
+    info: "The Factory is a place",
+    description:
+      "The rusted carcases of old machines huddle around the concrete floor.",
+  },
+  {
+    name: "Apartment Complex",
+    info: "",
+    description:
+      "",
+  },
+  {
+    name: "Grocery Store",
+    info: "",
+    description: "",
+  },
+]
+
+export class Game {
   state: GameState = {
     spears: 0,
     scrap: 0,
     hunger: 1,
     food: 0,
+    locations: cloneDeep(INIT_LOCATIONS),
+    // TODO: Fix cloneDeep mess here
+    currentLocation: cloneDeep(INIT_LOCATIONS)[1],
     actions: [],
     lastSynced: new Date(0)
   }
@@ -55,6 +86,15 @@ export default class Game {
     this.pushAction(action)
   }
 
+  goToLocation(location: GameLocation | null, timestamp: Date) {
+    const action: GoToLocation = {
+      action: ActionType.goToLocation,
+      location,
+      timestamp
+    }
+    this.pushAction(action)
+  }
+
   getCurrentState() {
     return this.getStateAt(new Date())
   }
@@ -88,5 +128,3 @@ export default class Game {
     })
   }
 }
-
-

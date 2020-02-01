@@ -1,5 +1,5 @@
-import Game, { GameState } from "clicker-game"
 import Axios from "axios"
+import { GameState, Game } from "clicker-game/lib/game"
 
 interface IApiResponseData {
   name: string
