@@ -9,6 +9,7 @@ import { getInitialState, syncGame } from "./api"
 import { useInterval } from "./useInterval"
 import { TimeSyncContext } from "./tick/TickContext"
 import { Game } from "clicker-game/lib/game"
+import cloneDeep from 'lodash/cloneDeep'
 
 interface IGameStateContext {
   game: Game
@@ -24,10 +25,14 @@ export const GameStateContext = createContext<IGameStateContext>({
 
 interface GameStateProviderProps extends PropsWithChildren<{}> {}
 export const GameStateProvider = ({ children }: GameStateProviderProps) => {
-  const [game, setGame] = useState(new Game())
+  const [game, _setGame] = useState(new Game())
   const [version, setVersion] = useState(0)
   const [error, setError] = useState<Error | null>(null)
   const timeSync = useContext(TimeSyncContext)
+
+  const setGame = (game: Game) => {
+    _setGame(cloneDeep(game))
+  }
 
   useEffect(() => {
     getInitialState().then(data => {

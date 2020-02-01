@@ -9,7 +9,7 @@ import Leaderboard from "./components/Leaderboard"
 import factory from "./factory.jpg"
 import { GameStateContext, GameStateProvider } from "./gameStateContext"
 import grocery from "./grocery.jpg"
-import { TickProvider, TimeSyncContext } from "./tick/TickContext"
+import { TimeSyncContext, TickProvider } from "./tick/TickContext"
 import { GameLocation } from "clicker-game/lib/game"
 
 const getLeaderBoard = async () => {
@@ -104,14 +104,18 @@ const LOCATION_IMAGES: { [s: string]: string } = {
 
 function App() {
   const [name, setName] = useState<string | null>(null)
-  const gameContext = useContext(GameStateContext)
-  const gameState = gameContext.game.getCurrentState()
+  const { game, setGame } = useContext(GameStateContext)
   const timeSync = useContext(TimeSyncContext)
+  const now = new Date(timeSync.now())
+  console.log("Getting game state at ", now)
+  const gameState = game.getStateAt(now)
   const { currentLocation } = gameState
 
   const setLocationHandler = (location: GameLocation | null) => {
-    gameContext.game.goToLocation(location, new Date(timeSync.now()))
-    gameContext.setGame(gameContext.game)
+    const time = new Date(timeSync.now())
+    console.log("Action at: ", time)
+    game.goToLocation(location, time)
+    setGame(game)
   }
 
   const leaveLocation = () => setLocationHandler(null)
@@ -168,10 +172,7 @@ function App() {
             <div className="location-menu__progress">
               <div className="location-menu__progress-bar"></div>
             </div>
-            <button
-              className="location-menu__leave"
-              onClick={leaveLocation}
-            >
+            <button className="location-menu__leave" onClick={leaveLocation}>
               Leave
             </button>
           </div>
