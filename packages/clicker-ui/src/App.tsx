@@ -96,6 +96,11 @@ const GetName = ({ onChange }: GetNameProps) => {
 //   new Event(EventType.login, "test"),
 //   new Event(EventType.login, "test")
 // ]
+const LOCATION_IMAGES: { [s: string]: string } = {
+  Factory: factory,
+  "Apartment Complex": apartment,
+  "Grocery Store": grocery
+}
 
 function App() {
   const [name, setName] = useState<string | null>(null)
@@ -139,7 +144,9 @@ function App() {
         {currentLocation !== null && (
           <div
             className="location"
-            style={{ backgroundImage: `url(${currentLocation.imageUrl}` }}
+            style={{
+              backgroundImage: `url(${LOCATION_IMAGES[currentLocation.name]}`
+            }}
           ></div>
         )}
         <div

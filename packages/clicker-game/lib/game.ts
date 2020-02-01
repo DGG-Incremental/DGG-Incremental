@@ -7,7 +7,6 @@ export interface GameLocation {
   name: string
   info: string
   description: string
-  imageUrl: string
 }
 
 export interface GameState {
@@ -27,20 +26,17 @@ const INIT_LOCATIONS: GameLocation[] = [
     info: "The Factory is a place",
     description:
       "The rusted carcases of old machines huddle around the concrete floor.",
-    imageUrl: ""
   },
   {
     name: "Apartment Complex",
     info: "",
     description:
       "",
-    imageUrl: ""
   },
   {
     name: "Grocery Store",
     info: "",
     description: "",
-    imageUrl: ""
   },
 ]
 
@@ -52,7 +48,7 @@ export class Game {
     food: 0,
     locations: cloneDeep(INIT_LOCATIONS),
     // TODO: Fix cloneDeep mess here
-    currentLocation: cloneDeep(INIT_LOCATIONS)[0],
+    currentLocation: cloneDeep(INIT_LOCATIONS)[1],
     actions: [],
     lastSynced: new Date(0)
   }
