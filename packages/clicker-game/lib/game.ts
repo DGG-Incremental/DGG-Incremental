@@ -2,12 +2,14 @@ import merge from "lodash/merge"
 import cloneDeep from "lodash/cloneDeep"
 import { Action, ActionType, MakeSpearAction, reduceState, GoToLocation } from "./actions"
 import { exceedsRateLimit } from "./validations"
+import { getPassiveState } from "./passive"
 
 export interface GameLocation {
   name: string
   info: string
   description: string
 }
+
 
 export interface GameState {
   scrap: number
@@ -107,7 +109,7 @@ export class Game {
         a.timestamp.getTime() >= lastSynced.getTime() &&
         a.timestamp.getTime() <= timestamp.getTime()
     )
-    return reduceState(cloneDeep(this.state), currentActions)
+    return getPassiveState(reduceState(cloneDeep(this.state), currentActions), timestamp)
   }
 
   validate() {

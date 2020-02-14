@@ -1,9 +1,11 @@
 import { Game, ActionType } from "../lib"
 
-const dateGen = function*() {
+const dateGen = function*(delta: number = 1) {
   let current = 0
   while(true) {
-    yield new Date(current++)
+    const next = current + delta
+    yield new Date(next)
+    current = next 
   }
 }
 
@@ -43,4 +45,18 @@ test("init with state set actions", () => {
   game.scavenge(d)
   expect(game.state.actions.length).toBe(2)
   expect(game.getStateAt(e).scrap).toBe(2)
+})
+
+test("hunger goes down over time", () => {
+  const [a, b] = dateGen(10 * 1000)
+  const game = new Game({lastSynced: a})
+  expect(game.getStateAt(a).hunger).toBe(1) 
+  expect(game.getStateAt(b).hunger).toBe(0.9) 
+})
+
+test("hunger doesn't go below zero", () => {
+  const [a, b] = dateGen(11 * 10 * 1000)
+  const game = new Game({lastSynced: a})
+  expect(game.getStateAt(a).hunger).toBe(1) 
+  expect(game.getStateAt(b).hunger).toBe(0) 
 })
