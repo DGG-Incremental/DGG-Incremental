@@ -60,3 +60,27 @@ test("hunger doesn't go below zero", () => {
   expect(game.getStateAt(a).hunger).toBe(1) 
   expect(game.getStateAt(b).hunger).toBe(0) 
 })
+
+test("hunting gives food", () => {
+  const [a,b] = dateGen()
+  const game = new Game({lastSynced: a})
+  expect(game.getStateAt(a).food).toBe(0)
+  game.hunt(a)
+  expect(game.getStateAt(b).food).toBe(1)  
+})
+
+
+test("hunting with spears gives more food", () => {
+  const [a,b] = dateGen()
+  const game = new Game({lastSynced: a, spears: 1})
+  game.hunt(a)
+  expect(game.getStateAt(b).food).toBe(2)
+})
+
+test("eating food lowers food and hunger", () => {
+  const [a,b ] = dateGen()
+  const game = new Game({lastSynced: a, food: 1, hunger: 0.5})
+  game.eat(a)
+  expect(game.getStateAt(b).hunger).toBeGreaterThan(0.5)
+  expect(game.getStateAt(b).food).toBe(0)
+})

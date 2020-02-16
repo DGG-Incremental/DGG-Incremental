@@ -1,8 +1,8 @@
 import { CondPair } from "lodash"
+import produce from "immer"
 import cond from "lodash/cond"
 import min from "lodash/min"
 import { GameState, GameLocation } from "./game"
-
 
 export enum ActionType {
   scavenge = "scavenge",
@@ -29,30 +29,25 @@ export interface MakeSpearAction extends Action {
 
 function scavenge(state: GameState) {
   state.scrap = state.scrap + 1
-  return state
 }
 function eat(state: GameState) {
-  state.hunger = min([state.hunger, state.hunger + 0.2]) as number
+  state.hunger = min([1, state.hunger + 0.2]) as number
   state.food--
-  return state
 }
 function hunt(state: GameState) {
-  state.food = state.food + 1
-  return state
+  state.food = state.food + state.spears + 1
 }
 function makeSpear(state: GameState, { count }: MakeSpearAction) {
   state.spears = state.spears + count
   state.scrap = state.scrap - 10
-  return state
 }
-function goToLocation(state: GameState, {location}: GoToLocation) {
+function goToLocation(state: GameState, { location }: GoToLocation) {
   state.currentLocation = location
-  return state
 }
 
 interface ActionCondPair<T extends Action> {
   0(action: Action): action is T
-  1(state: GameState, action: T): GameState
+  1(state: GameState, action: T): void
 }
 
 const isOfActionType = <T extends Action>(actionType: ActionType) => (
@@ -72,10 +67,10 @@ const reducerConds: ActionCondPair<Action>[] = [
 export const reduceState = (state: GameState, actions: Action[]) => {
   return actions.reduce((state, action) => {
     const pairs = reducerConds.map(
-      (c): CondPair<Action, GameState> => {
+      (condPair): CondPair<Action, GameState> => {
         return [
-          (val: Action) => c[0](val),
-          (action: Action) => c[1](state, action)
+          (val: Action) => condPair[0](val),
+          (action: Action) => produce(state, draftState => condPair[1](draftState, action))
         ]
       }
     )

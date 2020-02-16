@@ -1,6 +1,16 @@
 import merge from "lodash/merge"
+import flow from "lodash/flow"
+import filter from "lodash/filter"
 import cloneDeep from "lodash/cloneDeep"
-import { Action, ActionType, MakeSpearAction, reduceState, GoToLocation } from "./actions"
+import partial from "lodash/partial"
+import partialRight from "lodash/partialRight"
+import {
+  Action,
+  ActionType,
+  MakeSpearAction,
+  reduceState,
+  GoToLocation
+} from "./actions"
 import { exceedsRateLimit } from "./validations"
 import { getPassiveState } from "./passive"
 
@@ -9,7 +19,6 @@ export interface GameLocation {
   info: string
   description: string
 }
-
 
 export interface GameState {
   scrap: number
@@ -27,19 +36,18 @@ const INIT_LOCATIONS: GameLocation[] = [
     name: "Factory",
     info: "The Factory is a place",
     description:
-      "The rusted carcases of old machines huddle around the concrete floor.",
+      "The rusted carcases of old machines huddle around the concrete floor."
   },
   {
     name: "Apartment Complex",
     info: "",
-    description:
-      "",
+    description: ""
   },
   {
     name: "Grocery Store",
     info: "",
-    description: "",
-  },
+    description: ""
+  }
 ]
 
 export class Game {
@@ -104,12 +112,15 @@ export class Game {
   getStateAt(timestamp: Date): GameState {
     const { lastSynced, actions } = this.state
 
-    const currentActions = actions.filter(
-      a =>
-        a.timestamp.getTime() >= lastSynced.getTime() &&
-        a.timestamp.getTime() <= timestamp.getTime()
-    )
-    return getPassiveState(reduceState(cloneDeep(this.state), currentActions), timestamp)
+    return flow(
+      filter(
+        (a: Action) =>
+          a.timestamp.getTime() >= lastSynced.getTime() &&
+          a.timestamp.getTime() <= timestamp.getTime()
+      ),
+      partial(reduceState, this.state),
+      partialRight(getPassiveState, timestamp)
+    )(actions)
   }
 
   validate() {
