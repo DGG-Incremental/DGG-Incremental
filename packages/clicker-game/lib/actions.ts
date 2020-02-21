@@ -2,7 +2,8 @@ import { CondPair } from "lodash"
 import produce from "immer"
 import cond from "lodash/cond"
 import min from "lodash/min"
-import { GameState, GameLocation } from "./game"
+import { GameState } from "./game"
+import { GameLocation, locations } from "./locations"
 
 export enum ActionType {
   scavenge = "scavenge",
@@ -28,10 +29,21 @@ export interface MakeSpearAction extends Action {
 }
 
 function scavenge(state: GameState) {
-  state.scrap = state.scrap + 1
+  state.scrap = state.scrap + 1 
+
+  if(state.currentLocation?.name === locations.groceryStore.name) {
+    state.food = state.food + 1
+  }
+
+  if(state.currentLocation?.name === locations.factory.name) {
+    state.scrap = state.scrap + 1
+  }
 }
 function eat(state: GameState) {
-  state.hunger = min([1, state.hunger + 0.2]) as number
+  const change = state.currentLocation?.name === locations.apartment.name ? 
+    0.3 :
+    0.2
+  state.hunger = min([1, state.hunger + change]) as number
   state.food--
 }
 function hunt(state: GameState) {

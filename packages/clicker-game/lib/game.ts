@@ -1,7 +1,6 @@
 import merge from "lodash/merge"
 import flow from "lodash/flow"
 import filter from "lodash/filter"
-import cloneDeep from "lodash/cloneDeep"
 import partial from "lodash/partial"
 import partialRight from "lodash/partialRight"
 import {
@@ -13,42 +12,20 @@ import {
 } from "./actions"
 import { exceedsRateLimit } from "./validations"
 import { getPassiveState } from "./passive"
+import { GameLocation } from "./locations"
 
-export interface GameLocation {
-  name: string
-  info: string
-  description: string
-}
 
 export interface GameState {
   scrap: number
   food: number
   hunger: number
   spears: number
-  locations: GameLocation[]
   currentLocation: GameLocation | null
   actions: Action[]
   lastSynced: Date
+
 }
 
-const INIT_LOCATIONS: GameLocation[] = [
-  {
-    name: "Factory",
-    info: "The Factory is a place",
-    description:
-      "The rusted carcases of old machines huddle around the concrete floor."
-  },
-  {
-    name: "Apartment Complex",
-    info: "",
-    description: ""
-  },
-  {
-    name: "Grocery Store",
-    info: "",
-    description: ""
-  }
-]
 
 export class Game {
   state: GameState = {
@@ -56,9 +33,9 @@ export class Game {
     scrap: 0,
     hunger: 1,
     food: 0,
-    locations: cloneDeep(INIT_LOCATIONS),
+
     // TODO: Fix cloneDeep mess here
-    currentLocation: cloneDeep(INIT_LOCATIONS)[1],
+    currentLocation: null,
     actions: [],
     lastSynced: new Date(0)
   }

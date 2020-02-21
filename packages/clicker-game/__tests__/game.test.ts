@@ -1,13 +1,6 @@
 import { Game, ActionType } from "../lib"
+import { dateGen } from "./helpers"
 
-const dateGen = function*(delta: number = 1) {
-  let current = 0
-  while(true) {
-    const next = current + delta
-    yield new Date(next)
-    current = next 
-  }
-}
 
 test("first scavenge gives one scrap", () => {
   const game = new Game()
