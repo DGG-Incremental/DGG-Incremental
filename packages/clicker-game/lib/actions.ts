@@ -82,7 +82,7 @@ export const reduceState = (state: GameState, actions: Action[]) => {
       (condPair): CondPair<Action, GameState> => {
         return [
           (val: Action) => condPair[0](val),
-          (action: Action) => produce(state, draftState => condPair[1](draftState, action))
+          (action: Action) => produce(state, (draftState: GameState) => condPair[1](draftState, action))
         ]
       }
     )

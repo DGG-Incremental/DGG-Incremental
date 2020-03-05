@@ -3,7 +3,6 @@ import React, { useRef, useEffect } from "react"
 import moment from 'moment';
 
 import './Log.css'
-import Module from './Module'
 
 declare global {
     interface Window { test: any; }
@@ -37,19 +36,17 @@ const Log = ({ entries }: LogProps) => {
         
     }, [entries])
     return (
-        <Module className="log" title="Text Log">
-            <div ref={logRef} className="log__entries">
-                {entries.map((entry, i) => (
-                    <div className="log__entry" key={i}>
-                        {/* <span className="log__timestamp">[{moment(entry.timestamp).format("HH:mm:ss")}]</span>
-                        <span className="log__text"
-                            dangerouslySetInnerHTML={{
-                                __html: entry.text
-                            }}></span> */}
-                    </div>
-                ))}
-            </div>
-        </Module>
+        <div ref={logRef} className="log__entries">
+            {entries.map((entry, i) => (
+                <div className="log__entry" key={i}>
+                    {/* <span className="log__timestamp">[{moment(entry.timestamp).format("HH:mm:ss")}]</span>
+                    <span className="log__text"
+                        dangerouslySetInnerHTML={{
+                            __html: entry.text
+                        }}></span> */}
+                </div>
+            ))}
+        </div>
     )
 }
 export default Log;

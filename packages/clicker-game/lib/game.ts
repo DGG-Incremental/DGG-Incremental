@@ -12,7 +12,9 @@ import {
 } from "./actions"
 import { exceedsRateLimit } from "./validations"
 import { getPassiveState } from "./passive"
-import { GameLocation } from "./locations"
+import { GameLocation, locations } from "./locations"
+
+import { Upgrade } from './upgrades'
 
 
 export interface GameState {
@@ -23,7 +25,8 @@ export interface GameState {
   currentLocation: GameLocation | null
   actions: Action[]
   lastSynced: Date
-
+  upgrades: Upgrade[],
+  unlockedLocations: GameLocation[]
 }
 
 
@@ -31,13 +34,20 @@ export class Game {
   state: GameState = {
     spears: 0,
     scrap: 0,
-    hunger: 1,
+    hunger: 0.25,
     food: 0,
 
     // TODO: Fix cloneDeep mess here
     currentLocation: null,
     actions: [],
-    lastSynced: new Date(0)
+    lastSynced: new Date(0),
+    upgrades: [{
+      name: 'Soma',
+      cost: [
+        { resource: 'food', count: 1000 }
+      ]
+    }],
+    unlockedLocations: [locations.apartment, locations.factory]
   }
 
   constructor(state: Partial<GameState> = {}) {

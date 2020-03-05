@@ -1,113 +1,119 @@
-import axios from "axios"
-import cookies from "browser-cookies"
-import maxBy from "lodash/maxBy"
 import React, { useContext, useState } from "react"
-import apartment from "./apartment.jpg"
+
+import "normalize.css/normalize.css"
+import "./theme.less"
 import "./App.css"
-import Leaderboard from "./components/Leaderboard"
-// import Log from "./components/Log"
+
+import cookies from "browser-cookies"
+import moment from 'moment';
+
+import apartment from "./apartment.jpg"
 import factory from "./factory.jpg"
 import { GameStateContext, GameStateProvider } from "./gameStateContext"
 import grocery from "./grocery.jpg"
 import { TimeSyncContext, TickProvider } from "./tick/TickContext"
-import { GameLocation } from "clicker-game/lib/game"
+import { GameLocation, locations } from "clicker-game/lib/locations"
 
-const getLeaderBoard = async () => {
-  const res = await axios.get("/leaderboard")
-  return res.data
-}
+import { Drawer } from 'antd'
 
-interface ClickerProps {
-  name: string
-}
+import { Tabs, TabPane } from './components/Tabs'
+import { Card } from './components/Card'
+import { Switch } from './components/Switch'
+import { HoverHighlight } from './components/HoverHighlight'
+import { Progress } from './components/Progress'
 
-// const Clicker = ({ name }: ClickerProps) => {
-//   const { game, setGame, error } = useContext(GameStateContext)
-//   const timeSync = useContext(TimeSyncContext)
-//   const pepeClickHandler = async () => {
-//     game.clickPepe(new Date(timeSync.now()))
-//     setGame(new Game(game.state))
-//   }
+import { useSpring, animated as a } from 'react-spring'
 
-//   const yeeClickHandler = async () => {
-//     game.clickYee(new Date(timeSync.now()))
-//     setGame(new Game(game.state))
-//   }
+import { EnvironmentFilled, ToolFilled, ExperimentFilled, LayoutFilled, MehFilled, SmileFilled, FrownFilled, ReadFilled } from '@ant-design/icons'
+import styled from "@emotion/styled"
 
-//   const now = maxBy([new Date(timeSync.now()), game.state.lastSynced], d =>
-//     d.getTime()
-//   ) as Date // Avoids some de-sync issues
-//   const state = game.getStateAt(now)
-//   return (
-//     <div>
-//       <div
-//         style={{
-//           margin: "25px",
-//           display: "flex",
-//           justifyContent: "center",
-//           alignItems: "center"
-//         }}
-//       >
-//         <div style={{ display: "inline-block", margin: "15px" }}>
-//           <div className="emote YEE" onClick={yeeClickHandler}></div>
-//           <div>{state.yees}</div>
-//         </div>
-//         <div>VS</div>
-//         <div style={{ display: "inline-block", margin: "15px" }}>
-//           <div className="emote PEPE" onClick={pepeClickHandler}></div>
-//           <div>{state.pepes}</div>
-//         </div>
-//       </div>
-//       <div className="errors">
-//         <p>{error ? error.toString(): null}</p>
-//       </div>
-//     </div>
-//   )
-// }
+import somaImage from './skelington.svg'
 
 interface GetNameProps {
   onChange: (s: string) => void
 }
-const GetName = ({ onChange }: GetNameProps) => {
-  const username = cookies.get("username")
-  if (username) {
-    onChange(username)
-  }
-  return <a href="/auth">Login</a>
-}
-
-// const testEntries = [
-//   new Event(EventType.login, "test"),
-//   new Event(
-//     EventType.login,
-//     "Lorem ipsum <b>dolor</b> sit amet, <font color='Red'>consectetur</font> adipiscing elit."
-//   ),
-//   new Event(
-//     EventType.login,
-//     "Donec ut nunc vehicula nulla molestie porta quis ac nisl. Ut malesuada pretium nisl, et vehicula nisi placerat a."
-//   ),
-//   new Event(EventType.login, "test"),
-//   new Event(
-//     EventType.login,
-//     "Maecenas <em>eleifend</em> malesuada commodo. Suspendisse potenti. Duis sagittis dapibus arcu ac volutpat. Nulla ac mi id urna ornare eleifend at et est. Vivamus placerat, felis nec varius ullamcorper, urna massa ultricies mauris, a tristique leo libero a nibh. Fusce consequat vehicula sodales."
-//   ),
-//   new Event(EventType.login, "test"),
-//   new Event(EventType.login, "test"),
-//   new Event(EventType.login, "test"),
-//   new Event(EventType.login, "test")
-// ]
+// const GetName = ({ onChange }: GetNameProps) => {
+//   const username = cookies.get("username")
+//   if (username) {
+//     onChange(username)
+//   }
+//   return <a href="/auth">Login</a>
+// }
 const LOCATION_IMAGES: { [s: string]: string } = {
   Factory: factory,
   "Apartment Complex": apartment,
   "Grocery Store": grocery
 }
 
+const textLogEntry = ({ timestamp, text, className }: {timestamp: Date, text: string, className?: string}) => (
+  <div className={"log-entry " + className}>
+    <span className="log-entry__time">[{moment(timestamp).format("HH:mm:ss")}]</span>&nbsp;
+    <span className="log-entry__text" dangerouslySetInnerHTML={{ __html: text }}></span>
+  </div>
+)
+
+const TextLogEntry = styled(textLogEntry)`
+  .log-entry__time {
+    color: rgba(0,0,0,0.35);
+  }
+`
+
+const logEntries = [
+  { timestamp: new Date(), text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
+  { timestamp: new Date(), text: "Nam <b>hendrerit</b> facilisis velit in eleifend. Mauris volutpat, ipsum et convallis rutrum, justo augue molestie augue, ac elementum sapien erat ut urna. Pellentesque vitae felis fermentum mi sollicitudin mollis molestie aliquam ex." },
+]
+
+const location = ({ name, info, className, changeLocation }: { name: string, info: string, className?: string, changeLocation: Function }) => (
+  <div className={"location " + className} onClick={e => changeLocation()}>
+    <h3 className="location__name">{name}</h3>
+    <div className="location__info">{info}</div>
+  </div>
+)
+
+const Location = styled(location)`
+  background: var(--off-white);
+  margin: 10px;
+  padding: 15px;
+  box-shadow: var(--grey) 5px 5px 0 0;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+  &:hover {
+    transform: translate(-5px, -5px);
+    box-shadow: var(--grey) 10px 10px 0 0;
+  }
+`
+
 function App() {
   const [name, setName] = useState<string | null>(null)
+  const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false)
+  const [showChat, setShowChat] = useState<boolean>(false)
   const { game, setGame } = useContext(GameStateContext)
   const timeSync = useContext(TimeSyncContext)
   const now = new Date(timeSync.now())
-  const gameState = game.getStateAt(now)
+
+  const { width } = useSpring({
+    width: showChat ? '300px' : '0px',
+    config: { mass: 1, tension: 1000, friction: 100 }
+  })
+
+  const gameState = {
+    spears: 0,
+    scrap: 0,
+    hunger: 0.25,
+    food: 0,
+
+    // TODO: Fix cloneDeep mess here
+    currentLocation: null,
+    actions: [],
+    lastSynced: new Date(0),
+    upgrades: [{
+      name: 'Soma',
+      cost: [
+        { resource: 'food', count: 1000 }
+      ]
+    }],
+    unlockedLocations: [locations.apartment, locations.factory]
+  }
   const { currentLocation } = gameState
 
   const setLocationHandler = (location: GameLocation | null) => {
@@ -115,67 +121,76 @@ function App() {
     game.goToLocation(location, time)
     setGame(game)
   }
-
   const leaveLocation = () => setLocationHandler(null)
 
+  const resource: React.SFC<{ resource: string, count: number, className?: string }> = ({ resource, count, className }) => (
+    <tr className={className}>
+      <td>{resource}:</td>
+      <td>{count}</td>
+      <td></td>
+    </tr>
+  )
+  const Resource = styled(resource)`
+    
+  `
+
+  
   return (
     <div className="App">
-      <div className="modules">
-        <div className="modules__column">
-          {/* <Log entries={testEntries} /> */}
-          <Leaderboard updateRate={5000} />
+      <Drawer></Drawer>
+      <div className="content">
+        <div className="log">
+          <Card headStyle={{ fontSize: '18px' }} title={<span><ReadFilled /> Log</span>}>
+            <div className="card__body">
+              {logEntries.map((entry, i) => <TextLogEntry key={i} {...entry}/>)}
+            </div>
+          </Card>
         </div>
-        <div className="modules__column"></div>
-      </div>
-      <div className="map">
-        {currentLocation === null && (
-          <div className="location-list">
-            {gameState.locations.map((location, i) => (
-              <button
-                key={i}
-                className="location-list__location"
-                onClick={() => setLocationHandler(location)}
-              >
-                <h2>{location.name}</h2>
-                <div className="location-list__hover">
-                  <h2>{location.name}</h2>
+        <div className="resources">
+          <Card headStyle={{ fontSize: '18px' }} title={<span><LayoutFilled /> Resources</span>}>
+            <div className="card__body">
+              <table className="resources__table">
+                <tbody>
+                  <Resource resource={'Scrap'} count={gameState.scrap} />
+                  <Resource resource={'Food'} count={gameState.food} />
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+        <div className="condition">
+          <Card headStyle={{ fontSize: '18px' }} title={<span>{gameState.hunger > 0.3 ? gameState.hunger > 0.7 ? <SmileFilled /> : <MehFilled /> : <FrownFilled />} Condition</span>}>
+            <div className="card__body">
+              <h4>Hunger</h4>
+              <Progress percent={gameState.hunger * 100}/>
+            </div>
+          </Card>
+        </div>
+        <div className="tabs">
+          <Card style={{height: '100%'}}>
+            <Tabs size="large">
+              <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><EnvironmentFilled /> Location</div></HoverHighlight>} key="1">
+                {currentLocation === null && <div className="locations">
+                  {gameState.unlockedLocations.map((location, i) => <Location key={i} changeLocation={() => setLocationHandler(location)} name={location.name} info={location.info} />)}
+                </div>}
+                <div className="current-location">
+                  {currentLocation}
                 </div>
-                <div className="location-list__info">{location.info}</div>
-              </button>
-            ))}
-          </div>
-        )}
-        {currentLocation !== null && (
-          <div
-            className="location"
-            style={{
-              backgroundImage: `url(${LOCATION_IMAGES[currentLocation.name]}`
-            }}
-          ></div>
-        )}
-        <div
-          className={
-            "location-menu" + (currentLocation === null ? "" : " active")
-          }
-        >
-          <h2>
-            {currentLocation !== null ? currentLocation.name : "Transient"}
-          </h2>
-          <div className="location-menu__content">
-            <div className="location-menu__description">
-              {currentLocation !== null
-                ? currentLocation.description
-                : "You aren't currently at a location"}
-            </div>
-            <div className="location-menu__progress">
-              <div className="location-menu__progress-bar"></div>
-            </div>
-            <button className="location-menu__leave" onClick={leaveLocation}>
-              Leave
-            </button>
-          </div>
+              </TabPane>
+              <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="2">
+                Content of Tab Pane 2
+              </TabPane>
+              {gameState.upgrades.find(upgrade => upgrade.name === 'Soma') && <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ExperimentFilled /> Soma</div></HoverHighlight>} key="3">
+                <img src={somaImage} style={{maxWidth: '300px', margin: '0 auto', display: 'block' }} alt=""/>
+              </TabPane>}
+            </Tabs>
+          </Card>
         </div>
       </div>
+      <div className="footer">
+        <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} />
+      </div>
+      <a.div style={{ width }} className="chat">chat</a.div>
     </div>
   )
 }

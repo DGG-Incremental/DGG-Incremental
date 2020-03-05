@@ -1,190 +1,66 @@
+@import '~antd/dist/antd.css';
+
 .App {
   display: grid;
-  grid-template-areas: "modules map";
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 100vh;
+  grid-template-rows: 1fr auto;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "content chat"
+    "footer footer";
+  height: 100vh;
 }
 
-.modules {
-  display: flex;
-  height: 100%;
-}
-
-.modules__column {
-  display: flex;
-  flex-direction: column;
+.App > .content {
+  display: grid;
+  grid-template-columns: 2fr minmax(300px, 1fr) 4fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: 
+    "log resources tabs"
+    "log condition tabs";
+  gap: 20px;
+  padding: 20px;
   flex: 1;
-  height: 100%;
+  grid-area: content;
 }
 
-.modules__column > * {
-  min-height: 300px
-}
-
-.map {
-  grid-area: map;
-  background: var(--white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  /* margin: 10px; */
-}
-
-.location-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.location-list__location {
-  margin: 10px;
-  padding: 0;
-  border: none;
-  text-align: left;
-  position: relative;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-  box-shadow: var(--grey) 5px 5px;
-}
-
-.location-list__location h2 {
-  padding: 5px 20px 5px 10px;
-  margin: 0;
-}
-
-/* .location-list__location h2::first-letter {
-  text-decoration: underline;
-} */
-
-.location-list__hover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 100%;
+.chat {
+  grid-area: chat;
   overflow: hidden;
-  box-sizing: border-box;
-  transition: right 0.3s cubic-bezier(.16,.2,.19,.91);
-  white-space: nowrap;
 }
 
-.location-list__hover h2 {
-  background: var(--white);
-  background: #fff34e;
-  /* background: #4e6eff; */
-  color: #776014;
-  /* color: var(--black); */
+.tabs {
+  grid-area: tabs;
 }
 
-.location-list__location:hover .location-list__hover {
-  right: 0;
-}
-
-.location-list__info {
-  padding: 5px 10px 15px 10px;
-  opacity: 0.7;
-}
-
-.location-list__location:after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  margin-left: -0.2em;
-  top: 1.5em;
-  right: 5px;
-  box-sizing: border-box;
-  
-  border: 0.3em solid black;
-  border-color: transparent transparent var(--black) var(--black);
-  transform: translate(0, -50%) rotate(-135deg);
-  transition: right 0.3s ease;
-}
-
-.location-list__location:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: var(--grey) 11px 11px;
-}
-
-.location-list__location:hover:after {
-  right: -25px;
-}
-
-.location-list__location:focus {
-  outline: none;
-}
-
-.location-list__location:hover:before {
-  position: absolute;
-  content: '';
-  top: 0;
-  left: 0;
-  right: -5px;
-  bottom: -5px;
-}
-
-.location-menu {
-  width: 50%;
-  position: absolute;
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  /* padding: 20px; */
-  background: var(--white);
-  transition: bottom 0.4s cubic-bezier(.29,.3,0,.99);
-  /* box-shadow: var(--grey) 5px 5px; */
-}
-
-.location-menu.active {
-  bottom: 55%;
-}
-
-.location-menu__content {
-}
-
-.location-menu__description {
-  font-size: 0.77em;
-  opacity: 0.7;
-  padding: 5px 10px;
-}
-
-.location-menu__progress {
-  margin: 10px;
-  background: #3332;
-  /* width: 100%; */
-  height: 4px;
-}
-
-.location-menu__progress-bar {
+.footer {
+  height: 50px;
   background: var(--black);
-  width: 50%;
-  height: 100%;
+  grid-area: footer;
 }
 
-.location {
-  width: 100%;
-  height: 100%;
-  /* background-image: url("https://images.unsplash.com/33/91vrBzqgSveXxB03xgrG_patterns.jpg?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2100&q=80"); */
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  animation: fade-in 0.3s ease;
+.locations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 250px);
+  grid-template-rows: repeat(auto-fit, 200px);
+  /* justify-items: center;
+  align-items: center; */
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.resources {
+  grid-area: resources;
 }
 
-.location-menu__leave {
-  font-size: 20px;
-  font-weight: 300;
+.condition {
+  grid-area: condition;
+}
+
+.card__body {
+  padding: 10px;
+}
+
+h4 {
   text-transform: uppercase;
-  border: none;
-  color: var(--black);
-  cursor: pointer;
-  padding: 5px 10px 5px 10px;
+  font-weight: 400 !important;
+  color: rgba(0,0,0,0.45) !important;
+  margin: 0 !important;
 }

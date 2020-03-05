@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react"
 import axios from "axios"
 
 import './Leaderboard.css'
-import Module from './Module'
 
 
 const getLeaderBoard = async () => {
@@ -31,14 +30,14 @@ const Leaderboard = ({ updateRate }: LeaderboardProps) => {
 	}, [])
 
 	return (
-		<Module className="leaderboard" title="Leaderboard">
+		<div className="leaderboard">
 			{state.leaderboard.map((player, i) => (
 				<div key={i} className="leaderboard__player">
 					<div className="leaderboard__name">{player.name}</div>
 					<div className="leaderboard__score">{parseInt(player.yees) + parseInt(player.pepes)}</div>
 				</div>
 			))}
-		</Module> 
+		</div>
 	)
 }
 export default Leaderboard

@@ -21,24 +21,27 @@ code {
     monospace;
 }
 
-h1, h2 {
+h1, h2, h3 {
   text-transform: uppercase;
   font-weight: 300;
 }
 
-h2 {
+/* h2 {
   background: var(--black);
   color: var(--white);
   padding: 5px 10px;
   margin: 0;
-}
+} */
 
 html {
   background: var(--off-white);
 }
 
 .overlay {
-  background-image: url('./digital-overlay2-01.png');
+  /* background-image: url('./digital-overlay1.png'); */
+  background-image: url('./digital-overlay2.png');
+  /* background-image: url('./digital-overlay3.png'); */
+  /* background-image: url('./digital-overlay4.png'); */
   background-repeat: repeat;
   position: fixed;
   top: 0;
@@ -49,20 +52,8 @@ html {
   pointer-events: none;
 }
 
-/* .overlay {
-  background-image: url('./digital-overlay-01.png');
-  background-repeat: repeat;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0.05;
-  pointer-events: none;
-} */
-
 :root {
-  --black: #222;
+  --black: #333;
   --white: #fff;
   --off-white: #f2f2f2;
   --grey: #dfdfdf;
