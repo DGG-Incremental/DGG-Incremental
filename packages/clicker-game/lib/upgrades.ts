@@ -1,4 +1,5 @@
 export interface Upgrade {
-  name: string,
+  name: string
   cost: { resource: string, count: number }[]
+  description: string
 }

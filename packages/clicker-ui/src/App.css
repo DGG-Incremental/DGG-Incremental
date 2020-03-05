@@ -64,3 +64,9 @@ h4 {
   color: rgba(0,0,0,0.45) !important;
   margin: 0 !important;
 }
+
+.upgrades__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 150px);
+  grid-template-rows: repeat(auto-fit, 150px);
+}

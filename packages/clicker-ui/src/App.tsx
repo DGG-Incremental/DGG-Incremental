@@ -24,7 +24,7 @@ import { Progress } from './components/Progress'
 
 import { useSpring, animated as a } from 'react-spring'
 
-import { EnvironmentFilled, ToolFilled, ExperimentFilled, LayoutFilled, MehFilled, SmileFilled, FrownFilled, ReadFilled } from '@ant-design/icons'
+import { EnvironmentFilled, ToolFilled, ExperimentFilled, LayoutFilled, MehFilled, SmileFilled, FrownFilled, ReadFilled, AppstoreAddOutlined, GroupOutlined } from '@ant-design/icons'
 import styled from "@emotion/styled"
 
 import somaImage from './skelington.svg'
@@ -110,7 +110,8 @@ function App() {
       name: 'Soma',
       cost: [
         { resource: 'food', count: 1000 }
-      ]
+      ],
+      description: 'test'
     }],
     unlockedLocations: [locations.apartment, locations.factory]
   }
@@ -132,6 +133,26 @@ function App() {
   )
   const Resource = styled(resource)`
     
+  `
+
+  const upgrade = ({ name, info, className, purchaseUpgrade }: { name: string, info: string, className?: string, purchaseUpgrade?: () => void }) => (
+    <div className={"upgrade " + className} onClick={purchaseUpgrade}>
+      <h3 className="upgrade__name">{name}</h3>
+      <div className="upgrade__info">{info}</div>
+    </div>
+  )
+
+  const Upgrade = styled(upgrade)`
+    background: var(--off-white);
+    margin: 10px;
+    padding: 15px;
+    box-shadow: var(--grey) 5px 5px 0 0;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+    &:hover {
+      transform: translate(-5px, -5px);
+      box-shadow: var(--grey) 10px 10px 0 0;
+    }
   `
 
   
@@ -178,7 +199,16 @@ function App() {
                 </div>
               </TabPane>
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="2">
-                Content of Tab Pane 2
+                <div className="upgrades" style={{padding: '20px'}}>
+                  <Card headStyle={{ fontSize: '18px' }} style={{ marginBottom: '20px' }} title={<span><AppstoreAddOutlined /> Construct Upgrades</span>}>
+
+                  </Card>
+                  <Card headStyle={{ fontSize: '18px' }} title={<span><GroupOutlined /> Owned Upgrades</span>}>
+                    <div className="upgrades__list">
+                      {gameState.upgrades.map(upgrade => <Upgrade name={upgrade.name} info={upgrade.description} />)}
+                    </div>
+                  </Card>
+                </div>
               </TabPane>
               {gameState.upgrades.find(upgrade => upgrade.name === 'Soma') && <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ExperimentFilled /> Soma</div></HoverHighlight>} key="3">
                 <img src={somaImage} style={{maxWidth: '300px', margin: '0 auto', display: 'block' }} alt=""/>

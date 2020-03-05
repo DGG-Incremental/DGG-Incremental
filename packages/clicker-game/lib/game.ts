@@ -45,7 +45,8 @@ export class Game {
       name: 'Soma',
       cost: [
         { resource: 'food', count: 1000 }
-      ]
+      ],
+      description: 'test'
     }],
     unlockedLocations: [locations.apartment, locations.factory]
   }
