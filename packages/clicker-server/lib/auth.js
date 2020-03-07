@@ -7,6 +7,7 @@ const APP_ID = process.env.DGG_OATH_ID
 const APP_SECRET = process.env.DGG_OATH_SECRET
 const REDIRECT_URI = process.env.REDIRECT_URI
 
+
 const hash = val =>
   crypto
     .createHash("sha256")
