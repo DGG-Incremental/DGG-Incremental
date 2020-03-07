@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useContext
 } from "react"
-import { getInitialState, syncGame } from "./api"
+import { getInitialState, syncGame } from "./store"
 import { useInterval } from "./useInterval"
 import { TimeSyncContext } from "./tick/TickContext"
 import { Game } from "clicker-game/lib/game"
