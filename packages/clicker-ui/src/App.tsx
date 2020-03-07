@@ -118,6 +118,7 @@ function App() {
   const { currentLocation } = gameState
 
   const setLocationHandler = (location: GameLocation | null) => {
+    console.log("location change:", location)
     const time = new Date(timeSync.now())
     game.goToLocation(location, time)
     setGame(game)
@@ -195,7 +196,7 @@ function App() {
                   {gameState.unlockedLocations.map((location, i) => <Location key={i} changeLocation={() => setLocationHandler(location)} name={location.name} info={location.info} />)}
                 </div>}
                 <div className="current-location">
-                  {currentLocation}
+                  {gameState.lastSynced.toString()}
                 </div>
               </TabPane>
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="2">
