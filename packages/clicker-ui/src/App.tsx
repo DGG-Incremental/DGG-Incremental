@@ -25,7 +25,7 @@ import { Progress } from './components/Progress'
 import { Button } from './components/Button'
 import LoadingBoxes from './components/LoadingBoxes'
 
-import { useSpring, animated as a } from 'react-spring'
+import { useTransition, animated as a } from 'react-spring'
 
 import { DeleteFilled, ToolFilled, ExperimentFilled, LayoutFilled, MehFilled, SmileFilled, FrownFilled, ReadFilled, AppstoreAddOutlined, GroupOutlined, MessageFilled} from '@ant-design/icons'
 import styled from "@emotion/styled"
@@ -118,9 +118,12 @@ function App() {
   const now = new Date(timeSync.now())
   
 
-  const { width } = useSpring({
-    width: showChat ? '300px' : '0px',
-    config: { mass: 1, tension: 1000, friction: 100 }
+  const transitions = useTransition(showChat, null, {
+    from: { width: '0px', overflow: 'hidden' },
+    enter: { width: '300px' },
+    leave: { width: '0px' },
+    // width: showChat ? '300px' : '0px',
+    // config: { mass: 1, tension: 1000, friction: 100 }
   })
 
   const gameState = game.getStateAt(now);
@@ -254,12 +257,18 @@ function App() {
         {/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
         <Switch checkedChildren={<MessageFilled />} unCheckedChildren={<MessageFilled />} onChange={value => setShowChat(value)} />
       </div>
-      <a.div style={{ width }} className="chat">
+      {transitions.map(({ item, key, props }) => item && <a.div key={key} style={props}>
+        <iframe
+          src="https://www.destiny.gg/embed/chat"
+          style={{ height: "100%", }}
+        ></iframe>
+      </a.div>)}
+      {/* <a.div style={{ width }} className="chat">
         <iframe
           src="https://www.destiny.gg/embed/chat"
           style={{ height: "100%" }}
         ></iframe>
-      </a.div>
+      </a.div> */}
     </div>
   )
 }

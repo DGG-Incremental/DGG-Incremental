@@ -48,16 +48,16 @@ export default styled(LoadingBoxes)`
     background: var(--black);
     overflow: hidden;
   }
-  .loading-box:nth-child(1) {
+  .loading-box:nth-of-type(1) {
     animation: ${shrink} 4s ease infinite;
   }
-  .loading-box:nth-child(2) {
+  .loading-box:nth-of-type(2) {
     animation: ${shrink} 4s 0.25s ease infinite;
   }
-  .loading-box:nth-child(4) {
+  .loading-box:nth-of-type(4) {
     animation: ${shrink} 4s 0.5s ease infinite;
   }
-  .loading-box:nth-child(3) {
+  .loading-box:nth-of-type(3) {
     animation: ${shrink} 4s 0.75s ease infinite;
   }
 `
