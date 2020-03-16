@@ -41,11 +41,11 @@ export default styled(LoadingBoxes)`
   align-items: center;
   width: 16px;
   height: 16px;
-  vertical-align: 0.35em;
+  vertical-align: 0.4em;
   .loading-box {
     width: 8px;
     height: 8px;
-    background: var(--black);
+    background: var(--white);
     overflow: hidden;
   }
   .loading-box:nth-of-type(1) {

@@ -222,11 +222,14 @@ function App() {
                 </div>
                 <hr/>
                 <div className="current-location">
-                  <div className="scavenge">
-                    <Progress percent={50} />
-                    <div style={{ textTransform: 'uppercase' }}>Scavenging <LoadingBoxes /></div>
-                  </div>
-                  <Button type='primary' onClick={scavengeHandler}>Scrounge</Button>
+                  {/* <div className="scavenge"> */}
+                  <Card headStyle={{ fontSize: '18px' }} style={{ maxWidth: '400px'}} title={<div><LoadingBoxes /> Scavenging</div>}>
+                    <div className="card__body">
+                      <Progress percent={50} />
+                    </div>
+                  </Card>
+                  <Button style={{marginTop: '20px'}} type='primary' onClick={scavengeHandler}>Scrounge</Button>                
+                  {/* </div> */}
                 </div>
               </TabPane>
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="2">

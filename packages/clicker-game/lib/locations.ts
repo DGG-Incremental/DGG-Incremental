@@ -15,13 +15,13 @@ const factory: GameLocation = {
 
 const apartment: GameLocation = {
   name: "Apartment Complex",
-  info: "Dirty clothing scraps and faded memories",
+  info: "Scraps of dirty clothing and faded memories",
   description: "",
 }
 
 const groceryStore: GameLocation = {
   name: "Grocery Store",
-  info: "",
+  info: "Tiny morsels and a lingering stench",
   description: ""
 }
 

@@ -49,7 +49,7 @@ export class Game {
       description: 'test',
       owned: false,
     }],
-    unlockedLocations: [locations.apartment, locations.factory,locations.groceryStore]
+    unlockedLocations: [locations.apartment, locations.factory, locations.groceryStore]
   }
 
   constructor(state: Partial<GameState> = {}) {
