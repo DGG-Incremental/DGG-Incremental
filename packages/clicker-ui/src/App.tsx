@@ -35,13 +35,13 @@ import somaImage from './skelington.svg'
 interface GetNameProps {
   onChange: (s: string) => void
 }
-// const GetName = ({ onChange }: GetNameProps) => {
-//   const username = cookies.get("username")
-//   if (username) {
-//     onChange(username)
-//   }
-//   return <a href="/auth">Login</a>
-// }
+const GetName = ({ onChange }: GetNameProps) => {
+  const username = cookies.get("username")
+  if (username) {
+    onChange(username)
+  }
+  return <a href="/auth">Login</a>
+}
 const LOCATION_IMAGES: { [s: string]: string } = {
   Factory: factory,
   "Apartment Complex": apartment,
@@ -256,6 +256,8 @@ function App() {
       </div>
       <div className="footer">
         {/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
+        <div style={{ gridArea: 'info', fontSize: '12px', padding: '0 10px', lineHeight: '22px' }}>dgg clicker [ 0.0.1alpha ]</div>
+        <div style={{ gridArea: 'leaderboard', padding: '0 10px', }}></div>
         <div style={{ gridArea: 'chat' }}><Switch checkedChildren={<MessageFilled />} unCheckedChildren={<MessageFilled />} onChange={value => setShowChat(value)} /></div>
       </div>
       {transitions.map(({ item, key, props }) => item && <a.div key={key} style={props}>
