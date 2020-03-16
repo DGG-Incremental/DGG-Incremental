@@ -122,6 +122,7 @@ function App() {
     from: { width: '0px', overflow: 'hidden' },
     enter: { width: '300px' },
     leave: { width: '0px' },
+    unique: true,
     // width: showChat ? '300px' : '0px',
     // config: { mass: 1, tension: 1000, friction: 100 }
   })
@@ -255,7 +256,7 @@ function App() {
       </div>
       <div className="footer">
         {/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
-        <Switch checkedChildren={<MessageFilled />} unCheckedChildren={<MessageFilled />} onChange={value => setShowChat(value)} />
+        <div style={{ gridArea: 'chat' }}><Switch checkedChildren={<MessageFilled />} unCheckedChildren={<MessageFilled />} onChange={value => setShowChat(value)} /></div>
       </div>
       {transitions.map(({ item, key, props }) => item && <a.div key={key} style={props}>
         <iframe

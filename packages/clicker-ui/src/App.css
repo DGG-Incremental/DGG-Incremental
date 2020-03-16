@@ -36,6 +36,11 @@
   height: 50px;
   background: var(--black);
   grid-area: footer;
+  display: grid;
+  grid-template-areas: "info leaderboard . chat";
+  grid-template-columns: auto auto 1fr 60px;
+  align-content: center;
+  justify-content: center;
 }
 
 .locations {
