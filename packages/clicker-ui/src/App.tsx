@@ -5,7 +5,8 @@ import "./theme.less"
 import "./App.css"
 
 import cookies from "browser-cookies"
-import moment from 'moment';
+import moment from 'moment'
+import classNames from 'classnames'
 
 import apartment from "./apartment.jpg"
 import factory from "./factory.jpg"
@@ -14,17 +15,19 @@ import grocery from "./grocery.jpg"
 import { TimeSyncContext, TickProvider } from "./tick/TickContext"
 import { GameLocation, locations } from "clicker-game/lib/locations"
 
-import { Drawer } from 'antd'
+import { Drawer, Empty } from 'antd'
 
 import { Tabs, TabPane } from './components/Tabs'
 import { Card } from './components/Card'
 import { Switch } from './components/Switch'
 import { HoverHighlight } from './components/HoverHighlight'
 import { Progress } from './components/Progress'
+import { Button } from './components/Button'
+import LoadingBoxes from './components/LoadingBoxes'
 
 import { useSpring, animated as a } from 'react-spring'
 
-import { EnvironmentFilled, ToolFilled, ExperimentFilled, LayoutFilled, MehFilled, SmileFilled, FrownFilled, ReadFilled, AppstoreAddOutlined, GroupOutlined } from '@ant-design/icons'
+import { DeleteFilled, ToolFilled, ExperimentFilled, LayoutFilled, MehFilled, SmileFilled, FrownFilled, ReadFilled, AppstoreAddOutlined, GroupOutlined, MessageFilled} from '@ant-design/icons'
 import styled from "@emotion/styled"
 
 import somaImage from './skelington.svg'
@@ -63,8 +66,8 @@ const logEntries = [
   { timestamp: new Date(), text: "Nam <b>hendrerit</b> facilisis velit in eleifend. Mauris volutpat, ipsum et convallis rutrum, justo augue molestie augue, ac elementum sapien erat ut urna. Pellentesque vitae felis fermentum mi sollicitudin mollis molestie aliquam ex." },
 ]
 
-const location = ({ name, info, className, changeLocation }: { name: string, info: string, className?: string, changeLocation: Function }) => (
-  <div className={"location " + className} onClick={e => changeLocation()}>
+const location = ({ name, info, className, changeLocation, here, disabled }: { name: string, info: string, className?: string, changeLocation: Function, here?: boolean, disabled?: boolean }) => (
+  <div className={classNames("location", className, { disabled, here })} onClick={e => changeLocation()}>
     <h3 className="location__name">{name}</h3>
     <div className="location__info">{info}</div>
   </div>
@@ -76,10 +79,33 @@ const Location = styled(location)`
   padding: 15px;
   box-shadow: var(--grey) 5px 5px 0 0;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
   cursor: pointer;
   &:hover {
     transform: translate(-5px, -5px);
     box-shadow: var(--grey) 10px 10px 0 0;
+  }
+  &.here {
+    cursor: auto; 
+  }
+  &.here:hover {
+    transform: none;
+    box-shadow: var(--grey) 5px 5px 0 0;
+  }
+  &:after {
+    content: 'You are here';
+    position: absolute;
+    top: calc(100% - 10px);
+    right: 0;
+    background: var(--black);
+    color: var(--white);
+    padding: 5px 8px;
+    opacity: 0;
+    transition: opacity 0.25s ease, top 0.25s ease;
+  }
+  &.here:after {
+    opacity: 1;
+    top: calc(100% - 20px);
   }
 `
 
@@ -90,31 +116,14 @@ function App() {
   const { game, setGame } = useContext(GameStateContext)
   const timeSync = useContext(TimeSyncContext)
   const now = new Date(timeSync.now())
+  
 
   const { width } = useSpring({
     width: showChat ? '300px' : '0px',
     config: { mass: 1, tension: 1000, friction: 100 }
   })
 
-  const gameState = {
-    spears: 0,
-    scrap: 0,
-    hunger: 0.25,
-    food: 0,
-
-    // TODO: Fix cloneDeep mess here
-    currentLocation: null,
-    actions: [],
-    lastSynced: new Date(0),
-    upgrades: [{
-      name: 'Soma',
-      cost: [
-        { resource: 'food', count: 1000 }
-      ],
-      description: 'test'
-    }],
-    unlockedLocations: [locations.apartment, locations.factory]
-  }
+  const gameState = game.getStateAt(now);
   const { currentLocation } = gameState
 
   const setLocationHandler = (location: GameLocation | null) => {
@@ -123,6 +132,13 @@ function App() {
     game.goToLocation(location, time)
     setGame(game)
   }
+
+  const scavengeHandler = () => {
+    const time = new Date(timeSync.now())
+    game.scavenge(time);
+    setGame(game)
+  }
+
   const leaveLocation = () => setLocationHandler(null)
 
   const resource: React.SFC<{ resource: string, count: number, className?: string }> = ({ resource, count, className }) => (
@@ -191,22 +207,38 @@ function App() {
         <div className="tabs">
           <Card style={{height: '100%'}}>
             <Tabs size="large">
-              <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><EnvironmentFilled /> Location</div></HoverHighlight>} key="1">
-                {currentLocation === null && <div className="locations">
-                  {gameState.unlockedLocations.map((location, i) => <Location key={i} changeLocation={() => setLocationHandler(location)} name={location.name} info={location.info} />)}
-                </div>}
+              <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><DeleteFilled /> Scavenge</div></HoverHighlight>} key="1">
+                <div className="locations">
+                  {gameState.unlockedLocations.map((location, i) => <Location
+                    key={i}
+                    changeLocation={() => setLocationHandler(location)}
+                    here={currentLocation?.name === location.name}
+                    name={location.name}
+                    info={location.info} />)}
+                </div>
+                <hr/>
                 <div className="current-location">
-                  {gameState.lastSynced.toString()}
+                  <div className="scavenge">
+                    <Progress percent={50} />
+                    <div style={{ textTransform: 'uppercase' }}>Scavenging <LoadingBoxes /></div>
+                  </div>
+                  <Button type='primary' onClick={scavengeHandler}>Scrounge</Button>
                 </div>
               </TabPane>
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="2">
                 <div className="upgrades" style={{padding: '20px'}}>
                   <Card headStyle={{ fontSize: '18px' }} style={{ marginBottom: '20px' }} title={<span><AppstoreAddOutlined /> Construct Upgrades</span>}>
-
+                    <div className="upgrades__list">
+                      {gameState.upgrades.filter(u => !u.owned).length === 0 ?
+                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> :
+                        gameState.upgrades.filter(u => !u.owned).map((upgrade, i) => <Upgrade key={i} name={upgrade.name} info={upgrade.description} />)}
+                    </div>
                   </Card>
                   <Card headStyle={{ fontSize: '18px' }} title={<span><GroupOutlined /> Owned Upgrades</span>}>
                     <div className="upgrades__list">
-                      {gameState.upgrades.map(upgrade => <Upgrade name={upgrade.name} info={upgrade.description} />)}
+                      {gameState.upgrades.filter(u => u.owned).length === 0 ?
+                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> :
+                        gameState.upgrades.filter(u => u.owned).map((upgrade, i) => <Upgrade key={i} name={upgrade.name} info={upgrade.description} />)}
                     </div>
                   </Card>
                 </div>
@@ -219,7 +251,8 @@ function App() {
         </div>
       </div>
       <div className="footer">
-        <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} />
+        {/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
+        <Switch checkedChildren={<MessageFilled />} unCheckedChildren={<MessageFilled />} onChange={value => setShowChat(value)} />
       </div>
       <a.div style={{ width }} className="chat">chat</a.div>
     </div>

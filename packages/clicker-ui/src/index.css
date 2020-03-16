@@ -58,3 +58,8 @@ html {
   --off-white: #f2f2f2;
   --grey: #dfdfdf;
 }
+
+hr {
+  border: var(--off-white) 1px solid;
+  margin: 10px;
+}

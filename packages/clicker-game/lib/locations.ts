@@ -8,14 +8,14 @@ export interface GameLocation {
 
 const factory: GameLocation = {
   name: "Factory",
-  info: "The Factory is a place",
+  info: "Rusted metal and tetanus",
   description:
     "The rusted carcases of old machines huddle around the concrete floor.",
 }
 
 const apartment: GameLocation = {
   name: "Apartment Complex",
-  info: "",
+  info: "Dirty clothing scraps and faded memories",
   description: "",
 }
 

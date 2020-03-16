@@ -46,9 +46,10 @@ export class Game {
       cost: [
         { resource: 'food', count: 1000 }
       ],
-      description: 'test'
+      description: 'test',
+      owned: false,
     }],
-    unlockedLocations: [locations.apartment, locations.factory]
+    unlockedLocations: [locations.apartment, locations.factory,locations.groceryStore]
   }
 
   constructor(state: Partial<GameState> = {}) {

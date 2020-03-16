@@ -70,3 +70,19 @@ h4 {
   grid-template-columns: repeat(auto-fit, 150px);
   grid-template-rows: repeat(auto-fit, 150px);
 }
+
+.current-location {
+  padding: 10px;
+}
+
+.scavenge {
+  background: var(--off-white);
+  padding: 10px;
+  margin-bottom: 10px;
+  max-width: 300px;
+  text-align: center;
+}
+
+.scavenge .ant-progress {
+  margin-bottom: 5px;
+}

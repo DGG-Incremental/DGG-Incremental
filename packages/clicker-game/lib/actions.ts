@@ -29,8 +29,8 @@ export interface MakeSpearAction extends Action {
 }
 
 function scavenge(state: GameState) {
-  state.scrap = state.scrap + 1 
-
+  state.scrap = state.scrap + 1
+  
   if(state.currentLocation?.name === locations.groceryStore.name) {
     state.food = state.food + 1
   }
