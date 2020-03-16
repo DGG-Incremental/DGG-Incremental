@@ -160,7 +160,7 @@ function App() {
   )
 
   const Upgrade = styled(upgrade)`
-    background: var(--off-white);
+    background: var(--white);
     margin: 10px;
     padding: 15px;
     box-shadow: var(--grey) 5px 5px 0 0;
@@ -254,7 +254,12 @@ function App() {
         {/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
         <Switch checkedChildren={<MessageFilled />} unCheckedChildren={<MessageFilled />} onChange={value => setShowChat(value)} />
       </div>
-      <a.div style={{ width }} className="chat">chat</a.div>
+      <a.div style={{ width }} className="chat">
+        <iframe
+          src="https://www.destiny.gg/embed/chat"
+          style={{ height: "100%" }}
+        ></iframe>
+      </a.div>
     </div>
   )
 }

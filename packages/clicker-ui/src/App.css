@@ -86,3 +86,7 @@ h4 {
 .scavenge .ant-progress {
   margin-bottom: 5px;
 }
+
+iframe {
+  border: none;
+}
