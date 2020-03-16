@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useState, useEffect } from "react"
 
 import "normalize.css/normalize.css"
 import "./theme.less"
@@ -10,7 +10,7 @@ import { GameStateContext, GameStateProvider } from "./gameStateContext"
 import { TimeSyncContext, TickProvider } from "./tick/TickContext"
 import { GameLocation } from "clicker-game/lib/locations"
 
-import { Drawer } from 'antd'
+import { Drawer, Modal } from 'antd'
 
 import { Tabs, TabPane } from './components/Tabs'
 import { Card } from './components/Card'
@@ -26,7 +26,7 @@ import Soma from './components/tabs/Soma'
 
 import { useTransition, animated as a } from 'react-spring'
 
-import { ToolFilled, ExperimentFilled, MessageFilled, DeleteFilled } from '@ant-design/icons'
+import { ToolFilled, ExperimentFilled, MessageFilled, DeleteFilled, ExclamationCircleOutlined } from '@ant-design/icons'
 
 interface GetNameProps {
   onChange: (s: string) => void
@@ -36,7 +36,7 @@ const GetName = ({ onChange }: GetNameProps) => {
   if (username) {
     onChange(username)
   }
-  return <a href="/auth">Login</a>
+  return <a href="/auth">login</a>
 }
 
 const logEntries = [
@@ -52,6 +52,16 @@ function App() {
   const timeSync = useContext(TimeSyncContext)
   const now = new Date(timeSync.now())
   
+  useEffect(() => {
+    if (!cookies.get("username") && process.env.REACT_APP_STORAGE_TYPE !== "local") {
+      Modal.confirm ({
+        title: 'You are not logged in',
+        icon: <ExclamationCircleOutlined />,
+        content: <span><a href='/auth'>Login</a> with dgg</span>,
+        onOk() { location.href = '/auth'; }
+      });
+    }
+  }, [])
 
   const transitions = useTransition(showChat, null, {
     from: { width: '0px', overflow: 'hidden' },
@@ -109,7 +119,7 @@ function App() {
       <div className="footer">
         {/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
         <div style={{ gridArea: 'info', fontSize: '12px', padding: '0 10px', lineHeight: '22px' }}>dgg clicker [ 0.0.1alpha ]</div>
-        <div style={{ gridArea: 'leaderboard', padding: '0 10px', }}>PersonName</div>
+        <div style={{ gridArea: 'leaderboard', padding: '0 10px', }}><GetName onChange={name => { console.log(name) }}/></div>
         <div style={{ gridArea: 'chat' }}><Switch checkedChildren={<MessageFilled />} unCheckedChildren={<MessageFilled />} onChange={value => setShowChat(value)} /></div>
       </div>
       {transitions.map(({ item, key, props }) => item && <a.div key={key} style={props}>
