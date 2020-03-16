@@ -12,6 +12,7 @@ export const Card = styled(AntCard)`
     text-transform: uppercase;
     font-weight: 300;
     padding: 0 15px;
+    font-size: 18px;
   }
   .ant-card-head-title {
     padding: 5px 0;

@@ -5,32 +5,28 @@ import "./theme.less"
 import "./App.css"
 
 import cookies from "browser-cookies"
-import moment from 'moment'
-import classNames from 'classnames'
 
-import apartment from "./apartment.jpg"
-import factory from "./factory.jpg"
 import { GameStateContext, GameStateProvider } from "./gameStateContext"
-import grocery from "./grocery.jpg"
 import { TimeSyncContext, TickProvider } from "./tick/TickContext"
-import { GameLocation, locations } from "clicker-game/lib/locations"
+import { GameLocation } from "clicker-game/lib/locations"
 
-import { Drawer, Empty } from 'antd'
+import { Drawer } from 'antd'
 
 import { Tabs, TabPane } from './components/Tabs'
 import { Card } from './components/Card'
 import { Switch } from './components/Switch'
 import { HoverHighlight } from './components/HoverHighlight'
-import { Progress } from './components/Progress'
-import { Button } from './components/Button'
-import LoadingBoxes from './components/LoadingBoxes'
+import Log from './components/cards/Log'
+import Resources from './components/cards/Resources'
+import Condition from './components/cards/Condition'
+
+import Scavenge from './components/tabs/Scavenge'
+import Upgrades from './components/tabs/Upgrades'
+import Soma from './components/tabs/Soma'
 
 import { useTransition, animated as a } from 'react-spring'
 
-import { DeleteFilled, ToolFilled, ExperimentFilled, LayoutFilled, MehFilled, SmileFilled, FrownFilled, ReadFilled, AppstoreAddOutlined, GroupOutlined, MessageFilled} from '@ant-design/icons'
-import styled from "@emotion/styled"
-
-import somaImage from './skelington.svg'
+import { ToolFilled, ExperimentFilled, MessageFilled, DeleteFilled } from '@ant-design/icons'
 
 interface GetNameProps {
   onChange: (s: string) => void
@@ -42,72 +38,11 @@ const GetName = ({ onChange }: GetNameProps) => {
   }
   return <a href="/auth">Login</a>
 }
-const LOCATION_IMAGES: { [s: string]: string } = {
-  Factory: factory,
-  "Apartment Complex": apartment,
-  "Grocery Store": grocery
-}
-
-const textLogEntry = ({ timestamp, text, className }: {timestamp: Date, text: string, className?: string}) => (
-  <div className={"log-entry " + className}>
-    <span className="log-entry__time">[{moment(timestamp).format("HH:mm:ss")}]</span>&nbsp;
-    <span className="log-entry__text" dangerouslySetInnerHTML={{ __html: text }}></span>
-  </div>
-)
-
-const TextLogEntry = styled(textLogEntry)`
-  .log-entry__time {
-    color: rgba(0,0,0,0.35);
-  }
-`
 
 const logEntries = [
   { timestamp: new Date(), text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
   { timestamp: new Date(), text: "Nam <b>hendrerit</b> facilisis velit in eleifend. Mauris volutpat, ipsum et convallis rutrum, justo augue molestie augue, ac elementum sapien erat ut urna. Pellentesque vitae felis fermentum mi sollicitudin mollis molestie aliquam ex." },
 ]
-
-const location = ({ name, info, className, changeLocation, here, disabled }: { name: string, info: string, className?: string, changeLocation: Function, here?: boolean, disabled?: boolean }) => (
-  <div className={classNames("location", className, { disabled, here })} onClick={e => changeLocation()}>
-    <h3 className="location__name">{name}</h3>
-    <div className="location__info">{info}</div>
-  </div>
-)
-
-const Location = styled(location)`
-  background: var(--off-white);
-  margin: 10px;
-  padding: 15px;
-  box-shadow: var(--grey) 5px 5px 0 0;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  position: relative;
-  cursor: pointer;
-  &:hover {
-    transform: translate(-5px, -5px);
-    box-shadow: var(--grey) 10px 10px 0 0;
-  }
-  &.here {
-    cursor: auto; 
-  }
-  &.here:hover {
-    transform: none;
-    box-shadow: var(--grey) 5px 5px 0 0;
-  }
-  &:after {
-    content: 'You are here';
-    position: absolute;
-    top: calc(100% - 10px);
-    right: 0;
-    background: var(--black);
-    color: var(--white);
-    padding: 5px 8px;
-    opacity: 0;
-    transition: opacity 0.25s ease, top 0.25s ease;
-  }
-  &.here:after {
-    opacity: 1;
-    top: calc(100% - 20px);
-  }
-`
 
 function App() {
   const [name, setName] = useState<string | null>(null)
@@ -123,12 +58,9 @@ function App() {
     enter: { width: '300px' },
     leave: { width: '0px' },
     unique: true,
-    // width: showChat ? '300px' : '0px',
-    // config: { mass: 1, tension: 1000, friction: 100 }
   })
 
   const gameState = game.getStateAt(now);
-  const { currentLocation } = gameState
 
   const setLocationHandler = (location: GameLocation | null) => {
     console.log("location change:", location)
@@ -142,117 +74,34 @@ function App() {
     game.scavenge(time);
     setGame(game)
   }
-
-  const leaveLocation = () => setLocationHandler(null)
-
-  const resource: React.SFC<{ resource: string, count: number, className?: string }> = ({ resource, count, className }) => (
-    <tr className={className}>
-      <td>{resource}:</td>
-      <td>{count}</td>
-      <td></td>
-    </tr>
-  )
-  const Resource = styled(resource)`
-    
-  `
-
-  const upgrade = ({ name, info, className, purchaseUpgrade }: { name: string, info: string, className?: string, purchaseUpgrade?: () => void }) => (
-    <div className={"upgrade " + className} onClick={purchaseUpgrade}>
-      <h3 className="upgrade__name">{name}</h3>
-      <div className="upgrade__info">{info}</div>
-    </div>
-  )
-
-  const Upgrade = styled(upgrade)`
-    background: var(--white);
-    margin: 10px;
-    padding: 15px;
-    box-shadow: var(--grey) 5px 5px 0 0;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    cursor: pointer;
-    &:hover {
-      transform: translate(-5px, -5px);
-      box-shadow: var(--grey) 10px 10px 0 0;
-    }
-  `
-
   
   return (
     <div className="App">
-      <Drawer></Drawer>
+      <Drawer visible={showLeaderboard}></Drawer>
       <div className="content">
         <div className="log">
-          <Card headStyle={{ fontSize: '18px' }} title={<span><ReadFilled /> Log</span>}>
-            <div className="card__body">
-              {logEntries.map((entry, i) => <TextLogEntry key={i} {...entry}/>)}
-            </div>
-          </Card>
+          <Log entries={logEntries}/>
         </div>
         <div className="resources">
-          <Card headStyle={{ fontSize: '18px' }} title={<span><LayoutFilled /> Resources</span>}>
-            <div className="card__body">
-              <table className="resources__table">
-                <tbody>
-                  <Resource resource={'Scrap'} count={gameState.scrap} />
-                  <Resource resource={'Food'} count={gameState.food} />
-                </tbody>
-              </table>
-            </div>
-          </Card>
+          <Resources scrap={gameState.scrap} food={gameState.food}/>
         </div>
         <div className="condition">
-          <Card headStyle={{ fontSize: '18px' }} title={<span>{gameState.hunger > 0.3 ? gameState.hunger > 0.7 ? <SmileFilled /> : <MehFilled /> : <FrownFilled />} Condition</span>}>
-            <div className="card__body">
-              <h4>Hunger</h4>
-              <Progress percent={gameState.hunger * 100}/>
-            </div>
-          </Card>
+          <Condition hunger={gameState.hunger}/>
         </div>
         <div className="tabs">
           <Card style={{height: '100%'}}>
             <Tabs size="large">
-              <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><DeleteFilled /> Scavenge</div></HoverHighlight>} key="1">
-                <div className="locations">
-                  {gameState.unlockedLocations.map((location, i) => <Location
-                    key={i}
-                    changeLocation={() => setLocationHandler(location)}
-                    here={currentLocation?.name === location.name}
-                    name={location.name}
-                    info={location.info} />)}
-                </div>
-                <hr/>
-                <div className="current-location">
-                  {/* <div className="scavenge"> */}
-                  <Card headStyle={{ fontSize: '18px' }} style={{ maxWidth: '400px'}} title={<div><LoadingBoxes /> Scavenging</div>}>
-                    <div className="card__body">
-                      <Progress percent={50} />
-                    </div>
-                  </Card>
-                  <Button style={{marginTop: '20px'}} type='primary' onClick={scavengeHandler}>Scrounge</Button>                
-                  {/* </div> */}
-                </div>
+              <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><DeleteFilled /> Scavenge</div></HoverHighlight>} key="scavenge">
+                <Scavenge locations={gameState.unlockedLocations} currentLocation={gameState.currentLocation} setLocation={setLocationHandler} scavenge={scavengeHandler} />
               </TabPane>
-              <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="2">
-                <div className="upgrades" style={{padding: '20px'}}>
-                  <Card headStyle={{ fontSize: '18px' }} style={{ marginBottom: '20px' }} title={<span><AppstoreAddOutlined /> Construct Upgrades</span>}>
-                    <div className="upgrades__list">
-                      {gameState.upgrades.filter(u => !u.owned).length === 0 ?
-                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> :
-                        gameState.upgrades.filter(u => !u.owned).map((upgrade, i) => <Upgrade key={i} name={upgrade.name} info={upgrade.description} />)}
-                    </div>
-                  </Card>
-                  <Card headStyle={{ fontSize: '18px' }} title={<span><GroupOutlined /> Owned Upgrades</span>}>
-                    <div className="upgrades__list">
-                      {gameState.upgrades.filter(u => u.owned).length === 0 ?
-                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> :
-                        gameState.upgrades.filter(u => u.owned).map((upgrade, i) => <Upgrade key={i} name={upgrade.name} info={upgrade.description} />)}
-                    </div>
-                  </Card>
-                </div>
+              <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="upgrades">
+                <Upgrades upgrades={gameState.upgrades}/>
               </TabPane>
-              {gameState.upgrades.find(upgrade => upgrade.name === 'Soma') && <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ExperimentFilled /> Soma</div></HoverHighlight>} key="3">
-                <img src={somaImage} style={{maxWidth: '300px', margin: '0 auto', display: 'block' }} alt=""/>
-              </TabPane>}
+              {gameState.upgrades.find(upgrade => upgrade.name === 'Soma')?.owned &&
+                <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ExperimentFilled /> Soma</div></HoverHighlight>} key="soma">
+                  <Soma/>
+                </TabPane>
+              }
             </Tabs>
           </Card>
         </div>
@@ -260,7 +109,7 @@ function App() {
       <div className="footer">
         {/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
         <div style={{ gridArea: 'info', fontSize: '12px', padding: '0 10px', lineHeight: '22px' }}>dgg clicker [ 0.0.1alpha ]</div>
-        <div style={{ gridArea: 'leaderboard', padding: '0 10px', }}></div>
+        <div style={{ gridArea: 'leaderboard', padding: '0 10px', }}>PersonName</div>
         <div style={{ gridArea: 'chat' }}><Switch checkedChildren={<MessageFilled />} unCheckedChildren={<MessageFilled />} onChange={value => setShowChat(value)} /></div>
       </div>
       {transitions.map(({ item, key, props }) => item && <a.div key={key} style={props}>
@@ -269,12 +118,6 @@ function App() {
           style={{ height: "100%", }}
         ></iframe>
       </a.div>)}
-      {/* <a.div style={{ width }} className="chat">
-        <iframe
-          src="https://www.destiny.gg/embed/chat"
-          style={{ height: "100%" }}
-        ></iframe>
-      </a.div> */}
     </div>
   )
 }
