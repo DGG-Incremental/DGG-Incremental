@@ -24,6 +24,9 @@ module.exports = function (config, env) {
         // }),
         // addLessLoader({
         //     javascriptEnabled: true,
+        //     modifyVars: {
+        //         'primary-color': '#fff418',
+        //     },
         // }),
         addDecoratorsLegacy(),
         /*Make sure Babel compiles the stuff in the common folder*/

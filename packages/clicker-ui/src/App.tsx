@@ -87,6 +87,7 @@ function App() {
   
   return (
     <div className="App">
+      {console.log(gameState)}
       <Drawer visible={showLeaderboard}></Drawer>
       <div className="content">
         <div className="log">
@@ -102,10 +103,16 @@ function App() {
           <Card style={{height: '100%'}}>
             <Tabs size="large">
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><DeleteFilled /> Scavenge</div></HoverHighlight>} key="scavenge">
-                <Scavenge locations={gameState.unlockedLocations} currentLocation={gameState.currentLocation} setLocation={setLocationHandler} scavenge={scavengeHandler} />
+                <Scavenge
+                  locations={gameState.unlockedLocations}
+                  currentLocation={gameState.currentLocation}
+                  setLocation={setLocationHandler}
+                  scavenge={scavengeHandler}
+                  scavengeProgress={gameState.scavenge}
+                />
               </TabPane>
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="upgrades">
-                <Upgrades upgrades={gameState.upgrades}/>
+                <Upgrades upgrades={gameState.upgrades} playerResources={[{ name: 'food', count: gameState.food }, { name: 'scrap', count: gameState.scrap }]}/>
               </TabPane>
               {gameState.upgrades.find(upgrade => upgrade.name === 'Soma')?.owned &&
                 <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ExperimentFilled /> Soma</div></HoverHighlight>} key="soma">

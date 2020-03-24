@@ -55,11 +55,12 @@ const Location = styled(location)`
 
 interface ScavengeProps {
   locations: GameLocation[]
-  currentLocation: GameLocation | null,
+  currentLocation: GameLocation | null
   setLocation: (location: GameLocation | null) => void
   scavenge: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void
+  scavengeProgress: number
 }
-const Scavenge = ({ locations, currentLocation, setLocation, scavenge }: ScavengeProps) => {
+const Scavenge = ({ locations, currentLocation, setLocation, scavenge, scavengeProgress }: ScavengeProps) => {
   return (
     <div className="tab__scavenge">
       <div className="locations">
@@ -74,7 +75,7 @@ const Scavenge = ({ locations, currentLocation, setLocation, scavenge }: Scaveng
       <div className="current-location">
         <Card headStyle={{ fontSize: '18px' }} style={{ maxWidth: '400px' }} title={<div><LoadingBoxes /> Scavenging</div>}>
           <div className="card__body">
-            <Progress percent={50} />
+            <Progress percent={scavengeProgress * 100} />
           </div>
         </Card>
         <Button style={{ marginTop: '20px' }} type='primary' onClick={scavenge}>Scrounge</Button>

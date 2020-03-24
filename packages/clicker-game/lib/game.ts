@@ -25,8 +25,9 @@ export interface GameState {
   currentLocation: GameLocation | null
   actions: Action[]
   lastSynced: Date
-  upgrades: Upgrade[],
+  upgrades: Upgrade[]
   unlockedLocations: GameLocation[]
+  scavenge: number
 }
 
 
@@ -36,6 +37,7 @@ export class Game {
     scrap: 0,
     hunger: 0.25,
     food: 0,
+    scavenge: 0,
 
     // TODO: Fix cloneDeep mess here
     currentLocation: null,
