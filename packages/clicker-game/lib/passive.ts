@@ -2,6 +2,7 @@ import { GameState } from "./game"
 import CONFIG from "./config"
 import flow from "lodash/flow"
 import max from "lodash/max"
+import clamp from "lodash/clamp"
 import partialRight from "lodash/partialRight"
 
 interface PassiveTransformer {
@@ -22,7 +23,7 @@ export const transformers: { [name: string]: PassiveTransformer } = {
     if (state.currentLocation != null) {
       change = CONFIG.BASE_SCAVENGE_RATE * time
     }
-    const scavenge = max([state.scavenge + change, 0]) as number
+    const scavenge = clamp(state.scavenge + change, 0, 1) as number
 
     return { ...state, scavenge }
   }
