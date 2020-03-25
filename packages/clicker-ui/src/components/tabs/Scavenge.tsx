@@ -75,7 +75,7 @@ const Scavenge = ({ locations, currentLocation, setLocation, scavenge, scavengeP
       <div className="current-location">
         <Card headStyle={{ fontSize: '18px' }} style={{ maxWidth: '400px' }} title={<div><LoadingBoxes /> Scavenging</div>}>
           <div className="card__body">
-            <Progress percent={scavengeProgress * 100} />
+            <Progress percent={parseFloat((scavengeProgress * 100).toFixed(0))} />
           </div>
         </Card>
         <Button style={{ marginTop: '20px' }} type='primary' onClick={scavenge}>Scrounge</Button>
