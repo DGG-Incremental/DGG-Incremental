@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext } from "react"
 import styled from '@emotion/styled'
 import classNames from 'classnames'
 
@@ -7,6 +7,9 @@ import { TabPane } from '../Tabs'
 import { Progress } from '../Progress'
 import { Button } from '../Button'
 import LoadingBoxes from '../LoadingBoxes'
+
+import { GameStateContext, GameStateProvider } from "../../gameStateContext"
+import { TimeSyncContext, TickProvider } from "../../tick/TickContext"
 
 import { GameLocation } from "clicker-game/lib/locations"
 
@@ -54,20 +57,32 @@ const Location = styled(location)`
 `
 
 interface ScavengeProps {
-  locations: GameLocation[]
-  currentLocation: GameLocation | null
-  setLocation: (location: GameLocation | null) => void
-  scavenge: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void
-  scavengeProgress: number
+
 }
-const Scavenge = ({ locations, currentLocation, setLocation, scavenge, scavengeProgress }: ScavengeProps) => {
+const Scavenge = ({ }: ScavengeProps) => {
+  const { game, setGame, currentState } = useContext(GameStateContext)
+  const timeSync = useContext(TimeSyncContext)
+
+  const setLocationHandler = (location: GameLocation | null) => {
+    console.log("location change:", location)
+    const time = new Date(timeSync.now())
+    game.goToLocation(location, time)
+    setGame(game)
+  }
+
+  const scavengeHandler = () => {
+    const time = new Date(timeSync.now())
+    game.scavenge(time);
+    setGame(game)
+  }
+
   return (
     <div className="tab__scavenge">
       <div className="locations">
-        {locations.map((location, i) => <Location
+        {currentState.unlockedLocations.map((location, i) => <Location
           key={i}
-          changeLocation={() => setLocation(location)}
-          here={currentLocation?.name === location.name}
+          changeLocation={() => setLocationHandler(location)}
+          here={currentState.currentLocation?.name === location.name}
           name={location.name}
           info={location.info} />)}
       </div>
@@ -75,12 +90,18 @@ const Scavenge = ({ locations, currentLocation, setLocation, scavenge, scavengeP
       <div className="current-location">
         <Card headStyle={{ fontSize: '18px' }} style={{ maxWidth: '400px' }} title={<div><LoadingBoxes /> Scavenging</div>}>
           <div className="card__body">
-            <Progress percent={parseFloat((scavengeProgress * 100).toFixed(0))} />
+            <Progress percent={parseFloat((currentState.scavenge * 100).toFixed(0))} />
           </div>
         </Card>
-        <Button style={{ marginTop: '20px' }} type='primary' onClick={scavenge}>Scrounge</Button>
+        <Button style={{ marginTop: '20px' }} type='primary' onClick={scavengeHandler}>Scrounge</Button>
       </div>
     </div>
   )
 }
-export default Scavenge;
+export default () => (
+  <TickProvider>
+    <GameStateProvider>
+      <Scavenge />
+    </GameStateProvider>
+  </TickProvider>
+)

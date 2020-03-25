@@ -88,6 +88,8 @@ export class Game {
   }
 
   goToLocation(location: GameLocation | null, timestamp: Date) {
+    if (location?.name === this.state.currentLocation?.name)
+      return;    
     const action: GoToLocation = {
       action: ActionType.goToLocation,
       location,

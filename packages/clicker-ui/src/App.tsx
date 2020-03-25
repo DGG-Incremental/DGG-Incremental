@@ -69,20 +69,6 @@ function App() {
     leave: { width: '0px' },
     unique: true,
   })
-
-
-  const setLocationHandler = (location: GameLocation | null) => {
-    console.log("location change:", location)
-    const time = new Date(timeSync.now())
-    game.goToLocation(location, time)
-    setGame(game)
-  }
-
-  const scavengeHandler = () => {
-    const time = new Date(timeSync.now())
-    game.scavenge(time);
-    setGame(game)
-  }
   
   return (
     <div className="App">
@@ -92,7 +78,7 @@ function App() {
           <Log entries={logEntries}/>
         </div>
         <div className="resources">
-          <Resources scrap={currentState.scrap} food={currentState.food}/>
+          <Resources/>
         </div>
         <div className="condition">
           <Condition hunger={currentState.hunger}/>
@@ -101,13 +87,7 @@ function App() {
           <Card style={{height: '100%'}}>
             <Tabs size="large">
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><DeleteFilled /> Scavenge</div></HoverHighlight>} key="scavenge">
-                <Scavenge
-                  locations={currentState.unlockedLocations}
-                  currentLocation={currentState.currentLocation}
-                  setLocation={setLocationHandler}
-                  scavenge={scavengeHandler}
-                  scavengeProgress={currentState.scavenge}
-                />
+                <Scavenge/>
               </TabPane>
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="upgrades">
                 <Upgrades upgrades={currentState.upgrades} playerResources={[{ name: 'food', count: currentState.food }, { name: 'scrap', count: currentState.scrap }]}/>

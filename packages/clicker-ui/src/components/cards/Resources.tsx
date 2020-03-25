@@ -1,11 +1,12 @@
-import React from "react"
+import React, { useContext } from "react"
 import styled from '@emotion/styled'
 import { Card } from '../Card'
 import { LayoutFilled } from '@ant-design/icons'
 
 import './Resources.css'
 
-
+import { GameStateContext, GameStateProvider } from "../../gameStateContext"
+import { TimeSyncContext, TickProvider } from "../../tick/TickContext"
 
 
 const resource: React.SFC<{ resource: string, count: number, unit: string, className?: string }> = ({ resource, count, unit, className }) => (
@@ -20,21 +21,28 @@ const Resource = styled(resource)`
   `
 
 interface ResourcesProps {
-  scrap: number,
-  food: number,
 }
-const Resources = ({ scrap, food }: ResourcesProps) => {
+const Resources = ({ }: ResourcesProps) => {
+  const { game, setGame, currentState } = useContext(GameStateContext)
+  const timeSync = useContext(TimeSyncContext)
+
   return (
     <Card title={<span><LayoutFilled /> Resources</span>}>
       <div className="card__body">
         <table className="resources__table">
           <tbody>
-            <Resource resource={'Scrap'} count={scrap} unit="g" />
-            <Resource resource={'Food'} count={food} unit="g" />
+            <Resource resource={'Scrap'} count={currentState.scrap} unit="g" />
+            <Resource resource={'Food'} count={currentState.food} unit="g" />
           </tbody>
         </table>
       </div>
     </Card>
   )
 }
-export default Resources;
+export default () => (
+  <TickProvider>
+    <GameStateProvider>
+      <Resources />
+    </GameStateProvider>
+  </TickProvider>
+);
