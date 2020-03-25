@@ -40,20 +40,6 @@ test("init with state set actions", () => {
   expect(game.getStateAt(e).scrap).toBe(2)
 })
 
-test("hunger goes down over time", () => {
-  const [a, b] = dateGen(10 * 1000)
-  const game = new Game({lastSynced: a})
-  expect(game.getStateAt(a).hunger).toBe(1) 
-  expect(game.getStateAt(b).hunger).toBe(0.9) 
-})
-
-test("hunger doesn't go below zero", () => {
-  const [a, b] = dateGen(11 * 10 * 1000)
-  const game = new Game({lastSynced: a})
-  expect(game.getStateAt(a).hunger).toBe(1) 
-  expect(game.getStateAt(b).hunger).toBe(0) 
-})
-
 test("hunting gives food", () => {
   const [a,b] = dateGen()
   const game = new Game({lastSynced: a})

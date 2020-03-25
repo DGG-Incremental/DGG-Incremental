@@ -35,7 +35,7 @@ export class Game {
   state: GameState = {
     spears: 0,
     scrap: 0,
-    hunger: 0.25,
+    hunger: 1,
     food: 0,
     scavenge: 0,
 

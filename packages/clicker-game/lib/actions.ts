@@ -55,6 +55,7 @@ function makeSpear(state: GameState, { count }: MakeSpearAction) {
 }
 function goToLocation(state: GameState, { location }: GoToLocation) {
   state.currentLocation = location
+  state.scavenge = 0
 }
 
 interface ActionCondPair<T extends Action> {

@@ -42,14 +42,19 @@ interface syncGameOptions {
 
 
 const localSync = (options: syncGameOptions) => {
+  const now = new Date()
+  const state = options.game.getStateAt(now)
+  state.lastSynced = now
+  state.actions = []
+
   const gameData: IApiResponseData = {
-    gameState: options.game.state,
+    gameState: state,
     name: 'LocalUser',
     version: options.version
   }
   localStorage.setItem('gameData', JSON.stringify(gameData))
   return {
-    game: options.game,
+    game: new Game(state),
     version: options.version
   }
 }
