@@ -48,7 +48,7 @@ function App() {
   const [name, setName] = useState<string | null>(null)
   const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false)
   const [showChat, setShowChat] = useState<boolean>(false)
-  const { game, setGame } = useContext(GameStateContext)
+  const { game, setGame, currentState } = useContext(GameStateContext)
   const timeSync = useContext(TimeSyncContext)
   const now = new Date(timeSync.now())
   
@@ -70,7 +70,6 @@ function App() {
     unique: true,
   })
 
-  const gameState = game.getStateAt(now);
 
   const setLocationHandler = (location: GameLocation | null) => {
     console.log("location change:", location)
@@ -87,34 +86,33 @@ function App() {
   
   return (
     <div className="App">
-      {console.log(gameState)}
       <Drawer visible={showLeaderboard}></Drawer>
       <div className="content">
         <div className="log">
           <Log entries={logEntries}/>
         </div>
         <div className="resources">
-          <Resources scrap={gameState.scrap} food={gameState.food}/>
+          <Resources scrap={currentState.scrap} food={currentState.food}/>
         </div>
         <div className="condition">
-          <Condition hunger={gameState.hunger}/>
+          <Condition hunger={currentState.hunger}/>
         </div>
         <div className="tabs">
           <Card style={{height: '100%'}}>
             <Tabs size="large">
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><DeleteFilled /> Scavenge</div></HoverHighlight>} key="scavenge">
                 <Scavenge
-                  locations={gameState.unlockedLocations}
-                  currentLocation={gameState.currentLocation}
+                  locations={currentState.unlockedLocations}
+                  currentLocation={currentState.currentLocation}
                   setLocation={setLocationHandler}
                   scavenge={scavengeHandler}
-                  scavengeProgress={gameState.scavenge}
+                  scavengeProgress={currentState.scavenge}
                 />
               </TabPane>
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="upgrades">
-                <Upgrades upgrades={gameState.upgrades} playerResources={[{ name: 'food', count: gameState.food }, { name: 'scrap', count: gameState.scrap }]}/>
+                <Upgrades upgrades={currentState.upgrades} playerResources={[{ name: 'food', count: currentState.food }, { name: 'scrap', count: currentState.scrap }]}/>
               </TabPane>
-              {gameState.upgrades.find(upgrade => upgrade.name === 'Soma')?.owned &&
+              {currentState.upgrades.find(upgrade => upgrade.name === 'Soma')?.owned &&
                 <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ExperimentFilled /> Soma</div></HoverHighlight>} key="soma">
                   <Soma/>
                 </TabPane>
