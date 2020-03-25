@@ -8,17 +8,19 @@ import React, {
 import { getInitialState, syncGame } from "./store"
 import { useInterval } from "./useInterval"
 import { TimeSyncContext } from "./tick/TickContext"
-import { Game } from "clicker-game/lib/game"
+import { Game, GameState } from "clicker-game/lib/game"
 import cloneDeep from 'lodash/cloneDeep'
 
 interface IGameStateContext {
-  game: Game
+  game: Game,
+  currentState: GameState,
   setGame(game: Game): void
   error: Error | null
 }
 
 export const GameStateContext = createContext<IGameStateContext>({
   game: new Game(),
+  currentState: (new Game()).state,
   setGame: () => {},
   error: null
 })
@@ -29,6 +31,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
   const [version, setVersion] = useState(0)
   const [error, setError] = useState<Error | null>(null)
   const timeSync = useContext(TimeSyncContext)
+  const [currentState, setCurrentState] = useState(game.getCurrentState())
 
   const setGame = (game: Game) => {
     _setGame(cloneDeep(game))
@@ -63,8 +66,14 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
     }
   }, 3 * 1000)
 
+  useInterval(() => {
+    setCurrentState(game.getCurrentState())
+  }, 2 / 60 / 1000)
+
+
   const context: IGameStateContext = {
     game,
+    currentState,
     setGame,
     error
   }
