@@ -8,8 +8,8 @@ import { Progress } from '../Progress'
 import { Button } from '../Button'
 import LoadingBoxes from '../LoadingBoxes'
 
-import { GameStateContext, GameStateProvider } from "../../gameStateContext"
-import { TimeSyncContext, TickProvider } from "../../tick/TickContext"
+import { GameStateContext } from "../../gameStateContext"
+import { TimeSyncContext } from "../../tick/TickContext"
 
 import { GameLocation } from "clicker-game/lib/locations"
 
@@ -86,6 +86,7 @@ const Scavenge = ({ }: ScavengeProps) => {
           name={location.name}
           info={location.info} />)}
       </div>
+      {currentState.scrap}
       <hr />
       <div className="current-location">
         <Card headStyle={{ fontSize: '18px' }} style={{ maxWidth: '400px' }} title={<div><LoadingBoxes /> Scavenging</div>}>
@@ -98,10 +99,4 @@ const Scavenge = ({ }: ScavengeProps) => {
     </div>
   )
 }
-export default () => (
-  <TickProvider>
-    <GameStateProvider>
-      <Scavenge />
-    </GameStateProvider>
-  </TickProvider>
-)
+export default Scavenge;
