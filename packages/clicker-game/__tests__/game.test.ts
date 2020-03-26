@@ -57,9 +57,9 @@ test("hunting with spears gives more food", () => {
 })
 
 test("eating food lowers food and hunger", () => {
-  const [a,b ] = dateGen()
+  const [a,b] = dateGen()
   const game = new Game({lastSynced: a, food: 1, hunger: 0.5})
   game.eat(a)
-  expect(game.getStateAt(b).hunger).toBeGreaterThan(0.5)
+  expect(game.getStateAt(b).hunger).toBe(0.69999)
   expect(game.getStateAt(b).food).toBe(0)
 })

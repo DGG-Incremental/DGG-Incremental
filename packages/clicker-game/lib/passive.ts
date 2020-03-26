@@ -14,8 +14,7 @@ export const transformers: { [name: string]: PassiveTransformer } = {
     const time = timestamp.getTime() - state.lastSynced.getTime()
     const change = CONFIG.BASE_HUNGER_RATE * time
     const hunger = max([state.hunger + change, 0]) as number 
-
-    return { ...state, hunger, foo: 1 }
+    return { ...state, hunger}
   },
   scavenge(state, timestamp) {
     const time = timestamp.getTime() - state.lastSynced.getTime()

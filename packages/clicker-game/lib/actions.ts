@@ -2,6 +2,7 @@ import { CondPair } from "lodash"
 import produce from "immer"
 import cond from "lodash/cond"
 import min from "lodash/min"
+import clamp from "lodash/clamp"
 import { GameState } from "./game"
 import { GameLocation, locations } from "./locations"
 
@@ -43,7 +44,7 @@ function eat(state: GameState) {
   const change = state.currentLocation?.name === locations.apartment.name ? 
     0.3 :
     0.2
-  state.hunger = min([1, state.hunger + change]) as number
+  state.hunger = clamp(state.hunger + change, 0, 1) as number
   state.food--
 }
 function hunt(state: GameState) {
@@ -77,8 +78,7 @@ const reducerConds: ActionCondPair<Action>[] = [
   [isOfActionType<GoToLocation>(ActionType.goToLocation), goToLocation]
 ]
 
-export const reduceState = (state: GameState, actions: Action[]) => {
-  return actions.reduce((state, action) => {
+export const applyAction = (action: Action, state: GameState): GameState => {
     const pairs = reducerConds.map(
       (condPair): CondPair<Action, GameState> => {
         return [
@@ -87,6 +87,5 @@ export const reduceState = (state: GameState, actions: Action[]) => {
         ]
       }
     )
-    return cond(pairs)(action)
-  }, state)
+    return {...cond(pairs)(action), lastSynced: action.timestamp}
 }

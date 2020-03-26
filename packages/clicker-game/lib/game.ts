@@ -7,8 +7,8 @@ import {
   Action,
   ActionType,
   MakeSpearAction,
-  reduceState,
-  GoToLocation
+  GoToLocation,
+  applyAction
 } from "./actions"
 import { exceedsRateLimit } from "./validations"
 import { getPassiveState } from "./passive"
@@ -89,7 +89,7 @@ export class Game {
 
   goToLocation(location: GameLocation | null, timestamp: Date) {
     if (location?.name === this.state.currentLocation?.name)
-      return;    
+      return;
     const action: GoToLocation = {
       action: ActionType.goToLocation,
       location,
@@ -104,16 +104,18 @@ export class Game {
 
   getStateAt(timestamp: Date): GameState {
     const { lastSynced, actions } = this.state
-
-    return flow(
-      filter(
-        (a: Action) =>
-          a.timestamp.getTime() >= lastSynced.getTime() &&
-          a.timestamp.getTime() <= timestamp.getTime()
-      ),
-      partial(reduceState, this.state),
-      partialRight(getPassiveState, timestamp)
-    )(actions)
+    const targetActions = filter(actions,
+      (a: Action) =>
+        a.timestamp.getTime() >= lastSynced.getTime() &&
+        a.timestamp.getTime() <= timestamp.getTime()
+    )
+    const applied = targetActions.reduce(
+      (state, action) => {
+        const passiveState = getPassiveState(state, action.timestamp)
+        return applyAction(action, passiveState)
+      }, this.state
+    )
+    return getPassiveState(applied, timestamp)
   }
 
   validate() {
