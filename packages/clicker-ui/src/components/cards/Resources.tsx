@@ -5,8 +5,8 @@ import { LayoutFilled } from '@ant-design/icons'
 
 import './Resources.css'
 
-import { GameStateContext, GameStateProvider } from "../../gameStateContext"
-import { TimeSyncContext, TickProvider } from "../../tick/TickContext"
+import { GameStateContext } from "../../gameStateContext"
+import { TimeSyncContext } from "../../tick/TickContext"
 
 
 const resource: React.SFC<{ resource: string, count: number, unit: string, className?: string }> = ({ resource, count, unit, className }) => (
@@ -31,18 +31,12 @@ const Resources = ({ }: ResourcesProps) => {
       <div className="card__body">
         <table className="resources__table">
           <tbody>
-            <Resource resource={'Scrap'} count={currentState.scrap} unit="g" />
-            <Resource resource={'Food'} count={currentState.food} unit="g" />
+            <Resource resource='Scrap' count={currentState.scrap} unit="g" />
+            <Resource resource='Food' count={currentState.food} unit="g" />
           </tbody>
         </table>
       </div>
     </Card>
   )
 }
-export default () => (
-  <TickProvider>
-    <GameStateProvider>
-      <Resources />
-    </GameStateProvider>
-  </TickProvider>
-);
+export default Resources
