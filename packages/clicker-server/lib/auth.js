@@ -18,7 +18,6 @@ const encode = val => Buffer.from(val).toString("base64")
 const secret = hash(APP_SECRET)
 
 const CHALLENGES = {}
-const USERS = {}
 
 export const getOauthRedirect = () => {
   const code_verifier = encode(uuid())

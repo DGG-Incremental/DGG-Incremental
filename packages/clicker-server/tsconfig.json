@@ -16,9 +16,12 @@
 		"isolatedModules": true,
 		// Import non-ES modules as default imports.
       "esModuleInterop": true,
-      "outDir": "./build/",
+	  "outDir": "./build/",
+	  
+	  // For typeorm
       "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
+	  "experimentalDecorators": true,
+	  
       "strictPropertyInitialization": false
 	},
 	"include": [

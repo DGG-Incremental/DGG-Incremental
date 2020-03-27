@@ -1,8 +1,6 @@
-import { config } from "dotenv"
+import "reflect-metadata"
+import "regenerator-runtime/runtime.js";
 
-if (process.env.NODE_ENV !== "production") {
-  config()
-}
 
 // Import the rest of our application.
 import "./server"

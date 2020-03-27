@@ -1,17 +1,17 @@
-import express from "express"
-import timesyncServer from 'timesync/server'
-import cookieParser from "cookie-parser"
-import _ from "lodash"
-import bodyParser from "body-parser"
-import cors from "cors"
-import path from "path"
+import Joi from '@hapi/joi'
 import axios from "axios"
-import { getOauthRedirect, getCodeVerifier, getUserInfo } from "./auth"
+import bodyParser from "body-parser"
+import cookieParser from "cookie-parser"
+import cors from "cors"
+import { config } from "dotenv"
+import express from "express"
+import path from "path"
+import "reflect-metadata"
+import timesyncServer from 'timesync/server'
 import { createConnection } from 'typeorm'
-import "reflect-metadata";
+import { getCodeVerifier, getOauthRedirect, getUserInfo } from "./auth"
 import PlayerGameState from './db/entity/PlayerGameState'
 import { syncPlayerGameState } from "./syncService"
-import Joi from '@hapi/joi'
 
 const app = express()
 const port = process.env.PORT || 3001

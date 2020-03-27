@@ -6,7 +6,8 @@
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
       "start": "nodemon -e js,ts --watch ../clicker-game/lib --watch lib --exec ts-node lib/index.ts",
-      "serve": "ts-node lib/index.ts",
+      "serve": "node -r dotenv/config build/index.js",
+      "build": "babel lib --out-dir build --extensions '.ts,.js'",
       "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"
    },
    "author": "",
@@ -16,6 +17,7 @@
       "@babel/core": "^7.7.7",
       "@babel/node": "^7.7.7",
       "@babel/plugin-proposal-class-properties": "^7.7.4",
+      "@babel/plugin-proposal-decorators": "^7.8.3",
       "@babel/plugin-proposal-object-rest-spread": "^7.7.7",
       "@babel/plugin-transform-runtime": "^7.7.6",
       "@babel/polyfill": "^7.7.0",
