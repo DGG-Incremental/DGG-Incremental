@@ -15,13 +15,11 @@ const hash = val =>
     .digest("hex")
 const encode = val => Buffer.from(val).toString("base64")
 
-const secret = hash(APP_SECRET)
-
 const CHALLENGES = {}
 
 export const getOauthRedirect = () => {
   const code_verifier = encode(uuid())
-  const code_challenge = encode(hash(code_verifier + secret))
+  const code_challenge = encode(hash(code_verifier + hash(APP_SECRET)))
   const state = uuid()
   CHALLENGES[state] = code_verifier
   return `https://www.destiny.gg/oauth/authorize?response_type=code&client_id=${APP_ID}&redirect_uri=${encodeURIComponent(
