@@ -3,7 +3,6 @@ import axios from "axios"
 import bodyParser from "body-parser"
 import cookieParser from "cookie-parser"
 import cors from "cors"
-import { config } from "dotenv"
 import express from "express"
 import path from "path"
 import "reflect-metadata"
@@ -15,7 +14,6 @@ import { syncPlayerGameState } from "./syncService"
 
 const app = express()
 const port = process.env.PORT || 3001
-
 const APP_ID = process.env.DGG_OATH_ID
 const REDIRECT_URI = process.env.REDIRECT_URI
 
@@ -74,8 +72,13 @@ app.get("/leaderboard", async (req, res) => {
 })
 
 const getReqUser = async req => {
-  const token = req.cookies.token
-  return await getUserInfo(token)
+  if (process.env.NODE_ENV !== 'development') {
+    const token = req.cookies.token
+    return await getUserInfo(token)
+  }
+  else {
+    return 'TestUser'
+  }
 }
 
 app.put("/leaderboard/", async (req, res) => {
