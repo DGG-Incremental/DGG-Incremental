@@ -1,17 +1,31 @@
 import Axios from "axios"
-import { GameState, Game } from "clicker-game/lib/game"
+import { GameState, Game, SerializedGameState } from "clicker-game/lib/game"
+import merge from 'lodash/merge'
 
-interface IApiResponseData {
+interface ISyncResponse {
   name: string
   version: number
   gameState: GameState
 }
+
+interface IApiResponseData {
+  name: string
+  version: number
+  gameState: SerializedGameState
+}
 const localStorage = window.localStorage
 
-const getApiState = async () => {
+
+const getApiState = async (): Promise<ISyncResponse | undefined> => {
   try {
     const res = await Axios.get("/me/state")
-    return res.data as IApiResponseData
+    const state = res.data as IApiResponseData
+    const parsedActions = state.gameState.actions.map(a => ({
+      ...a,
+      timestamp: new Date(a.timestamp)
+    }))
+
+    return merge(state, { gameState: { actions: parsedActions } })
   } catch (err) {
     if (err.response.status === 404) {
       return undefined
@@ -20,7 +34,7 @@ const getApiState = async () => {
   }
 }
 
-const getLocalState = (): IApiResponseData => {
+const getLocalState = (): ISyncResponse => {
   const s = localStorage.getItem("gameData") as string | null
   if (s) {
     return JSON.parse(s)
@@ -47,7 +61,7 @@ const localSync = (options: syncGameOptions) => {
   state.lastSynced = now
   state.actions = []
 
-  const gameData: IApiResponseData = {
+  const gameData: ISyncResponse = {
     gameState: state,
     name: 'LocalUser',
     version: options.version
@@ -66,7 +80,7 @@ const apiSync = async ({ game, version, sentAt }: syncGameOptions) => {
       sentAt,
       version
     })
-    const data = res.data as IApiResponseData
+    const data = res.data as ISyncResponse
     return {
       game: new Game(data.gameState),
       version: data.version

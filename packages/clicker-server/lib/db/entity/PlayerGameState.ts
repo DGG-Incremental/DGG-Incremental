@@ -5,7 +5,7 @@ import {
   BaseEntity,
   VersionColumn
 } from "typeorm"
-import { GameState } from "clicker-game/lib/game"
+import { GameState, Game } from "clicker-game/lib/game"
 
 @Entity()
 export default class PlayerGameState extends BaseEntity {
@@ -18,13 +18,20 @@ export default class PlayerGameState extends BaseEntity {
   @Column({ type: "jsonb" })
   gameState: GameState
 
-  static async getOrCreate(name: string) {
-    return (await this.findOne(name)) || (await this.init(name))
+  static async getOrCreate(name: string): Promise<PlayerGameState> {
+    const existing = await this.findOne(name)
+    if (existing) {
+      const { state } = new Game(existing.gameState)
+      existing.gameState = state
+      return existing
+    }
+    return await this.init(name)
   }
 
   static async init(name: string) {
+    const game = new Game({ lastSynced: new Date() })
     return await this.create({
-      gameState: { lastSynced: new Date() },
+      gameState: game.state,
       name
     }).save()
   }

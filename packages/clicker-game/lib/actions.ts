@@ -14,11 +14,12 @@ export enum ActionType {
   goToLocation = "goToLocation"
 }
 
-export interface Action {
+export interface GenericAction<D> {
   action: ActionType
-  timestamp: Date
+  timestamp: D
 }
-
+export interface Action extends GenericAction<Date> { }
+export interface SerializedAction extends GenericAction<string> { }
 export type EatAction = Action
 export type ScavengAction = Action
 export type HuntAction = Action
@@ -31,17 +32,17 @@ export interface MakeSpearAction extends Action {
 
 function scavenge(state: GameState) {
   state.scrap = state.scrap + 1
-  
-  if(state.currentLocation?.name === locations.groceryStore.name) {
+
+  if (state.currentLocation?.name === locations.groceryStore.name) {
     state.food = state.food + 1
   }
 
-  if(state.currentLocation?.name === locations.factory.name) {
+  if (state.currentLocation?.name === locations.factory.name) {
     state.scrap = state.scrap + 1
   }
 }
 function eat(state: GameState) {
-  const change = state.currentLocation?.name === locations.apartment.name ? 
+  const change = state.currentLocation?.name === locations.apartment.name ?
     0.3 :
     0.2
   state.hunger = clamp(state.hunger + change, 0, 1) as number
@@ -79,13 +80,13 @@ const reducerConds: ActionCondPair<Action>[] = [
 ]
 
 export const applyAction = (action: Action, state: GameState): GameState => {
-    const pairs = reducerConds.map(
-      (condPair): CondPair<Action, GameState> => {
-        return [
-          (val: Action) => condPair[0](val),
-          (action: Action) => produce(state, (draftState: GameState) => condPair[1](draftState, action))
-        ]
-      }
-    )
-    return {...cond(pairs)(action), lastSynced: action.timestamp}
+  const pairs = reducerConds.map(
+    (condPair): CondPair<Action, GameState> => {
+      return [
+        (val: Action) => condPair[0](val),
+        (action: Action) => produce(state, (draftState: GameState) => condPair[1](draftState, action))
+      ]
+    }
+  )
+  return { ...cond(pairs)(action), lastSynced: action.timestamp }
 }

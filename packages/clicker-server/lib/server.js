@@ -102,10 +102,11 @@ app.get("/me/state", async (req, res) => {
 
 
 const statePatchBodySchema = Joi.object({
-  actions: Joi.array().items(Joi.object({
-    timestamp: Joi.date(),
-    action: Joi.string()
-  }))
+  actions: Joi.array().items(
+    Joi.object({
+      timestamp: Joi.date(),
+      action: Joi.string()
+    }))
     .required(),
   sentAt: Joi.date().required(),
   version: Joi.number().integer().required()

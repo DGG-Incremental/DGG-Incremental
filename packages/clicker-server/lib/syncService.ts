@@ -29,10 +29,11 @@ export const syncPlayerGameState = async (
   version: number
 ) => {
   const playerState = await PlayerGameState.getOrCreate(name)
+  const lastSync = process.env.NODE_ENV !== 'development' ? playerState.gameState.lastSynced : new Date(0)
   Joi.assert(
     {
       actions,
-      lastSync: playerState.gameState.lastSynced,
+      lastSync,
       sentAt: syncTime,
       version
     },

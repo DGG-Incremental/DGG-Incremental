@@ -5,7 +5,7 @@
    "main": "index.js",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "start": "nodemon -e js,ts --watch ../clicker-game/lib --watch lib --exec ts-node lib/index.ts",
+      "start": "NODE_ENV=development nodemon -e js,ts --watch ../clicker-game/lib --watch lib --exec ts-node lib/index.ts",
       "serve": "node -r dotenv/config build/index.js",
       "build": "babel lib --out-dir build --extensions '.ts,.js'",
       "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"

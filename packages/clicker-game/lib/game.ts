@@ -8,7 +8,8 @@ import {
   ActionType,
   MakeSpearAction,
   GoToLocation,
-  applyAction
+  applyAction,
+  GenericAction
 } from "./actions"
 import { exceedsRateLimit } from "./validations"
 import { getPassiveState } from "./passive"
@@ -17,19 +18,22 @@ import { GameLocation, locations } from "./locations"
 import { Upgrade } from './upgrades'
 
 
-export interface GameState {
+export interface GenericGameState<D> {
   scrap: number
   food: number
   hunger: number
   spears: number
   currentLocation: GameLocation | null
-  actions: Action[]
+  actions: GenericAction<D>[]
   lastSynced: Date
   upgrades: Upgrade[]
   unlockedLocations: GameLocation[]
   scavenge: number
 }
 
+export interface SerializedGameState extends GenericGameState<string> { }
+
+export interface GameState extends GenericGameState<Date> { }
 
 export class Game {
   state: GameState = {
