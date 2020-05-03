@@ -21,20 +21,25 @@ interface IGameStateContext {
 export const GameStateContext = createContext<IGameStateContext>({
   game: new Game(),
   currentState: (new Game()).state,
-  setGame: () => {},
+  setGame: () => { },
   error: null
 })
 
-interface GameStateProviderProps extends PropsWithChildren<{}> {}
+interface GameStateProviderProps extends PropsWithChildren<{}> { }
 export const GameStateProvider = ({ children }: GameStateProviderProps) => {
   const [game, _setGame] = useState(new Game())
   const [version, setVersion] = useState(0)
   const [error, setError] = useState<Error | null>(null)
   const timeSync = useContext(TimeSyncContext)
+
+  // Calculated current state so each consumer doesn't trigger state calculations 
   const [currentState, setCurrentState] = useState(game.getCurrentState())
 
   const setGame = (game: Game) => {
-    _setGame(cloneDeep(game))
+    const clone = cloneDeep(game)
+    _setGame(clone)
+    // Update the current state store
+    setCurrentState(clone.getCurrentState())
   }
 
   useEffect(() => {
@@ -68,8 +73,8 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
 
   useInterval(() => {
     setCurrentState(game.getCurrentState())
-  }, 2 / 60 / 1000)
 
+  }, 1000 / 2 /* Twice a second */)
 
   const context: IGameStateContext = {
     game,
