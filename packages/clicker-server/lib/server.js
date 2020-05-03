@@ -10,7 +10,7 @@ import timesyncServer from 'timesync/server'
 import { createConnection } from 'typeorm'
 import { getCodeVerifier, getOauthRedirect, getUserInfo } from "./auth"
 import PlayerGameState from './db/entity/PlayerGameState'
-import { syncPlayerGameState } from "./syncService"
+import { syncPlayerGameState, ConditionalActionSchema } from "./syncService"
 
 const app = express()
 const port = process.env.PORT || 3001
@@ -102,11 +102,8 @@ app.get("/me/state", async (req, res) => {
 
 
 const statePatchBodySchema = Joi.object({
-  actions: Joi.array().items(
-    Joi.object({
-      timestamp: Joi.date(),
-      action: Joi.string()
-    }))
+  actions: Joi.array()
+    .items(ConditionalActionSchema)
     .required(),
   sentAt: Joi.date().required(),
   version: Joi.number().integer().required()

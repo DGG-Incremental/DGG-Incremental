@@ -1,22 +1,40 @@
-import { Game } from "clicker-game"
+import { Game, locations } from "clicker-game"
 import PlayerGameState from "./db/entity/PlayerGameState"
 import Joi from "@hapi/joi"
-import { Action } from "clicker-game/lib/actions"
+import { Action, ActionType } from "clicker-game/lib/actions"
+
+const ActionSchema = Joi.object().keys({
+  action: Joi.string().valid(...Object.values(ActionType)),
+  timestamp: Joi.alternatives()
+    .conditional('/lastSync', {
+      is: Joi.exist(),
+      then: Joi.date()
+        .greater(Joi.ref('/lastSync'))
+        .less(Joi.ref('/sentAt')),
+      otherwise: Joi.date()
+    })
+})
+const GoToLocationSchema = ActionSchema.keys({
+  location: Joi.object().valid(...Object.values(locations))
+})
+
+export const ConditionalActionSchema = Joi
+  .alternatives()
+  .conditional('.action', {
+    switch: [
+      { is: ActionType.goToLocation, then: GoToLocationSchema },
+    ],
+    otherwise: ActionSchema
+  })
 
 const syncSchema = Joi.object({
-  actions: Joi.array().items(
-    Joi.object({
-      action: Joi.string(),
-      timestamp: Joi.date()
-        .greater(Joi.ref("/lastSync"))
-        .less(Joi.ref("/sentAt"))
-    })
-  ),
+  actions: Joi.array().items(ConditionalActionSchema),
   version: Joi.number()
     .integer()
     .required()
     .equal(Joi.ref("$version")),
-  lastSync: Joi.date().required(),
+  lastSync: Joi.date()
+    .required(),
   sentAt: Joi.date()
     .greater(Joi.ref("/lastSync"))
     .required()

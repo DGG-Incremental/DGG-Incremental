@@ -51,10 +51,10 @@ function App() {
   const { game, setGame, currentState } = useContext(GameStateContext)
   const timeSync = useContext(TimeSyncContext)
   const now = new Date(timeSync.now())
-  
+
   useEffect(() => {
     if (!cookies.get("username") && process.env.REACT_APP_STORAGE_TYPE !== "local") {
-      Modal.confirm ({
+      Modal.confirm({
         title: 'You are not logged in',
         icon: <ExclamationCircleOutlined />,
         content: <span><a href='/auth'>Login</a> with dgg</span>,
@@ -69,32 +69,32 @@ function App() {
     leave: { width: '0px' },
     unique: true,
   })
-  
+
   return (
     <div className="App">
       <Drawer visible={showLeaderboard}></Drawer>
       <div className="content">
         <div className="log">
-          <Log entries={logEntries}/>
+          <Log entries={logEntries} />
         </div>
         <div className="resources">
-          <Resources/>
+          <Resources />
         </div>
         <div className="condition">
-          <Condition hunger={currentState.hunger}/>
+          <Condition hunger={currentState.hunger} />
         </div>
         <div className="tabs">
-          <Card style={{height: '100%'}}>
+          <Card style={{ height: '100%' }}>
             <Tabs size="large">
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><DeleteFilled /> Scavenge</div></HoverHighlight>} key="scavenge">
-                <Scavenge/>
+                <Scavenge />
               </TabPane>
               <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ToolFilled /> Upgrades</div></HoverHighlight>} key="upgrades">
-                <Upgrades upgrades={currentState.upgrades} playerResources={[{ name: 'food', count: currentState.food }, { name: 'scrap', count: currentState.scrap }]}/>
+                <Upgrades upgrades={currentState.upgrades} playerResources={[{ name: 'food', count: currentState.food }, { name: 'scrap', count: currentState.scrap }]} />
               </TabPane>
               {currentState.upgrades.find(upgrade => upgrade.name === 'Soma')?.owned &&
                 <TabPane tab={<HoverHighlight><div style={{ padding: '3px 5px' }}><ExperimentFilled /> Soma</div></HoverHighlight>} key="soma">
-                  <Soma/>
+                  <Soma />
                 </TabPane>
               }
             </Tabs>
@@ -104,7 +104,7 @@ function App() {
       <div className="footer">
         {/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
         <div style={{ gridArea: 'info', fontSize: '12px', padding: '0 10px', lineHeight: '22px' }}>dgg clicker [ 0.0.1alpha ]</div>
-        <div style={{ gridArea: 'leaderboard', padding: '0 10px', }}><GetName onChange={name => { console.log(name) }}/></div>
+        <div style={{ gridArea: 'leaderboard', padding: '0 10px', }}></div>
         <div style={{ gridArea: 'chat' }}><Switch checkedChildren={<MessageFilled />} unCheckedChildren={<MessageFilled />} onChange={value => setShowChat(value)} /></div>
       </div>
       {transitions.map(({ item, key, props }) => item && <a.div key={key} style={props}>

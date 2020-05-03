@@ -20,6 +20,7 @@ export interface GenericAction<D> {
 }
 export interface Action extends GenericAction<Date> { }
 export interface SerializedAction extends GenericAction<string> { }
+
 export type EatAction = Action
 export type ScavengAction = Action
 export type HuntAction = Action
