@@ -5,7 +5,7 @@ import {
   BaseEntity,
   VersionColumn
 } from "typeorm"
-import { GameState, Game } from "clicker-game/lib/game"
+import { GameState, Game } from "clicker-game"
 
 @Entity()
 export default class PlayerGameState extends BaseEntity {
