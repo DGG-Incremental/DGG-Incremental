@@ -27,7 +27,7 @@ const GetName = ({ onChange }: GetNameProps) => {
   if (username) {
     onChange(username);
   }
-  return <a href="/auth">login</a>;
+  return username ? <span>{username}</span> : <a href="/auth">login</a>;
 };
 
 const logEntries = [
@@ -133,11 +133,7 @@ const App = ({ className }: { className?: string }) => {
         {/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
         <div style={{ gridArea: "info", fontSize: "12px", padding: "0 10px", lineHeight: "22px" }}>dgg clicker [ 0.0.1alpha ]</div>
         <div style={{ gridArea: "leaderboard", padding: "0 10px" }}>
-          <GetName
-            onChange={(name) => {
-              console.log(name);
-            }}
-          />
+          <GetName onChange={setName} />
         </div>
         <div style={{ gridArea: "chat-switch" }}>
           <Switch checkedChildren={<MessageFilled />} unCheckedChildren={<MessageFilled />} onChange={(value) => setShowChat(value)} />
