@@ -6,8 +6,7 @@
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
       "start": "NODE_ENV=development nodemon -e js,ts --watch ../clicker-game/lib --watch lib --exec ts-node lib/index.ts",
-      "serve": "node -r dotenv/config build/index.js",
-      "build": "babel lib --out-dir build --extensions '.ts,.js'",
+      "serve": "ts-node -r dotenv/config lib/index.ts",
       "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"
    },
    "author": "",
@@ -49,7 +48,7 @@
       "timesync": "^1.0.4",
       "ts-node": "^8.5.4",
       "typeorm": "0.2.22",
-      "typescript": "^3.7.4",
+      "typescript": "^3.8.3",
       "uuid": "^3.3.3"
    },
    "devDependencies": {
