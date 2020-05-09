@@ -17,7 +17,7 @@ export interface Task {
   cooldown: number;
   charges: number;
   // cost: { item: ItemType; count: number }[];
-  onComplete: (state: GameState, elapsed: number) => void;
+  onComplete: (state: GameState, elapsed: number) => GameState;
 }
 
 export const Tasks: { [index in TaskType]: Task } = {
@@ -27,7 +27,7 @@ export const Tasks: { [index in TaskType]: Task } = {
     charges: 10,
     // cost: [],
     onComplete: (state: GameState, elapsed = 1) => {
-      state.test += elapsed;
+      return { ...state, test: state.test + elapsed };
     },
   },
 };

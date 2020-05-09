@@ -27,7 +27,6 @@ const getApiState = async (): Promise<ISyncResponse | undefined> => {
       ...a,
       startTime: new Date(a.startTime),
     }));
-    console.log(parsedActions, parsedTaskStates);
 
     return merge(state, { gameState: { actions: parsedActions, tasks: parsedTaskStates } });
   } catch (err) {

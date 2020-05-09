@@ -85,6 +85,7 @@ const App = ({ className }: { className?: string }) => {
           </ElementSpawn>
           {currentState.test}
           <button onClick={() => game.testAction(now)}>test</button>
+          <button onClick={() => game.test2Action(now)}>test2</button>
         </div>
         <div className="inventory">
           <h1>

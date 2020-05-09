@@ -47,10 +47,15 @@ export class Game {
 
   pushAction(action: Action) {
     this.state.actions.push(action);
+    // this.state = { ...this.state, actions: [...this.state.actions, action] };
   }
 
   testAction(timestamp: Date) {
     this.pushAction({ action: ActionType.test, timestamp });
+  }
+
+  test2Action(timestamp: Date) {
+    this.pushAction({ action: ActionType.test2, timestamp });
   }
 
   getCurrentState() {

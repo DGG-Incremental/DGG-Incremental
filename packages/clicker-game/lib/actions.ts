@@ -14,6 +14,7 @@ export enum ActionType {
   makeSpear = "makeSpear",
   goToLocation = "goToLocation",
   test = "test",
+  test2 = "test2",
 }
 
 export interface GenericAction<D> {
@@ -40,34 +41,9 @@ function test(state: GameState, action: TestAction) {
     startTime: action.timestamp,
   });
 }
-
-// function scavenge(state: GameState) {
-//   state.scrap = state.scrap + 1;
-
-//   if (state.currentLocation?.name === locations.groceryStore.name) {
-//     state.food = state.food + 1;
-//   }
-
-//   if (state.currentLocation?.name === locations.factory.name) {
-//     state.scrap = state.scrap + 1;
-//   }
-// }
-// function eat(state: GameState) {
-//   const change = state.currentLocation?.name === locations.apartment.name ? 0.3 : 0.2;
-//   state.hunger = clamp(state.hunger + change, 0, 1) as number;
-//   state.food--;
-// }
-// function hunt(state: GameState) {
-//   state.food = state.food + state.spears + 1;
-// }
-// function makeSpear(state: GameState, { count }: MakeSpearAction) {
-//   state.spears = state.spears + count;
-//   state.scrap = state.scrap - 10;
-// }
-// function goToLocation(state: GameState, { location }: GoToLocation) {
-//   state.currentLocation = location;
-//   state.scavenge = 0;
-// }
+function test2(state: GameState) {
+  state.test += 1;
+}
 
 interface ActionCondPair<T extends Action> {
   0(action: Action): action is T;
@@ -80,11 +56,7 @@ const isOfActionType = <T extends Action>(actionType: ActionType) => (action: Ac
 
 const reducerConds: ActionCondPair<Action>[] = [
   [isOfActionType<TestAction>(ActionType.test), test],
-  // [isOfActionType<MakeSpearAction>(ActionType.makeSpear), makeSpear],
-  // [isOfActionType<EatAction>(ActionType.eat), eat],
-  // [isOfActionType<HuntAction>(ActionType.hunt), hunt],
-  // [isOfActionType<ScavengAction>(ActionType.scavenge), scavenge],
-  // [isOfActionType<GoToLocation>(ActionType.goToLocation), goToLocation],
+  [isOfActionType<TestAction>(ActionType.test2), test2],
 ];
 
 export const applyAction = (action: Action, state: GameState): GameState => {
