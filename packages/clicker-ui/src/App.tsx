@@ -6,7 +6,7 @@ import classNames from "classnames";
 import { GameStateContext, GameStateProvider } from "./gameStateContext";
 import { TimeSyncContext, TickProvider } from "./tick/TickContext";
 import { GameLocation } from "clicker-game/lib/locations";
-import { Items, ItemType } from "clicker-game/lib/items";
+import { Items, ResourceType } from "clicker-game/lib/items";
 
 import { Drawer, Modal } from "antd";
 
@@ -44,7 +44,7 @@ const App = ({ className }: { className?: string }) => {
   const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false);
   const [showChat, setShowChat] = useState<boolean>(false);
   const { game, setGame, currentState } = useContext(GameStateContext);
-  const itemEntries = Object.entries(currentState.items).map(([key, content]) => ({ ...Items[key as ItemType], count: content?.count }));
+  const itemEntries = Object.entries(currentState.resources).map(([key, content]) => ({ ...Items[key as ResourceType], count: content?.count }));
   const timeSync = useContext(TimeSyncContext);
   const now = new Date(timeSync.now());
 

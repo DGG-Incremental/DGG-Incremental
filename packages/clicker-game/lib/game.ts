@@ -8,28 +8,33 @@ import { exceedsRateLimit } from "./validations";
 import { getPassiveState } from "./passive";
 import { GameLocation, locations } from "./locations";
 
-import { Item, ItemType } from "./items";
-import { GenericTaskState, TaskType } from "./tasks";
+import { Resource, ResourceType } from "./items";
+import { GenericTaskState, TaskType, applyTasks } from "./tasks";
 
 export interface GenericGameState<D> {
-  items: { [key in ItemType]?: { count: number } };
+  // Tracks current owned resources
+  resources: { [key in ResourceType]: number };
+
+  // Array of actions taken by the user
+  // These are used to transition the current state to a new state
   actions: GenericAction<D>[];
+
+  // The last time the actions were synced to the current state
   lastSynced: Date;
+
   itemSlots: number;
   tasks: GenericTaskState<D>[];
-  test: number;
 }
 
-export interface SerializedGameState extends GenericGameState<string> {}
+export interface SerializedGameState extends GenericGameState<string> { }
 
-export interface GameState extends GenericGameState<Date> {}
+export interface GameState extends GenericGameState<Date> { }
 
 export class Game {
   state: GameState = {
     // TODO: Fix cloneDeep mess here
-    test: 0,
-    items: {
-      [ItemType.metal]: { count: 1 },
+    resources: {
+      [ResourceType.metal]: 0,
     },
     tasks: [],
     itemSlots: 9,

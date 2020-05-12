@@ -1,15 +1,15 @@
-export interface Item {
+export interface Resource {
   name: string;
   shortname: string;
   icon: string;
 }
 
-export enum ItemType {
+export enum ResourceType {
   metal = "metal",
 }
 
-export const Items: { [key in ItemType]: Item } = {
-  [ItemType.metal]: {
+export const Items: { [key in ResourceType]: Resource } = {
+  [ResourceType.metal]: {
     name: "metal",
     shortname: "MTL",
     icon: "",

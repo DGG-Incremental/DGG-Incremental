@@ -5,14 +5,9 @@ import { Action, ActionType } from "clicker-game/lib/actions"
 
 const ActionSchema = Joi.object().keys({
   action: Joi.string().valid(...Object.values(ActionType)),
-  timestamp: Joi.alternatives()
-    .conditional('/lastSync', {
-      is: Joi.exist(),
-      then: Joi.date()
-        .greater(Joi.ref('/lastSync'))
-        .less(Joi.ref('/sentAt')),
-      otherwise: Joi.date()
-    })
+  timestamp: Joi.date()
+    .when('#lastSync', { is: Joi.exist(), then: Joi.date().greater('#lastSync') })
+    .when('#sentAt', { is: Joi.exist(), then: Joi.date().less('#sentAt') })
 })
 const GoToLocationSchema = ActionSchema.keys({
   location: Joi.object().valid(...Object.values(locations))
@@ -33,11 +28,6 @@ const syncSchema = Joi.object({
     .integer()
     .required()
     .equal(Joi.ref("$version")),
-  lastSync: Joi.date()
-    .required(),
-  sentAt: Joi.date()
-    .greater(Joi.ref("/lastSync"))
-    .required()
 })
 
 export const syncPlayerGameState = async (
@@ -51,12 +41,16 @@ export const syncPlayerGameState = async (
   Joi.assert(
     {
       actions,
-      lastSync,
-      sentAt: syncTime,
       version
     },
     syncSchema,
-    { context: { version: playerState.version } }
+    {
+      context: {
+        lastSync,
+        sentAt: syncTime,
+        version: playerState.version
+      }
+    }
   )
   const game = new Game(playerState.gameState)
   game.state.actions = actions

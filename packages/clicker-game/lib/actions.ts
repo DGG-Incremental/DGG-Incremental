@@ -21,8 +21,8 @@ export interface GenericAction<D> {
   action: ActionType;
   timestamp: D;
 }
-export interface Action extends GenericAction<Date> {}
-export interface SerializedAction extends GenericAction<string> {}
+export interface Action extends GenericAction<Date> { }
+export interface SerializedAction extends GenericAction<string> { }
 
 export type EatAction = Action;
 export type ScavengAction = Action;
@@ -35,15 +35,6 @@ export interface MakeSpearAction extends Action {
 }
 export type TestAction = Action;
 
-function test(state: GameState, action: TestAction) {
-  state.tasks.push({
-    task: TaskType.acquireMetal,
-    startTime: action.timestamp,
-  });
-}
-function test2(state: GameState) {
-  state.test += 1;
-}
 
 interface ActionCondPair<T extends Action> {
   0(action: Action): action is T;
@@ -55,8 +46,6 @@ const isOfActionType = <T extends Action>(actionType: ActionType) => (action: Ac
 };
 
 const reducerConds: ActionCondPair<Action>[] = [
-  [isOfActionType<TestAction>(ActionType.test), test],
-  [isOfActionType<TestAction>(ActionType.test2), test2],
 ];
 
 export const applyAction = (action: Action, state: GameState): GameState => {
