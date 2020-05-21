@@ -5,8 +5,7 @@ import classNames from "classnames";
 
 import { GameStateContext, GameStateProvider } from "./gameStateContext";
 import { TimeSyncContext, TickProvider } from "./tick/TickContext";
-import { GameLocation } from "clicker-game/lib/locations";
-import { Items, ResourceType } from "clicker-game/lib/items";
+import { GameLocation, Items, ResourceType } from "shared/game";
 
 import { Drawer, Modal } from "antd";
 
@@ -102,8 +101,8 @@ const App = ({ className }: { className?: string }) => {
                     {item?.name}: {item?.count}
                   </div>
                 ) : (
-                  <div key={i} className="inventory__slot"></div>
-                );
+                    <div key={i} className="inventory__slot"></div>
+                  );
               })}
             </div>
           </ElementSpawn>

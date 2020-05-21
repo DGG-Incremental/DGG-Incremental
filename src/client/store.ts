@@ -1,5 +1,5 @@
 import Axios from "axios";
-import { GameState, Game, SerializedGameState } from "clicker-game/lib/game";
+import { GameState, Game, SerializedGameState } from "shared/game";
 import merge from "lodash/merge";
 
 interface ISyncResponse {

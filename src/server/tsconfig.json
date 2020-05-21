@@ -1,0 +1,35 @@
+{
+	"compilerOptions": {
+		"target": "ES2019",
+		"sourceMap": true,
+		"module": "commonjs",
+		"allowJs": true,
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"importHelpers": true,
+		"outDir": "../../dist/server",
+		"types": [
+			"node"
+		],
+		"lib": [
+			"ES2019"
+		],
+		// For typeorm
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"strictPropertyInitialization": false,
+		"baseUrl": "./",
+		"paths": {
+			"@shared/*": ["../shared/*"]
+		}
+	},
+	"include": [
+		"**/*.ts"
+	],
+
+	"references": [
+		{
+			"path": "../shared"
+		}
+	]
+}

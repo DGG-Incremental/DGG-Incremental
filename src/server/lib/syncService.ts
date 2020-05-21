@@ -1,13 +1,12 @@
-import { Game, locations } from "clicker-game"
+import { Game, locations, Action, ActionType } from "@shared/game"
 import PlayerGameState from "./db/entity/PlayerGameState"
 import Joi from "@hapi/joi"
-import { Action, ActionType } from "clicker-game/lib/actions"
 
 const ActionSchema = Joi.object().keys({
   action: Joi.string().valid(...Object.values(ActionType)),
   timestamp: Joi.date()
-    .when('#lastSync', { is: Joi.exist(), then: Joi.date().greater('#lastSync') })
-    .when('#sentAt', { is: Joi.exist(), then: Joi.date().less('#sentAt') })
+    .when('#lastSync', { is: Joi.exist(), then: Joi.date().greater(Joi.ref('#lastSync')) })
+    .when('#sentAt', { is: Joi.exist(), then: Joi.date().less(Joi.ref('#sentAt')) })
 })
 const GoToLocationSchema = ActionSchema.keys({
   location: Joi.object().valid(...Object.values(locations))

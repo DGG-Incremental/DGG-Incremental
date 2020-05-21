@@ -1,5 +1,7 @@
 import "reflect-metadata"
-import "regenerator-runtime/runtime.js";
+import 'module-alias/register' 
+
+// import "regenerator-runtime/runtime.js";
 
 import { config } from "dotenv"
 config()

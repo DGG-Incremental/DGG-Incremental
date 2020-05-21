@@ -1,4 +1,6 @@
-import { Game, locations } from "../lib";
+import { Game } from "../game";
+import { locations } from "../locations";
+
 import { dateGen } from "./helpers";
 import CONFIG from "../lib/config";
 
@@ -27,7 +29,7 @@ test("being in an area gives scavenge", () => {
 
 test('eating food replinishes depleted hunger', () => {
   const [a, b, c, d] = dateGen(1000);
-  const game = new Game({ lastSynced: a, hunger: 1});
+  const game = new Game({ lastSynced: a, hunger: 1 });
   game.eat(c)
 
   expect(game.getStateAt(a).hunger).toBe(1)

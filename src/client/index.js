@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
+import "antd";
 import "./theme.less";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
