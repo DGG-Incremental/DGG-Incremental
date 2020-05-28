@@ -5,7 +5,7 @@ import classNames from "classnames";
 
 import { GameStateContext, GameStateProvider } from "./gameStateContext";
 import { TimeSyncContext, TickProvider } from "./tick/TickContext";
-import { GameLocation, Items, ResourceType } from "shared/game";
+import { GameLocation, Items, ResourceType } from "@game";
 
 import { Drawer, Modal } from "antd";
 
@@ -43,7 +43,7 @@ const App = ({ className }: { className?: string }) => {
   const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false);
   const [showChat, setShowChat] = useState<boolean>(false);
   const { game, setGame, currentState } = useContext(GameStateContext);
-  const itemEntries = Object.entries(currentState.resources).map(([key, content]) => ({ ...Items[key as ResourceType], count: content?.count }));
+  const itemEntries = Object.entries(currentState.resources).map(([key, content]) => ({ ...Items[key as ResourceType], count: content }));
   const timeSync = useContext(TimeSyncContext);
   const now = new Date(timeSync.now());
 
@@ -82,7 +82,6 @@ const App = ({ className }: { className?: string }) => {
           <ElementSpawn state="spawn" delay={0.2}>
             <Log entries={logEntries} />
           </ElementSpawn>
-          {currentState.test}
           <button onClick={() => game.testAction(now)}>test</button>
           <button onClick={() => game.test2Action(now)}>test2</button>
         </div>

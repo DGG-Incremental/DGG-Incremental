@@ -5,7 +5,7 @@ import {
   BaseEntity,
   VersionColumn
 } from "typeorm"
-import { GameState, Game } from "@shared/game"
+import { GameState, Game } from "@game"
 
 @Entity()
 export default class PlayerGameState extends BaseEntity {

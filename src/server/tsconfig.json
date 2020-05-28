@@ -18,18 +18,20 @@
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"strictPropertyInitialization": false,
+		"composite": true,
 		"baseUrl": "./",
 		"paths": {
-			"@shared/*": ["../shared/*"]
+			"@game": ["../game/"]
 		}
 	},
 	"include": [
-		"**/*.ts"
+		"**/*.ts",
+		"**/*.js",
 	],
 
 	"references": [
 		{
-			"path": "../shared"
+			"path": "../game"
 		}
 	]
 }

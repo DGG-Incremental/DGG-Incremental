@@ -2,7 +2,7 @@ import React, { createContext, useState, PropsWithChildren, useEffect, useContex
 import { getInitialState, syncGame } from "./store";
 import { useInterval } from "./useInterval";
 import { TimeSyncContext } from "./tick/TickContext";
-import { Game, GameState } from "shared/game";
+import { Game, GameState } from "@game";
 import cloneDeep from "lodash/cloneDeep";
 
 interface IGameStateContext {

@@ -9,7 +9,7 @@
       "skipLibCheck": true,
       "allowSyntheticDefaultImports": true,
       "isolatedModules": true,
-      "outDir": "../../dist/shared",
+      "outDir": "../../dist/game",
       "lib": ["ES2019"],
       "composite": true
     },

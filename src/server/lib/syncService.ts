@@ -1,4 +1,4 @@
-import { Game, locations, Action, ActionType } from "@shared/game"
+import { Game, locations, Action, ActionType } from "@game"
 import PlayerGameState from "./db/entity/PlayerGameState"
 import Joi from "@hapi/joi"
 

@@ -1,6 +1,8 @@
 import Axios from "axios";
-import { GameState, Game, SerializedGameState } from "shared/game";
+import { GameState, Game, SerializedGameState } from "@game";
 import merge from "lodash/merge";
+import { GenericAction } from "../game/actions";
+import { GenericTaskState } from "../game/tasks";
 
 interface ISyncResponse {
   name: string;
@@ -19,11 +21,11 @@ const getApiState = async (): Promise<ISyncResponse | undefined> => {
   try {
     const res = await Axios.get("/me/state");
     const state = res.data as IApiResponseData;
-    const parsedActions = state.gameState.actions.map((a) => ({
+    const parsedActions = state.gameState.actions.map((a: GenericAction<string>) => ({
       ...a,
       timestamp: new Date(a.timestamp),
     }));
-    const parsedTaskStates = state.gameState.tasks.map((a) => ({
+    const parsedTaskStates = state.gameState.tasks.map((a: GenericTaskState<string>) => ({
       ...a,
       startTime: new Date(a.startTime),
     }));

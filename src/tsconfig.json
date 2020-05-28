@@ -1,11 +1,12 @@
 {
     "files": [],
     "references": [
-        {
-            "path": "./server"
-        },
-        {
-            "path": "./shared"
-        }
+      {
+        "path": "./server"
+      },
+      {
+        "path": "./game"
+      }
     ]
-}
+  }
+  
