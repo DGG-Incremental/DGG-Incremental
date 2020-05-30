@@ -22,10 +22,10 @@ html {
 }
 
 .overlay {
-	/* background-image: url('./digital-overlay1.png'); */
-	/* background-image: url('./digital-overlay2.png'); */
-	/* background-image: url('./digital-overlay3.png'); */
-	/* background-image: url('./digital-overlay4.png'); */
+	/* background-image: url("./assets/images/overlay/digital-overlay1.png"); */
+	/* background-image: url("./assets/images/overlay/digital-overlay2.png"); */
+	/* background-image: url("./assets/images/overlay/digital-overlay3.png"); */
+	/* background-image: url("./assets/images/overlay/digital-overlay4.png"); */
 	background-repeat: repeat;
 	position: fixed;
 	top: 0;
