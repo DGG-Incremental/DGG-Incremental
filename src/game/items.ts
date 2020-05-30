@@ -1,17 +1,17 @@
 export interface Resource {
-  name: string;
-  shortname: string;
-  icon: string;
+	name: string;
+	shortname: string;
+	icon: string;
 }
 
 export enum ResourceType {
-  metal = "metal",
+	metal = "metal",
 }
 
-export const Items: { [key in ResourceType]: Resource } = {
-  [ResourceType.metal]: {
-    name: "metal",
-    shortname: "MTL",
-    icon: "",
-  },
+export const Resources: { [key in ResourceType]: Resource } = {
+	[ResourceType.metal]: {
+		name: "metal",
+		shortname: "MTL",
+		icon: "",
+	},
 };
