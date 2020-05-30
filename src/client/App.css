@@ -1,102 +1,100 @@
-@import '~antd/dist/antd.css';
-
 .App {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  grid-template-columns: 1fr auto;
-  grid-template-areas:
-    "content chat"
-    "footer footer";
-  height: 100vh;
+	display: grid;
+	grid-template-rows: 1fr auto;
+	grid-template-columns: 1fr auto;
+	grid-template-areas:
+		"content chat"
+		"footer footer";
+	height: 100vh;
 }
 
 .App > .content {
-  display: grid;
-  grid-template-columns: 2fr minmax(300px, 1fr) 4fr;
-  grid-template-rows: 1fr 1fr;
-  grid-template-areas: 
-    "log resources tabs"
-    "log condition tabs";
-  gap: 20px;
-  padding: 20px;
-  flex: 1;
-  grid-area: content;
+	display: grid;
+	grid-template-columns: 2fr minmax(300px, 1fr) 4fr;
+	grid-template-rows: 1fr 1fr;
+	grid-template-areas:
+		"log resources tabs"
+		"log condition tabs";
+	gap: 20px;
+	padding: 20px;
+	flex: 1;
+	grid-area: content;
 }
 
 .chat {
-  grid-area: chat;
-  overflow: hidden;
+	grid-area: chat;
+	overflow: hidden;
 }
 
 .tabs {
-  grid-area: tabs;
+	grid-area: tabs;
 }
 
 .footer {
-  height: 50px;
-  background: var(--black);
-  grid-area: footer;
-  display: grid;
-  grid-template-areas: "info leaderboard . chat";
-  grid-template-columns: auto auto 1fr 60px;
-  align-content: center;
-  justify-content: center;
-  color: var(--white);
+	height: 50px;
+	background: var(--black);
+	grid-area: footer;
+	display: grid;
+	grid-template-areas: "info leaderboard . chat";
+	grid-template-columns: auto auto 1fr 60px;
+	align-content: center;
+	justify-content: center;
+	color: var(--white);
 }
 
 .locations {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, 250px);
-  grid-template-rows: repeat(auto-fill, 200px);
-  /* justify-items: center;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, 250px);
+	grid-template-rows: repeat(auto-fill, 200px);
+	/* justify-items: center;
   align-items: center; */
 }
 
 .resources {
-  grid-area: resources;
+	grid-area: resources;
 }
 
 .condition {
-  grid-area: condition;
+	grid-area: condition;
 }
 
 .card__body {
-  padding: 10px;
+	padding: 10px;
 }
 
 h4 {
-  text-transform: uppercase;
-  font-weight: 400 !important;
-  color: rgba(0,0,0,0.45) !important;
-  margin: 0 !important;
+	text-transform: uppercase;
+	font-weight: 400 !important;
+	color: rgba(0, 0, 0, 0.45) !important;
+	margin: 0 !important;
 }
 
 .upgrades__list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, 150px);
-  grid-template-rows: repeat(auto-fit, 150px);
+	display: grid;
+	grid-template-columns: repeat(auto-fit, 150px);
+	grid-template-rows: repeat(auto-fit, 150px);
 }
 
 .current-location {
-  padding: 10px;
+	padding: 10px;
 }
 
 .scavenge {
-  background: var(--off-white);
-  padding: 10px;
-  margin-bottom: 10px;
-  max-width: 300px;
-  text-align: center;
+	background: var(--off-white);
+	padding: 10px;
+	margin-bottom: 10px;
+	max-width: 300px;
+	text-align: center;
 }
 
 .scavenge .ant-progress {
-  margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 iframe {
-  border: none;
+	border: none;
 }
 
 html {
-  --antd-wave-shadow-color: rgba(0,0,0,1);
+	--antd-wave-shadow-color: rgba(0, 0, 0, 1);
 }

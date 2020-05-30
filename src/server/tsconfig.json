@@ -8,28 +8,23 @@
 		"moduleResolution": "node",
 		"importHelpers": true,
 		"outDir": "../../dist/server",
-		"types": [
-			"node"
-		],
-		"lib": [
-			"ES2019"
-		],
+		"types": ["node"],
+		"lib": ["ES2019"],
 		// For typeorm
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"strictPropertyInitialization": false,
+		"composite": true,
 		"baseUrl": "./",
 		"paths": {
-			"@shared/*": ["../shared/*"]
+			"@game": ["../game/"]
 		}
 	},
-	"include": [
-		"**/*.ts"
-	],
+	"include": ["**/*.ts", "**/*.js"],
 
 	"references": [
 		{
-			"path": "../shared"
+			"path": "../game"
 		}
 	]
 }

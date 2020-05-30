@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "scripts": {
     "build": "concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run build-server\" \"npm run build-client\"",
-    "build-client": "cross-env NODE_ENV=production TS_NODE_PROJECT=\"tsconfig-for-webpack-config.json\" webpack -p",
-    "build-server": "tsc -b src",
+    "build-client": "NODE_ENV=production parcel build src/client/index.html",
+    "build-server": "tsc -b src/server",
     "dev": "concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run dev-server\" \"npm run dev-client\"",
     "dev-client": "parcel ./src/client/index.html",
     "dev-server": "tsc-watch --noClear -b ./src/tsconfig.json --onSuccess \"node --enable-source-maps index.js\"",
     "start": "node index.js",
-    "start:prod": "cross-env NODE_ENV=production node index.js",
+    "start:prod": "NODE_ENV=production node index.js",
     "type-check-client": "tsc -p ./src/client/tsconfig.json"
   },
   "dependencies": {
@@ -74,6 +74,7 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
+    "@parcel/transformer-less": "^2.0.0-alpha.3",
     "@types/hapi__joi": "^17.1.0",
     "concurrently": "^5.2.0",
     "tsc-watch": "^4.2.7",
@@ -83,6 +84,6 @@
     "@shared": "dist/shared"
   },
   "alias": {
-    "shared": "./src/shared"
+    "@game": "./src/game"
   }
 }

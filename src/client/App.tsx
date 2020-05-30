@@ -5,7 +5,7 @@ import classNames from "classnames";
 
 import { GameStateContext, GameStateProvider } from "./gameStateContext";
 import { TimeSyncContext, TickProvider } from "./tick/TickContext";
-import { GameLocation, Items, ResourceType } from "shared/game";
+import { GameLocation, Items, ResourceType } from "@game";
 
 import { Drawer, Modal } from "antd";
 
@@ -37,10 +37,7 @@ const GetName = ({ onChange }: GetNameProps) => {
 };
 
 const logEntries = [
-	{
-		timestamp: new Date(),
-		text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-	},
+	{ timestamp: new Date(), text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
 	{
 		timestamp: new Date(),
 		text:
@@ -49,14 +46,13 @@ const logEntries = [
 ];
 
 const App = ({ className }: { className?: string }) => {
-	console.log(Items);
 	const [name, setName] = useState<string | null>(null);
 	const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false);
 	const [showChat, setShowChat] = useState<boolean>(false);
 	const { game, setGame, currentState } = useContext(GameStateContext);
 	const itemEntries = Object.entries(currentState.resources).map(([key, content]) => ({
 		...Items[key as ResourceType],
-		count: content?.count,
+		count: content,
 	}));
 	const timeSync = useContext(TimeSyncContext);
 	const now = new Date(timeSync.now());
@@ -96,7 +92,6 @@ const App = ({ className }: { className?: string }) => {
 					<ElementSpawn state="spawn" delay={0.2}>
 						<Log entries={logEntries} />
 					</ElementSpawn>
-					{currentState.test}
 					<button onClick={() => game.testAction(now)}>test</button>
 					<button onClick={() => game.test2Action(now)}>test2</button>
 				</div>
@@ -145,14 +140,7 @@ const App = ({ className }: { className?: string }) => {
 			</div>
 			<div className="footer">
 				{/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
-				<div
-					style={{
-						gridArea: "info",
-						fontSize: "12px",
-						padding: "0 10px",
-						lineHeight: "22px",
-					}}
-				>
+				<div style={{ gridArea: "info", fontSize: "12px", padding: "0 10px", lineHeight: "22px" }}>
 					dgg clicker [ 0.0.1alpha ]
 				</div>
 				<div style={{ gridArea: "leaderboard", padding: "0 10px" }}>
