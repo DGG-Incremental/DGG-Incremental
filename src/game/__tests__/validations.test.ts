@@ -1,5 +1,5 @@
-import { Game, ActionType } from "../lib"
-import { exceedsRateLimit } from "../lib/validations"
+import { Game, ActionType } from "../"
+import { exceedsRateLimit } from "../validations"
 
 test("exceedsRateLimit returns false whewn no actions", () => {
   const rateLimit = 1 // per second

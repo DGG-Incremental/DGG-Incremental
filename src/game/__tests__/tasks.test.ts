@@ -1,7 +1,7 @@
 
 
-import { Game } from '../lib/game'
-import { TaskHandlers, TaskType, Tasks } from '../lib/tasks'
+import { Game } from '../game'
+import { TaskHandlers, TaskType, Tasks } from '../tasks'
 import { dateGen } from './helpers'
 
 

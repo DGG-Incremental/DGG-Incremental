@@ -13,6 +13,7 @@ export interface GenericTaskState<D> {
 
 export enum TaskType {
   acquireMetal = "acquireMetal",
+  // buildBox = "buildBox"
 }
 
 export interface Task {
@@ -29,7 +30,7 @@ export const Tasks: { [index in TaskType]: Task } = {
     cooldown: 5 * 1000,
     charges: 10,
     // cost: [],
-  }
+  },
 }
 
 interface TaskHandler {
@@ -42,14 +43,6 @@ interface TaskHandler {
 
 export const TaskHandlers: { [s in TaskType]: TaskHandler } = {
   [TaskType.acquireMetal]: ({ state, start, target }) => {
-    // const { interval, cooldown, charges } = Tasks[TaskType.acquireMetal]
-    // const delta = target.getTime() - start.getTime() // The span of time the handler is calculating 
-    // const cycleTime = interval * charges + cooldown
-    // const avgRate = charges / cycleTime
-    // const metalGained = delta * avgRate  
-    // const currentCycleProgress = delta % cycleTime  
-
-
     const { interval, cooldown, charges } = Tasks[TaskType.acquireMetal]
     const activeTime = interval * charges // how long the task yields resources until CD
     const cycleTime = activeTime + cooldown // the time between starting the task and finishing the cooldown
