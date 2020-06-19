@@ -4,8 +4,9 @@ import flow from "lodash/flow";
 import max from "lodash/max";
 import clamp from "lodash/clamp";
 import partialRight from "lodash/partialRight";
-import produce from "immer";
 import { applyTasks } from "./tasks";
+import { applyFabricators } from "./fabricator";
+import produce from "immer";
 
 interface PassiveTransformer {
   (state: GameState, timestamp: Date): GameState;
@@ -30,7 +31,7 @@ export const transformers: { [name: string]: PassiveTransformer } = {
   // },
   tasks(state, timestamp) {
     return applyTasks(state, timestamp)
-  },
+  }
 };
 
 function tasksCompleted(time: number, taskTime: number, taskCharges: number, taskCooldown: number) {

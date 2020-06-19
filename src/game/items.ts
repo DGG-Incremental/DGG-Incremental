@@ -6,6 +6,7 @@ export interface Resource {
 
 export enum ResourceType {
   metal = "metal",
+  wire = "wire"
 }
 
 export const Items: { [key in ResourceType]: Resource } = {
@@ -14,4 +15,9 @@ export const Items: { [key in ResourceType]: Resource } = {
     shortname: "MTL",
     icon: "",
   },
+  [ResourceType.wire]: {
+    name: "wire",
+    shortname: 'WR',
+    icon: ''
+  }
 };
