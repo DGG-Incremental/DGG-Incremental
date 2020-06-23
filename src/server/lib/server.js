@@ -13,13 +13,11 @@ import PlayerGameState from './db/entity/PlayerGameState'
 import { syncPlayerGameState, ConditionalActionSchema } from "./syncService"
 import { buildWssServer } from './wss'
 import { createServer } from 'http'
-import Bundler from 'parcel-bundler'
 
 const app = express()
 const port = process.env.PORT || 3000
 const APP_ID = process.env.DGG_OATH_ID
 const REDIRECT_URI = process.env.REDIRECT_URI
-
 
 app.use(cors())
 app.use(cookieParser())
@@ -145,10 +143,6 @@ buildWssServer({server: createServer((app))})
 if (process.env.NODE_ENV === "production") {
   // Serve static files from the React app
   app.use(express.static(path.join(__dirname, process.env.STATIC_ASSET_DIR)))
-}
-else {
-  const bundler = new Bundler(path.join(__dirname, '../../../src/client/index.html')) 
-  app.use(bundler.middleware())
 }
 
 export default app

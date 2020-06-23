@@ -8,7 +8,7 @@
     "test-game": "jest src/game --config src/game/jest.config.js",
     "test-server": "jest src/server --config src/server/jest.config.js",
     "dev": "concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run dev-server\" \"npm run dev-client\"",
-    "dev-client": "parcel ./src/client/index.html",
+    "dev-client": "node src/client/client-dev-server.js",
     "dev-server": "tsc-watch --noClear -b ./src/server/tsconfig.json --onSuccess \"npm run start\"",
     "start": "ts-node -P src/server/tsconfig.json -r tsconfig-paths/register src/server/lib/index.ts",
     "start:prod": "NODE_ENV=production node index.js",
@@ -81,6 +81,7 @@
     "@types/ws": "^7.2.5",
     "concurrently": "^5.2.0",
     "cssnano": "^4.1.10",
+    "http-proxy-middleware": "^1.0.4",
     "tsc-watch": "^4.2.7",
     "tslint": "^5.20.1"
   },
