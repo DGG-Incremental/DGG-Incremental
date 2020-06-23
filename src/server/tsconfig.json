@@ -9,7 +9,8 @@
 		"importHelpers": true,
 		"outDir": "../../dist/server",
 		"types": [
-			"node"
+			"node",
+			"jest"
 		],
 		"lib": [
 			"ES2019"

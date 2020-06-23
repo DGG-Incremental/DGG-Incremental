@@ -6,12 +6,14 @@
     "build-client": "NODE_ENV=production parcel build src/client/index.html",
     "build-server": "tsc -b src/server",
     "test-game": "jest src/game --config src/game/jest.config.js",
+    "test-server": "jest src/server --config src/server/jest.config.js",
     "dev": "concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run dev-server\" \"npm run dev-client\"",
     "dev-client": "parcel ./src/client/index.html",
     "dev-server": "tsc-watch --noClear -b ./src/server/tsconfig.json --onSuccess \"node --enable-source-maps index.js\"",
     "start": "node index.js",
     "start:prod": "NODE_ENV=production node index.js",
-    "type-check-client": "tsc -p ./src/client/tsconfig.json"
+    "type-check-client": "tsc -p ./src/client/tsconfig.json",
+    "migrate": "ts-node ./node_modules/typeorm/cli.js --config src/server/ormconfig.js migration:run"
   },
   "dependencies": {
     "@emotion/core": "^10.0.28",
@@ -21,7 +23,7 @@
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.1.2",
     "@types/classnames": "^2.2.10",
-    "@types/jest": "^24.0.24",
+    "@types/jest": "^24.9.1",
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.1.2",
     "@types/react": "^16.9.17",
@@ -46,7 +48,7 @@
     "express": "^4.17.1",
     "express-http-proxy": "^1.6.0",
     "immer": "^5.3.6",
-    "jest": "^24.9.0",
+    "jest": "^26.0.1",
     "lerna": "^3.19.0",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
@@ -55,6 +57,7 @@
     "moment": "^2.24.0",
     "mysql": "^2.14.1",
     "normalize.css": "^8.0.1",
+    "parcel-bundler": "^1.12.4",
     "pg": "^7.15.1",
     "react": "^16.12.0",
     "react-app-rewired": "^2.1.5",
@@ -72,13 +75,15 @@
   },
   "devDependencies": {
     "@types/hapi__joi": "^17.1.2",
+    "@types/parcel-bundler": "^1.12.1",
+    "@types/ws": "^7.2.5",
     "concurrently": "^5.2.0",
     "cssnano": "^4.1.10",
     "tsc-watch": "^4.2.7",
     "tslint": "^5.20.1"
   },
   "_moduleAliases": {
-    "@shared": "dist/shared"
+    "@game": "dist/game"
   },
   "alias": {
     "@game": "./src/game"
