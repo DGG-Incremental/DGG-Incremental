@@ -6,5 +6,6 @@ import 'module-alias/register'
 import { config } from "dotenv"
 config()
 
+
 // Import the rest of our application.
 import "./server"

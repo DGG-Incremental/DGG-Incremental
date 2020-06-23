@@ -9,11 +9,12 @@
     "test-server": "jest src/server --config src/server/jest.config.js",
     "dev": "concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run dev-server\" \"npm run dev-client\"",
     "dev-client": "parcel ./src/client/index.html",
-    "dev-server": "tsc-watch --noClear -b ./src/server/tsconfig.json --onSuccess \"node --enable-source-maps index.js\"",
-    "start": "node index.js",
+    "dev-server": "tsc-watch --noClear -b ./src/server/tsconfig.json --onSuccess \"npm run start\"",
+    "start": "ts-node -P src/server/tsconfig.json -r tsconfig-paths/register src/server/lib/index.ts",
     "start:prod": "NODE_ENV=production node index.js",
     "type-check-client": "tsc -p ./src/client/tsconfig.json",
-    "migrate": "ts-node ./node_modules/typeorm/cli.js --config src/server/ormconfig.js migration:run"
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm",
+    "migrate": "npm run typeorm migration:run"
   },
   "dependencies": {
     "@emotion/core": "^10.0.28",
@@ -68,6 +69,7 @@
     "timesync": "^1.0.4",
     "ts-jest": "^26.1.0",
     "ts-node": "^8.5.4",
+    "tsconfig-paths": "^3.9.0",
     "typeorm": "0.2.22",
     "typescript": "^3.9.3",
     "uuid": "^3.3.3",

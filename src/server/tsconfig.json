@@ -23,7 +23,7 @@
 		"baseUrl": "./",
 		"paths": {
 			"@game": ["../game/"]
-		}
+		},
 	},
 	"include": [
 		"**/*.ts",
