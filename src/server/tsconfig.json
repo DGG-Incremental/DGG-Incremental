@@ -8,7 +8,7 @@
 		"moduleResolution": "node",
 		"importHelpers": true,
 		"outDir": "../../dist/server",
-		"types": ["node"],
+		"types": ["node", "jest"],
 		"lib": ["ES2019"],
 		// For typeorm
 		"emitDecoratorMetadata": true,

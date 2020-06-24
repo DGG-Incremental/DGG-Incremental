@@ -1,1 +1,1 @@
-require('./dist/server');
+import "./dist/server/lib";
