@@ -11,7 +11,7 @@
     "dev-client": "node src/client/client-dev-server.js",
     "dev-server": "tsc-watch --noClear -b ./src/server/tsconfig.json --onSuccess \"npm run start\"",
     "start": "ts-node -P src/server/tsconfig.json -r tsconfig-paths/register src/server/lib/index.ts",
-    "start:prod": "NODE_ENV=production node index.js",
+    "serve": "NODE_ENV=production node index.js",
     "type-check-client": "tsc -p ./src/client/tsconfig.json",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm",
     "migrate": "npm run typeorm migration:run"
