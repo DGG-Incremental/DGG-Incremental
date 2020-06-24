@@ -3,6 +3,12 @@ import cookies from "browser-cookies";
 import styled from "@emotion/styled";
 import classNames from "classnames";
 
+import { Router, Link } from "@reach/router";
+import Tasks from "./pages/Tasks";
+import Constructs from "./pages/Constructs";
+import Computer from "./pages/Computer";
+import Core from "./pages/Core";
+
 import { GameStateContext, GameStateProvider } from "./gameStateContext";
 import { TimeSyncContext, TickProvider } from "./tick/TickContext";
 import { GameLocation, Resources, ResourceType } from "@game";
@@ -85,61 +91,21 @@ const App = ({ className }: { className?: string }) => {
 	return (
 		<div className={classNames("app", className)}>
 			<Drawer visible={showLeaderboard}></Drawer>
-			<div className="content">
-				<div className="log">
-					<h1>
-						<ElementSpawn state="spawn">Log</ElementSpawn>
-					</h1>
-					<ElementSpawn state="spawn" delay={0.2}>
-						<Log entries={logEntries} />
-					</ElementSpawn>
-					<button onClick={() => game.testAction(now)}>test</button>
-					<button onClick={() => game.test2Action(now)}>test2</button>
-				</div>
-				<div className="inventory">
-					<h1>
-						<ElementSpawn state="spawn" delay={0.6}>
-							Inventory
-						</ElementSpawn>
-					</h1>
-					<ElementSpawn state="spawn" blockContent delay={0.3}>
-						<div className="inventory__items">
-							{[...new Array(currentState.itemSlots)].map((_, i) => {
-								const resource = resourceEntries[i];
-								return resource ? (
-									<div key={i.toString() + (resource?.name || "")} className="inventory__slot">
-										<Resource {...resource} />
-									</div>
-								) : (
-									<div key={i} className="inventory__slot"></div>
-								);
-							})}
-						</div>
-					</ElementSpawn>
-				</div>
-				<div className="fabrication">
-					<h1>
-						<ElementSpawn state="spawn" delay={0.4}>
-							Fabrication
-						</ElementSpawn>
-					</h1>
-					<ElementSpawn state="spawn" blockContent delay={0.6}>
-						<div className="fabricators">
-							{[...new Array(3)].map((_, i) => (
-								<Fabricator key={i} active={i > 1} progress={30 * i} />
-							))}
-						</div>
-					</ElementSpawn>
-				</div>
-				<div className="acquisition">
-					<h1>
-						<ElementSpawn state="spawn" delay={0.6}>
-							Acquisition
-						</ElementSpawn>
-					</h1>
-				</div>
+			<div className="sidebar">
+				<Link to="/">Tasks</Link>
+				<Link to="/constructs">Constructs</Link>
+				<Link to="/computer">Computer</Link>
+				<Link to="/core">AI Core</Link>
 			</div>
-			<div className="footer">
+			<div className="content">
+				<Router style={{ height: "100%" }}>
+					<Tasks path="/" />
+					<Constructs path="/constructs" />
+					<Computer path="/computer" />
+					<Core path="/core" />
+				</Router>
+			</div>
+			<footer className="footer">
 				{/* <Switch checkedChildren="話" unCheckedChildren="話" onChange={value => setShowChat(value)} /> */}
 				<div style={{ gridArea: "info", fontSize: "12px", padding: "0 10px", lineHeight: "22px" }}>
 					dgg clicker [ 0.0.1alpha ]
@@ -154,7 +120,7 @@ const App = ({ className }: { className?: string }) => {
 						onChange={(value) => setShowChat(value)}
 					/>
 				</div>
-			</div>
+			</footer>
 			{transitions.map(
 				({ item, key, props }) =>
 					item && (
@@ -172,12 +138,10 @@ const StyledApp = styled(App)`
 	background: var(--white);
 	display: grid;
 	grid-template-areas:
-		"content chat"
-		"footer footer";
-	grid-template-columns: 1fr auto;
+		"sidebar content chat"
+		"footer  footer footer";
+	grid-template-columns: 100px 1fr auto;
 	grid-template-rows: 1fr auto;
-	column-gap: 20px;
-
 	.footer {
 		height: 50px;
 		background: var(--black);
@@ -192,6 +156,7 @@ const StyledApp = styled(App)`
 
 	.chat {
 		grid-area: chat;
+		background: var(--black);
 	}
 
 	iframe {
@@ -208,49 +173,18 @@ const StyledApp = styled(App)`
 		font-weight: 700;
 		font-size: 32px;
 	}
-
-	.content {
-		grid-area: content;
-		padding: 20px;
+	.sidebar {
 		display: grid;
-		grid-template-areas:
-			"sidebar log         acquisition"
-			"sidebar inventory   acquisition"
-			"sidebar fabrication acquisition"
-			"logo    fabrication acquisition";
-		grid-template-columns: 100px 1fr 1fr;
-		grid-template-rows: 1fr auto auto 100px;
-		gap: 20px;
-	}
-	.log {
-		grid-area: log;
-		max-width: 500px;
-	}
-	.inventory {
-		grid-area: inventory;
-		padding-bottom: 50px;
-	}
-	.inventory__items {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, 100px);
-		grid-auto-rows: 100px;
+		grid-template-columns: 80px;
+		grid-template-rows: repeat(auto-fill, 80px);
+		/* text-align: center; */
+		align-items: center;
+		justify-items: center;
 		gap: 10px;
+		padding: 10px;
 	}
-	.inventory__slot {
-		background: rgba(0, 0, 0, 0.05);
-		display: grid;
-	}
-	.fabrication {
-		grid-area: fabrication;
-		padding-bottom: 50px;
-	}
-	.fabricators {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, 100px);
-		gap: 20px;
-	}
-	.acquisition {
-		grid-area: acquisition;
+	.sidebar a {
+		/* background: var(--black); */
 	}
 `;
 

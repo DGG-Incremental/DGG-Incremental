@@ -65,9 +65,9 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
 		}
 	}, 3 * 1000);
 
-	useInterval(() => {
-		setCurrentState(game.getCurrentState());
-	}, 1000 / 10 /* 10 times a second */);
+	// useInterval(() => {
+	// 	setCurrentState(game.getCurrentState());
+	// }, 1000 / 10 /* 10 times a second */);
 
 	const context: IGameStateContext = {
 		game,

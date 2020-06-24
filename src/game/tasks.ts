@@ -13,6 +13,7 @@ export interface GenericTaskState<D> {
 
 export enum TaskType {
 	acquireMetal = "acquireMetal",
+	// buildBox = "buildBox"
 }
 
 export interface Task {
@@ -27,6 +28,7 @@ export const Tasks: { [index in TaskType]: Task } = {
 		interval: 0.5 * 1000,
 		cooldown: 5 * 1000,
 		charges: 10,
+		// cost: [],
 	},
 };
 
@@ -36,7 +38,22 @@ interface TaskHandler {
 
 export const TaskHandlers: { [s in TaskType]: TaskHandler } = {
 	[TaskType.acquireMetal]: ({ state, start, target }) => {
-		const totalProgress = getTaskProgress(start, target, TaskType.acquireMetal);
+		const { interval, cooldown, charges } = Tasks[TaskType.acquireMetal];
+		const activeTime = interval * charges; // how long the task yields resources until CD
+		const cycleTime = activeTime + cooldown; // the time between starting the task and finishing the cooldown
+		const activeRatio = activeTime / cycleTime; // The ratio of active yield time to the length of the cooldown
+
+		const delta = target.getTime() - start.getTime(); // The span of time the handler is calculating
+		const completedCycleProgress = delta / cycleTime; // how many cycles were completed (with current cycle in decimal)
+		const completedCycles = floor(completedCycleProgress); // how many cycles were completed
+		const currentCycleCompletedRatio = min([completedCycleProgress - completedCycles, activeRatio]); // Fuzzy progress on current cycle
+
+		if (currentCycleCompletedRatio === undefined) {
+			throw new Error("Current progres is undefined");
+		}
+
+		const currentCycleCompletedInterval = (currentCycleCompletedRatio * cycleTime) / interval; // How many interval completed
+		const totalProgress = completedCycles * charges + floor(currentCycleCompletedInterval);
 		return merge(state, {
 			resources: { metal: state.resources.metal + totalProgress },
 		} as GameState);
@@ -48,29 +65,3 @@ export const applyTasks = (game: GameState, target: Date) => {
 		return TaskHandlers[task.task]({ state, start: task.startTime, target });
 	}, game);
 };
-
-export function getTaskProgress(start, target, taskType) {
-	// const { interval, cooldown, charges } = Tasks[TaskType.acquireMetal]
-	// const delta = target.getTime() - start.getTime() // The span of time the handler is calculating
-	// const cycleTime = interval * charges + cooldown
-	// const avgRate = charges / cycleTime
-	// const metalGained = delta * avgRate
-	// const currentCycleProgress = delta % cycleTime
-	const { interval, cooldown, charges } = Tasks[taskType];
-	const activeTime = interval * charges; // how long the task yields resources until CD
-	const cycleTime = activeTime + cooldown; // the time between starting the task and finishing the cooldown
-	const activeRatio = activeTime / cycleTime; // The ratio of active yield time to the length of the cooldown
-
-	const delta = target.getTime() - start.getTime(); // The span of time the handler is calculating
-	const completedCycleProgress = delta / cycleTime; // how many cycles were completed (with current cycle in decimal)
-	const completedCycles = floor(completedCycleProgress); // how many cycles were completed
-	const currentCycleCompletedRatio = min([completedCycleProgress - completedCycles, activeRatio]); // Fuzzy progress on current cycle
-
-	if (currentCycleCompletedRatio === undefined) {
-		throw new Error("Current progres is undefined");
-	}
-
-	const currentCycleCompletedInterval = (currentCycleCompletedRatio * cycleTime) / interval; // How many interval completed
-	const totalProgress = completedCycles * charges + floor(currentCycleCompletedInterval);
-	return totalProgress;
-}

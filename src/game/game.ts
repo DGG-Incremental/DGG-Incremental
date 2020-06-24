@@ -10,10 +10,23 @@ import { GameLocation, locations } from "./locations";
 
 import { Resource, ResourceType } from "./items";
 import { GenericTaskState, TaskType, applyTasks } from "./tasks";
+import { Fabricator } from "./fabricator";
+
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends Array<infer U>
+    ? Array<DeepPartial<U>>
+    : T[P] extends ReadonlyArray<infer U>
+      ? ReadonlyArray<DeepPartial<U>>
+      : DeepPartial<T[P]>
+};
+
+export type GameResources = {
+  [key in ResourceType]: number
+}
 
 export interface GenericGameState<D> {
   // Tracks current owned resources
-  resources: { [key in ResourceType]: number };
+  resources: GameResources;
 
   // Array of actions taken by the user
   // These are used to transition the current state to a new state
@@ -21,6 +34,9 @@ export interface GenericGameState<D> {
 
   // The last time the actions were synced to the current state
   lastSynced: Date;
+
+  // Fabricators are used to produce resources from other resources
+  fabricators: Fabricator[]
 
   itemSlots: number;
   tasks: GenericTaskState<D>[];
@@ -35,14 +51,16 @@ export class Game {
     // TODO: Fix cloneDeep mess here
     resources: {
       [ResourceType.metal]: 0,
+      [ResourceType.wire]: 0,
     },
     tasks: [],
     itemSlots: 9,
     actions: [],
+    fabricators: [],
     lastSynced: new Date(0),
   };
 
-  constructor(state: Partial<GameState> = {}) {
+  constructor(state: DeepPartial<GameState> = {}) {
     merge(this.state, state);
 
     if (this.state.lastSynced) {

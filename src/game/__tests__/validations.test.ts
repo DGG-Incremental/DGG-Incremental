@@ -1,12 +1,12 @@
-import { Game, ActionType } from "../lib"
-import { exceedsRateLimit } from "../lib/validations"
+import { Game, ActionType } from "../";
+import { exceedsRateLimit } from "../validations";
 
 test("exceedsRateLimit returns false whewn no actions", () => {
-  const rateLimit = 1 // per second
+	const rateLimit = 1; // per second
 
-  const game = new Game()
-  expect(exceedsRateLimit(game, rateLimit)).toBe(false)
-})
+	const game = new Game();
+	expect(exceedsRateLimit(game, rateLimit)).toBe(false);
+});
 
 // test("exceedsRateLimit returns false when under limit", () => {
 //   const rateLimit = 1 // per second
