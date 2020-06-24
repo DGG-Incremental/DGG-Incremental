@@ -113,12 +113,11 @@ const App = ({ className }: { className?: string }) => {
 				<div style={{ gridArea: "leaderboard", padding: "0 10px" }}>
 					<GetName onChange={setName} />
 				</div>
-				<div style={{ gridArea: "chat-switch" }}>
-					<Switch
-						checkedChildren={<MessageFilled />}
-						unCheckedChildren={<MessageFilled />}
-						onChange={(value) => setShowChat(value)}
-					/>
+				<div
+					className={classNames("chat-toggle", { active: showChat })}
+					onClick={(value) => setShowChat(!showChat)}
+				>
+					<MessageFilled />
 				</div>
 			</footer>
 			{transitions.map(
@@ -148,15 +147,30 @@ const StyledApp = styled(App)`
 		color: var(--white);
 		grid-area: footer;
 		display: grid;
-		grid-template-areas: "info leaderboard . chat-switch";
+		grid-template-areas: "info leaderboard . chat-toggle";
 		grid-template-columns: auto auto 1fr 60px;
-		align-content: center;
-		justify-content: center;
+		align-items: center;
+		justify-items: center;
 	}
 
 	.chat {
 		grid-area: chat;
 		background: var(--black);
+	}
+
+	.chat-toggle {
+		grid-area: chat-toggle;
+		height: 50px;
+		text-align: center;
+		font-size: 30px;
+		cursor: pointer;
+		padding-top: 1px;
+		width: 100%;
+	}
+
+	.chat-toggle.active {
+		color: var(--black);
+		background: var(--white);
 	}
 
 	iframe {
