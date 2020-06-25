@@ -87,14 +87,14 @@ const App = ({ className }: { className?: string }) => {
 			<div className="sidebar">
 				<Link to="/">Tasks</Link>
 				<Link to="/constructs">Constructs</Link>
-				<Link to="/computer">Computer</Link>
+				<Link to="/comp">Computer</Link>
 				<Link to="/core">AI Core</Link>
 			</div>
 			<div className="content">
 				<Router style={{ height: "100%" }}>
 					<Tasks path="/" />
 					<Constructs path="/constructs" />
-					<Computer path="/computer" />
+					<Computer path="/comp" />
 					<Core path="/core" />
 				</Router>
 			</div>

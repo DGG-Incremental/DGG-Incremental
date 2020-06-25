@@ -6,10 +6,8 @@ import moment from "moment";
 
 import { GameStateContext } from "../gameStateContext";
 import { TimeSyncContext } from "../tick/TickContext";
-import { Resources, ResourceType } from "@game";
 
 import { Table } from "antd";
-import { ColumnsType } from "antd/es/table";
 
 interface File {
 	name: string;
@@ -25,31 +23,6 @@ interface Download extends File {
 interface FileEntry extends File {
 	timestamp: Date;
 }
-
-// const Download = styled(() => (
-//   <div className="download">
-//     <div className="name"></div>
-//   </div>
-// ))`
-// `;
-
-const downloadColumns: ColumnsType<Download> = [
-	{
-		title: "Name",
-		dataIndex: "name",
-		key: "name",
-		sorter: (a, b) => a.name.length - b.name.length,
-	},
-	{
-		title: "Size",
-		dataIndex: "size",
-		key: "size",
-		sorter: {
-			compare: (a: any, b: any) => a - b,
-			multiple: 1,
-		},
-	},
-];
 
 const Computer = ({ className }: { className?: string } & RouteComponentProps) => {
 	const { game, setGame, currentState } = useContext(GameStateContext);
