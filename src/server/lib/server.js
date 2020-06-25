@@ -136,7 +136,7 @@ buildWssServer({ server: createServer(app) });
 
 if (process.env.NODE_ENV === "production") {
 	// Serve static files from the React app
-	app.use(express.static(path.join(__dirname, process.env.STATIC_ASSET_DIR)));
+	app.use(express.static(path.join(__dirname, '../../../dist/client')));
 }
 
 export default app.listen(port, () =>

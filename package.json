@@ -2,9 +2,8 @@
   "name": "dgg-clicker",
   "version": "0.1.0",
   "scripts": {
-    "build": "concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run build-server\" \"npm run build-client\"",
-    "build-client": "NODE_ENV=production parcel build src/client/index.html",
-    "build-server": "tsc -b src/server",
+    "build": "npm run build-client",
+    "build-client": "NODE_ENV=production parcel build src/client/index.html --out-dir dist/client",
     "test-game": "jest src/game --config src/game/jest.config.js",
     "test-server": "jest src/server --config src/server/jest.config.js",
     "dev": "concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run dev-server\" \"npm run dev-client\"",
