@@ -23,14 +23,7 @@ import Resource from "./components/Resource";
 
 import { useTransition, animated as a } from "react-spring";
 
-import {
-	ToolFilled,
-	ExperimentFilled,
-	ReadFilled,
-	MessageFilled,
-	DeleteFilled,
-	ExclamationCircleOutlined,
-} from "@ant-design/icons";
+import { MessageFilled, ExclamationCircleOutlined } from "@ant-design/icons";
 
 interface GetNameProps {
 	onChange: (s: string) => void;
