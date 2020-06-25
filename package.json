@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "build": "concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run build-server\" \"npm run build-client\"",
-    "build-client": "NODE_ENV=production parcel build src/client/index.html",
+    "build-client": "NODE_ENV=production parcel build src/client/index.html --out-dir dist/client",
     "build-server": "tsc -b src/server",
     "test-game": "jest src/game --config src/game/jest.config.js",
     "test-server": "jest src/server --config src/server/jest.config.js",
@@ -11,7 +11,6 @@
     "dev-client": "node src/client/client-dev-server.js",
     "dev-server": "tsc-watch --noClear -b ./src/server/tsconfig.json --onSuccess \"npm run start\"",
     "start": "ts-node -P src/server/tsconfig.json -r tsconfig-paths/register src/server/lib/index.ts",
-    "start:prod": "NODE_ENV=production node index.js",
     "type-check-client": "tsc -p ./src/client/tsconfig.json",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm",
     "migrate": "npm run typeorm migration:run"
