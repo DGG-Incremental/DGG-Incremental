@@ -10,23 +10,19 @@ const bundler = new Bundler(path.join(__dirname, "index.html"), {
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-console.log("\x1b[33m%s\x1b[0m", `Client running on port ${PORT}`);
 
-// This route structure is specifc to Netlify functions, so
-// if you're setting this up for a non-Netlify project, just use
-// whatever values make sense to you.  Probably something like /api/**
-
-// Pass the Parcel bundler into Express as middleware
 app.use(bundler.middleware());
 
 app.use(
-	"*",
 	createProxyMiddleware({
 		// Your local server
 		target: "http://localhost:3000",
-		// Your production routes
+		// Your production routes,
+		autoRewrite: true
 	})
 );
 
+// Pass the Parcel bundler into Express as middleware
+
 // Run your Express server
-app.listen(PORT);
+app.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", `Client running on port ${PORT}`));
