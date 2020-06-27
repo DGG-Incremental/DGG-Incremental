@@ -6,10 +6,8 @@ import moment from "moment";
 
 import { GameStateContext } from "../gameStateContext";
 import { TimeSyncContext } from "../tick/TickContext";
-import { Resources, ResourceType } from "@game";
 
 import { Table } from "antd";
-import { ColumnsType } from "antd/es/table";
 
 interface File {
 	name: string;
@@ -25,31 +23,6 @@ interface Download extends File {
 interface FileEntry extends File {
 	timestamp: Date;
 }
-
-// const Download = styled(() => (
-//   <div className="download">
-//     <div className="name"></div>
-//   </div>
-// ))`
-// `;
-
-const downloadColumns: ColumnsType<Download> = [
-	{
-		title: "Name",
-		dataIndex: "name",
-		key: "name",
-		sorter: (a, b) => a.name.length - b.name.length,
-	},
-	{
-		title: "Size",
-		dataIndex: "size",
-		key: "size",
-		sorter: {
-			compare: (a: any, b: any) => a - b,
-			multiple: 1,
-		},
-	},
-];
 
 const Computer = ({ className }: { className?: string } & RouteComponentProps) => {
 	const { game, setGame, currentState } = useContext(GameStateContext);
@@ -67,7 +40,10 @@ const Computer = ({ className }: { className?: string } & RouteComponentProps) =
 
 	return (
 		<div className={classNames("computer", className)}>
-			<div className="stats"></div>
+			<div className="stats">
+				<div className="bandwidth"></div>
+				<div className="storage"></div>
+			</div>
 			<div className="downloads">
 				<Table<Download> dataSource={downloads} pagination={false}>
 					<Table.Column<Download>
@@ -89,14 +65,14 @@ const Computer = ({ className }: { className?: string } & RouteComponentProps) =
 						title="Added"
 						key="added"
 						dataIndex="added"
-						width="15%"
+						width="200px"
 						showSorterTooltip={false}
 						render={(text, record, index) => moment(text).format("MM/DD/YY HH:MM:SS")}
 						sorter={(a, b) => a.added.valueOf() - b.added.valueOf()}
 					/>
 				</Table>
 			</div>
-			<div className="harddrive">
+			{/* <div className="harddrive">
 				<Table<FileEntry>
 					dataSource={harddrive}
 					pagination={false}
@@ -129,7 +105,7 @@ const Computer = ({ className }: { className?: string } & RouteComponentProps) =
 						sorter={(a, b) => a.timestamp.valueOf() - b.timestamp.valueOf()}
 					/>
 				</Table>
-			</div>
+			</div> */}
 			<div className="code">
 				<div className="projects"></div>
 				<div className="project-details"></div>
@@ -141,6 +117,33 @@ const Computer = ({ className }: { className?: string } & RouteComponentProps) =
 export default styled(Computer)`
 	background: var(--black);
 	height: 100%;
+	display: grid;
+	grid-template-areas:
+		"code  downloads"
+		"stats stats";
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 500px;
+	gap: 20px;
+	padding: 20px;
+	.downloads {
+		grid-area: downloads;
+	}
+	.stats {
+		grid-area: stats;
+	}
+	.code {
+		grid-area: code;
+		display: grid;
+		grid-template-areas: "projects details";
+		grid-template-columns: 2fr 5fr;
+	}
+	.projects {
+		grid-area: projects;
+	}
+	.project-details {
+		grid-area: details;
+	}
+
 	.ant-table {
 		background: none;
 		color: var(--white);
