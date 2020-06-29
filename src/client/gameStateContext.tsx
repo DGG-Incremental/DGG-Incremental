@@ -4,6 +4,7 @@ import { useInterval } from "./utilities/useInterval";
 import { TimeSyncContext } from "./tick/TickContext";
 import { Game, GameState } from "@game";
 import cloneDeep from "lodash/cloneDeep";
+import cookies from 'browser-cookies'
 
 interface IGameStateContext {
 	game: Game;
@@ -15,17 +16,17 @@ interface IGameStateContext {
 export const GameStateContext = createContext<IGameStateContext>({
 	game: new Game(),
 	currentState: new Game().state,
-	setGame: () => {},
+	setGame: () => { },
 	error: null,
 });
 
-interface GameStateProviderProps extends PropsWithChildren<{}> {}
+interface GameStateProviderProps extends PropsWithChildren<{}> { }
 export const GameStateProvider = ({ children }: GameStateProviderProps) => {
 	const [game, _setGame] = useState(new Game());
 	const [version, setVersion] = useState(0);
 	const [error, setError] = useState<Error | null>(null);
 	const timeSync = useContext(TimeSyncContext);
-
+	const [syncSocket] = useState(new WebSocket('ws://' + window.location.hostname + '/wss/sync'))
 	// Calculated current state so each consumer doesn't trigger state calculations
 	const [currentState, setCurrentState] = useState(game.getCurrentState());
 
@@ -36,38 +37,46 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
 		setCurrentState(clone.getCurrentState());
 	};
 
+
 	useEffect(() => {
 		getInitialState().then((data) => {
 			if (data) {
 				setGame(new Game(data.gameState));
 				setVersion(data.version);
 			} else {
-				window.location.replace("/auth");
+				window.location.replace("/api/auth");
 			}
 		});
+
+		syncSocket.addEventListener('open', () => console.log('Connected to Sync Socket'))
+		syncSocket.addEventListener('message', ({ data }) => {
+			const { event, state, version } = JSON.parse(data)
+			console.log('Received data from wss: ', { event, state, version })
+			setVersion(version)
+			setCurrentState(state)
+		})
+		syncSocket.addEventListener('error', (event) => {
+			console.error('Error when syncing')
+			console.error(event)
+		})
+		return () => syncSocket.close()
 	}, []);
 
 	useInterval(async () => {
 		if (game.state.actions.length) {
 			try {
-				const synced = await syncGame({
-					game,
+				syncSocket.send(JSON.stringify({
+					token: cookies.get('jwt'),
+					actions: game.state.actions,
 					version,
-					sentAt: new Date(timeSync.now()),
-				});
-				setGame(game.fastForward(synced.game));
-				setVersion(synced.version);
-				setError(null);
+					sentAt: new Date(timeSync.now())
+				}))
 			} catch (err) {
 				setError(err);
 				console.error(err);
 			}
 		}
 	}, 3 * 1000);
-
-	// useInterval(() => {
-	// 	setCurrentState(game.getCurrentState());
-	// }, 1000 / 10 /* 10 times a second */);
 
 	const context: IGameStateContext = {
 		game,

@@ -17,12 +17,11 @@
 		"composite": true,
 		"baseUrl": "./",
 		"paths": {
-			"@game": ["../game/"],
-			"@sync": ["../sync"]
+			"@game": ["../game/"]
 		},
-		"rootDir": "../"
+		"rootDir": "./"
 	},
-	"include": ["**/*.ts", "**/*.js", "../sync"],
+	"include": ["**/*.ts", "**/*.js"],
 
 	"references": [
 		{
