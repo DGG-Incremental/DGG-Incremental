@@ -20,15 +20,21 @@ export const GameStateContext = createContext<IGameStateContext>({
 	error: null,
 });
 
+const getWssUrl = () => {
+	const url = new URL('wss/sync', window.location.origin)
+	url.protocol = url.protocol === 'https:' ? 'wss' : 'ws'
+	return url
+}
+
 interface GameStateProviderProps extends PropsWithChildren<{}> { }
 export const GameStateProvider = ({ children }: GameStateProviderProps) => {
-	const [game, _setGame] = useState(new Game());
+	const [game, _setGame] = useState(() => new Game());
 	const [version, setVersion] = useState(0);
 	const [error, setError] = useState<Error | null>(null);
 	const timeSync = useContext(TimeSyncContext);
-	const [syncSocket] = useState(new WebSocket('ws://' + window.location.hostname + '/wss/sync'))
+	const [syncSocket] = useState(() => new WebSocket(getWssUrl().toString()))
 	// Calculated current state so each consumer doesn't trigger state calculations
-	const [currentState, setCurrentState] = useState(game.getCurrentState());
+	const [currentState, setCurrentState] = useState(() => game.getCurrentState());
 
 	const setGame = (game: Game) => {
 		const clone = cloneDeep(game);
