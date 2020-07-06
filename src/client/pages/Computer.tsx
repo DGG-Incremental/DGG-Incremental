@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import styled from "@emotion/styled";
 import classNames from "classnames";
 import { RouteComponentProps } from "@reach/router";
-import moment from "moment";
 
 import { GameStateContext } from "../gameStateContext";
 import { TimeSyncContext } from "../tick/TickContext";
@@ -32,10 +31,6 @@ const Computer = ({ className }: { className?: string } & RouteComponentProps) =
 	const [downloads, setDownloads] = useState<(Download & { key: number })[]>([
 		{ key: 1, name: "test", size: 1024, downloaded: 0, status: "idle", added: new Date() },
 		{ key: 2, name: "foo", size: 51200, downloaded: 0, status: "idle", added: new Date(0) },
-	]);
-	const [harddrive, setHarddrive] = useState<(FileEntry & { key: number })[]>([
-		{ key: 1, name: "bar", size: 128, timestamp: new Date() },
-		{ key: 2, name: "floop", size: 8192, timestamp: new Date(0) },
 	]);
 
 	return (
@@ -67,45 +62,21 @@ const Computer = ({ className }: { className?: string } & RouteComponentProps) =
 						dataIndex="added"
 						width="200px"
 						showSorterTooltip={false}
-						render={(text, record, index) => moment(text).format("MM/DD/YY HH:MM:SS")}
+						render={(date) =>
+							new Intl.DateTimeFormat("en-US", {
+								year: "2-digit",
+								month: "2-digit",
+								day: "2-digit",
+								hour: "2-digit",
+								minute: "2-digit",
+								second: "2-digit",
+								hour12: false,
+							}).format(date)
+						}
 						sorter={(a, b) => a.added.valueOf() - b.added.valueOf()}
 					/>
 				</Table>
 			</div>
-			{/* <div className="harddrive">
-				<Table<FileEntry>
-					dataSource={harddrive}
-					pagination={false}
-					expandable={{
-						expandedRowRender: (record) => <p style={{ margin: 0 }}>{record.name}</p>,
-					}}
-				>
-					<Table.Column<FileEntry>
-						title="Name"
-						key="name"
-						dataIndex="name"
-						showSorterTooltip={false}
-						sorter={(a, b) => a.name.localeCompare(b.name)}
-					/>
-					<Table.Column<FileEntry>
-						title="Size"
-						key="size"
-						dataIndex="size"
-						width="10%"
-						showSorterTooltip={false}
-						sorter={(a, b) => a.size - b.size}
-					/>
-					<Table.Column<FileEntry>
-						title="Timestamp"
-						key="timestamp"
-						dataIndex="timestamp"
-						width="15%"
-						showSorterTooltip={false}
-						render={(text, record, index) => moment(text).format("MM/DD/YY HH:MM:SS")}
-						sorter={(a, b) => a.timestamp.valueOf() - b.timestamp.valueOf()}
-					/>
-				</Table>
-			</div> */}
 			<div className="code">
 				<div className="projects"></div>
 				<div className="project-details"></div>

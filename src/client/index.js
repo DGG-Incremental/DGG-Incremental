@@ -8,7 +8,7 @@ import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(<App />, document.getElementById("root"));
 
-if (module.hot) {
+if (module.hot && process.env.REACT_APP_STORAGE_TYPE === "local") {
 	module.hot.accept("./App", () => {
 		const NextApp = require("./App").default;
 		ReactDOM.render(<NextApp />, rootEl);

@@ -15,15 +15,15 @@ import { GameLocation, Resources, ResourceType } from "@game";
 
 import { Drawer, Modal } from "antd";
 
-import { Switch } from "./components/Switch";
-import Log from "./components/cards/Log";
-import ElementSpawn from "./components/sequencing/ElementSpawn";
-import Fabricator from "./components/Fabricator";
-import Resource from "./components/Resource";
-
 import { useTransition, animated as a } from "react-spring";
 
 import { MessageFilled, ExclamationCircleOutlined } from "@ant-design/icons";
+import TasksIcon from "./assets/images/icons/tasks.svg";
+import ConstructsIcon from "./assets/images/icons/constructs.svg";
+import ComputerIcon from "./assets/images/icons/computer.svg";
+import CoreIcon from "./assets/images/icons/core.svg";
+import MapIcon from "./assets/images/icons/map.svg";
+import { jsx } from "@emotion/core";
 
 interface GetNameProps {
 	onChange: (s: string) => void;
@@ -44,6 +44,12 @@ const logEntries = [
 			"Nam <b>hendrerit</b> facilisis velit in eleifend. Mauris volutpat, ipsum et convallis rutrum, justo augue molestie augue, ac elementum sapien erat ut urna. Pellentesque vitae felis fermentum mi sollicitudin mollis molestie aliquam ex.",
 	},
 ];
+
+const NavLink: React.FC<{ to: string }> = ({ to, children }) => (
+	<Link to={to} getProps={({ isCurrent }) => ({ className: isCurrent ? "active" : "" })}>
+		{children}
+	</Link>
+);
 
 const App = ({ className }: { className?: string }) => {
 	const [name, setName] = useState<string | null>(null);
@@ -83,18 +89,20 @@ const App = ({ className }: { className?: string }) => {
 
 	return (
 		<div className={classNames("app", className)}>
+			<div className="overlay"></div>
 			<Drawer visible={showLeaderboard}></Drawer>
-			<div className="sidebar">
-				<Link to="/">Tasks</Link>
-				<Link to="/constructs">Constructs</Link>
-				<Link to="/comp">Computer</Link>
-				<Link to="/core">AI Core</Link>
+			<div className="links">
+				<NavLink to="/">Home</NavLink>
+				<NavLink to="/constructs">Constructs</NavLink>
+				<NavLink to="/computer">Computer</NavLink>
+				<NavLink to="/core">Core</NavLink>
+				<NavLink to="/map">Map</NavLink>
 			</div>
 			<div className="content">
 				<Router style={{ height: "100%" }}>
 					<Tasks path="/" />
 					<Constructs path="/constructs" />
-					<Computer path="/comp" />
+					<Computer path="/computer" />
 					<Core path="/core" />
 				</Router>
 			</div>
@@ -130,10 +138,11 @@ const StyledApp = styled(App)`
 	background: var(--white);
 	display: grid;
 	grid-template-areas:
-		"sidebar content chat"
-		"footer  footer footer";
-	grid-template-columns: 100px 1fr auto;
-	grid-template-rows: 1fr auto;
+		"links links"
+		"content chat"
+		"footer footer";
+	grid-template-columns: 1fr auto;
+	grid-template-rows: 30px 1fr auto;
 	.footer {
 		height: 50px;
 		background: var(--black);
@@ -180,18 +189,46 @@ const StyledApp = styled(App)`
 		font-weight: 700;
 		font-size: 32px;
 	}
-	.sidebar {
-		display: grid;
-		grid-template-columns: 80px;
-		grid-template-rows: repeat(auto-fill, 80px);
-		/* text-align: center; */
+	.links {
+		grid-area: links;
+		align-self: center;
+		/* display: grid;
+		grid-template-columns: 40px;
+		grid-template-rows: repeat(auto-fill, 40px);
 		align-items: center;
 		justify-items: center;
-		gap: 10px;
-		padding: 10px;
+		gap: 20px;
+		padding: 20px; */
 	}
-	.sidebar a {
+	.links a {
 		/* background: var(--black); */
+		position: relative;
+		transition: opacity 0.2s ease;
+		margin: 0 10px;
+	}
+	.links a:after {
+		position: absolute;
+		/* content: ""; */
+		top: 0;
+		bottom: 0;
+		left: -20px;
+		right: calc(100% + 20px);
+		background: var(--black);
+		opacity: 0.15;
+		transition: opacity 0.2s ease, right 0.2s ease;
+	}
+	.links a:hover,
+	.links a.active {
+		opacity: 1;
+	}
+	.links a:hover:after,
+	.links a.active:after {
+		right: calc(100%);
+		opacity: 1;
+	}
+	img {
+		width: 100%;
+		height: 100%;
 	}
 `;
 
