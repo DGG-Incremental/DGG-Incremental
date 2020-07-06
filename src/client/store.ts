@@ -19,7 +19,7 @@ const localStorage = window.localStorage;
 
 const getApiState = async (): Promise<ISyncResponse | undefined> => {
 	try {
-		const res = await Axios.get("/me/state");
+		const res = await Axios.get("/api/sync/state");
 		const state = res.data as IApiResponseData;
 		const parsedActions = state.gameState.actions.map((a: GenericAction<string>) => ({
 			...a,
@@ -77,9 +77,10 @@ const localSync = (options: syncGameOptions) => {
 	};
 };
 
+
 const apiSync = async ({ game, version, sentAt }: syncGameOptions) => {
 	try {
-		const res = await Axios.patch("/me/state", {
+		const res = await Axios.patch("/api/sync/state", {
 			actions: game.state.actions,
 			sentAt,
 			version,
@@ -90,8 +91,9 @@ const apiSync = async ({ game, version, sentAt }: syncGameOptions) => {
 			version: data.version,
 		};
 	} catch (err) {
+		debugger
 		if (err.response.status === 404) {
-			window.location.replace("/auth");
+			window.location.replace("/api/auth");
 		}
 		throw err.response.data;
 	}
@@ -106,7 +108,6 @@ export const syncGame = (options: syncGameOptions) => {
 };
 
 export const getInitialState = async () => {
-	console.log(process.env.REACT_APP_STORAGE_TYPE);
 	if (process.env.REACT_APP_STORAGE_TYPE === "local") {
 		return await getLocalState();
 	} else {

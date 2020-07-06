@@ -10,7 +10,7 @@ import React, {
 } from "react"
 import { create as TimeSync } from "timesync"
 
-export const TimeSyncContext = createContext(TimeSync({ server: "/timesync" }))
+export const TimeSyncContext = createContext(TimeSync({ server: "/api/timesync" }))
 export const TickContext = createContext(Date.now())
 
 export const TickProvider = ({ children }: PropsWithChildren<{}>) => {

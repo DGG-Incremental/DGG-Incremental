@@ -1,6 +1,7 @@
 import { Game, locations, Action, ActionType } from "@game";
 import PlayerGameState from "./db/entity/PlayerGameState";
 import Joi from "@hapi/joi";
+import { SyncSchema } from './validation';
 
 const ActionSchema = Joi.object().keys({
 	action: Joi.string().valid(...Object.values(ActionType)),
@@ -8,18 +9,9 @@ const ActionSchema = Joi.object().keys({
 		.when("#lastSync", { is: Joi.exist(), then: Joi.date().greater(Joi.ref("#lastSync")) })
 		.when("#sentAt", { is: Joi.exist(), then: Joi.date().less(Joi.ref("#sentAt")) }),
 });
+
 const GoToLocationSchema = ActionSchema.keys({
 	location: Joi.object().valid(...Object.values(locations)),
-});
-
-export const ConditionalActionSchema = Joi.alternatives().conditional(".action", {
-	switch: [{ is: ActionType.goToLocation, then: GoToLocationSchema }],
-	otherwise: ActionSchema,
-});
-
-const syncSchema = Joi.object({
-	actions: Joi.array().items(ConditionalActionSchema),
-	version: Joi.number().integer().required().equal(Joi.ref("$version")),
 });
 
 export const syncPlayerGameState = async (
@@ -36,7 +28,7 @@ export const syncPlayerGameState = async (
 			actions,
 			version,
 		},
-		syncSchema,
+		SyncSchema,
 		{
 			context: {
 				lastSync,
@@ -50,7 +42,7 @@ export const syncPlayerGameState = async (
 	game.validate();
 	const newState = game.getStateAt(syncTime);
 	playerState.gameState = newState;
-	playerState.version = version;
+	playerState.version = version + 1;
 
 	return await playerState.save();
 };
