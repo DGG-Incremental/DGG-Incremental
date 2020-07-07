@@ -11,7 +11,8 @@
 		"isolatedModules": true,
 		"outDir": "../../dist/game",
 		"lib": ["ES2019"],
-		"composite": true
+		"composite": true,
+		"strictNullChecks": true,
 	},
 	"include": ["./**/*.ts"],
 	"exclude": ["./**/*.test.ts"]

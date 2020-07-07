@@ -1,11 +1,11 @@
-import { GameState } from "./game";
+import { GameState } from "./resource";
 import CONFIG from "./config";
 import flow from "lodash/flow";
 import max from "lodash/max";
 import clamp from "lodash/clamp";
 import partialRight from "lodash/partialRight";
 import { applyTasks } from "./tasks";
-import { applyFabricators } from "./fabricator";
+import { applyFabricators } from "./fabricators";
 import produce from "immer";
 
 interface PassiveTransformer {

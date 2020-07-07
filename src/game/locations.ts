@@ -1,4 +1,4 @@
-import { GameState } from "./game"
+import { GameState } from "./resource"
 
 export interface GameLocation {
   name: string

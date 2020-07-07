@@ -1,4 +1,4 @@
-import { GameState } from "./game";
+import { GameState } from "./resource";
 import merge from "lodash/merge";
 import { ResourceType } from "./items";
 import floor from "lodash/floor";

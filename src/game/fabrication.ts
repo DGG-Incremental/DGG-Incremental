@@ -1,5 +1,5 @@
 import { ResourceType } from "./items";
-import { GameState } from "./game";
+import { GameState } from "./resource";
 import { merge } from "lodash";
 
 export interface GenericFabricatorState<D> {

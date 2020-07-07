@@ -1,7 +1,7 @@
 import orderBy from "lodash/orderBy"
 import some from "lodash/some"
 
-import { Game, GameState } from "../game"
+import { Game, GameState } from "../resource"
 
 export const exceedsRateLimit = (game: Game, rateLimit = 15000) => {
   const timeline = orderBy(game.state.actions, ["timestamp"])
