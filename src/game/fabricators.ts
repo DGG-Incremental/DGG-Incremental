@@ -1,6 +1,4 @@
-import { chain, reduce, update } from "lodash"
-import PriorityQueue = require('js-priority-queue')
-import { findSourceMap } from "module"
+import { chain } from "lodash"
 
 export interface Fabricator<B> {
     blueprint: B
@@ -49,16 +47,31 @@ interface ApplyFabricatorsArgs<B, G extends HasFabricators<B>> {
     fabricatorService: FabricatorService<B, G>
 }
 export const applyFabricators = <B, G extends HasFabricators<B>>({ fabricators, targetTime, fabricatorService }: ApplyFabricatorsArgs<B, G>) => {
-    if (fabricators.fabricatorSlots.length === 0) {
-        return fabricators
-    }
-
     return chain(fabricators.fabricatorSlots)
         .compact()
         .filter(fabricator => fabricator.start !== null)
         .filter(fabricator => fabricator.finish !== null && fabricator.finish <= targetTime)
         .orderBy(fabricator => fabricator.finish)
-        .reduce((acc, fabricator) => fabricatorService.applyFabricator(acc, fabricator), fabricators)
+        .head()
+        .thru((fabricator: Fabricator<B> | undefined) => {
+            if (!fabricator || fabricator.finish === null) {
+                return fabricators
+            }
+            const index = fabricators.fabricatorSlots.indexOf(fabricator)
+            const updated = fabricatorService.applyFabricator(fabricators, fabricator)
+            const nextFinish = fabricatorService.getBlueprintCompletionTime(updated, fabricator.blueprint)
+            const updatedWithFabricator = setFabricator(updated, index, {
+                ...fabricator,
+                finish: nextFinish,
+                start: nextFinish === null ? null : fabricator.finish
+            })
+
+            return applyFabricators({
+                fabricators: updatedWithFabricator,
+                fabricatorService,
+                targetTime
+            })
+        })
         .value() as G
 }
 

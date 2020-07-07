@@ -1,7 +1,5 @@
 import * as Fabricators from '../fabricators'
 import { dateGen } from './helpers'
-import { update } from 'lodash'
-import { start } from 'repl'
 
 describe("fabricators", () => {
     // const [BEFORE_COMPLETE, COMPLETE, AFTER_COMPLETE] = dateGen()
@@ -47,11 +45,10 @@ describe("fabricators", () => {
     }
 
     let fabricators = createFabricatorGame()
-    beforeEach(() => fabricators = createFabricatorGame())
+    beforeEach(() => {
+        fabricators = createFabricatorGame()
+    })
 
-    const A_TIMER = jest.fn()
-        .mockReturnValueOnce(A_COMPLETES_AGAIN)
-        .mockReturnValue(null)
 
     const fabricatorService: Fabricators.FabricatorService<TestBlueprint, FabricatorGame> = {
         applyFabricator: (game, fabricator) => {
@@ -64,8 +61,8 @@ describe("fabricators", () => {
         },
         getBlueprintCompletionTime: (game, blueprint) => {
             return {
-                A: A_TIMER,
-                B: () => game.completedOrder.includes('B') ? null : B_COMPLETES,
+                A: () => [A_COMPLETES, A_COMPLETES_AGAIN, null][game.completedOrder.filter(c => c === 'A').length],
+                B: () => [B_COMPLETES, null][game.completedOrder.filter(c => c === 'B').length],
                 C: () => null
             }[blueprint]()
         },
@@ -145,7 +142,7 @@ describe("fabricators", () => {
             let updatedFabricators = Fabricators.setFabricator(fabricators, 0, FABRICATOR_A)
             updatedFabricators = Fabricators.addFabricator(updatedFabricators)
             updatedFabricators = Fabricators.setFabricator(updatedFabricators, 1, FABRICATOR_B)
-            const result = Fabricators.applyFabricators({ fabricators: updatedFabricators, fabricatorService, targetTime: FINISH })
+            const result = Fabricators.applyFabricators({ fabricators: updatedFabricators, fabricatorService, targetTime: B_COMPLETES })
             expect(result.counter).toEqual(2)
         })
 
@@ -153,15 +150,16 @@ describe("fabricators", () => {
             let updatedFabricators = Fabricators.setFabricator(fabricators, 0, FABRICATOR_B)
             updatedFabricators = Fabricators.addFabricator(updatedFabricators)
             updatedFabricators = Fabricators.setFabricator(updatedFabricators, 1, FABRICATOR_A)
-            const result = Fabricators.applyFabricators({ fabricators: updatedFabricators, fabricatorService, targetTime: FINISH })
+            const result = Fabricators.applyFabricators({ fabricators: updatedFabricators, fabricatorService, targetTime: B_COMPLETES })
 
             expect(result.counter).toEqual(2)
             expect(result.completedOrder).toEqual([FABRICATOR_A.blueprint, FABRICATOR_B.blueprint])
         })
 
-        xtest('should repeatidly apply fabricators', () => {
+        test('should repeatidly apply fabricators', () => {
             const updatedFabricators = Fabricators.setFabricator(fabricators, 0, FABRICATOR_A)
             const result = Fabricators.applyFabricators({ fabricators: updatedFabricators, fabricatorService, targetTime: FINISH })
+            expect(fabricatorService.getBlueprintCompletionTime)
             expect(result.counter).toEqual(2)
         })
     })
