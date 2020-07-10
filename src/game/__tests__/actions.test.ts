@@ -1,5 +1,4 @@
 import * as Actions from '../actions'
-import { DatePicker } from 'antd'
 
 
 describe("actions", () => {
@@ -56,7 +55,7 @@ describe("actions", () => {
             } as TestGame
         }
 
-        const actionService: Actions.IActionService<ACTION_TYPE, TestGame> = (game, action) => {
+        const actionService: Actions.AbstractActionService<ACTION_TYPE, TestGame> = (game, action) => {
             if (action.action === 'INC_COUNTER') {
                 return {
                     ...game,

@@ -25,14 +25,14 @@ export const pushActionQueue = <A, G extends HasActionQueue<A>>(queue: G, action
   }
 }
 
-export interface IActionService<A, G extends HasActionQueue<A> = HasActionQueue<A>> {
+export interface AbstractActionService<A, G extends HasActionQueue<A> = HasActionQueue<A>> {
   (game: G, action: Action<A>): G
 }
 
 interface ReduceActionArgs<A, G extends HasActionQueue<A>> {
   game: G
   targetTime: Date
-  actionService: IActionService<A, G>
+  actionService: AbstractActionService<A, G>
 }
 
 export const reduceActions = <A, G extends HasActionQueue<A>>({ actionService, game, targetTime }: ReduceActionArgs<A, G>) => {

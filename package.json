@@ -5,7 +5,7 @@
     "build": "concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run build-server\" \"npm run build-client\"",
     "build-client": "NODE_ENV=production parcel build src/client/index.html --out-dir dist/client",
     "build-server": "tsc -b src/server",
-    "test-game": "jest src/game/__tests__ --color",
+    "test-game": "jest src/game/ --color",
     "test-server": "jest src/server",
     "dev": "concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run dev-server\" \"npm run dev-client\"",
     "dev-client": "node src/client/client-dev-server.js",
