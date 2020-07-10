@@ -18,12 +18,6 @@ import { Drawer, Modal } from "antd";
 import { useTransition, animated as a } from "react-spring";
 
 import { MessageFilled, ExclamationCircleOutlined } from "@ant-design/icons";
-import TasksIcon from "./assets/images/icons/tasks.svg";
-import ConstructsIcon from "./assets/images/icons/constructs.svg";
-import ComputerIcon from "./assets/images/icons/computer.svg";
-import CoreIcon from "./assets/images/icons/core.svg";
-import MapIcon from "./assets/images/icons/map.svg";
-import { jsx } from "@emotion/core";
 
 interface GetNameProps {
 	onChange: (s: string) => void;
@@ -164,9 +158,9 @@ const StyledApp = styled(App)`
 		grid-area: chat-toggle;
 		height: 50px;
 		text-align: center;
-		font-size: 30px;
+		font-size: 24px;
 		cursor: pointer;
-		padding-top: 1px;
+		padding-top: 6px;
 		width: 100%;
 	}
 

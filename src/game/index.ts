@@ -8,3 +8,5 @@ export type { GameLocation } from "./locations";
 
 export { Resources } from "./items";
 export type { ResourceType } from "./items";
+
+export { Blueprints, Blueprint } from "./fabrication";

@@ -2,6 +2,9 @@ import { ResourceType } from "./items";
 import { GameState } from "./game";
 import { merge } from "lodash";
 
+import WireIcon from "../client/assets/images/icons/resources/wire.svg";
+import HeavyWireIcon from "../client/assets/images/icons/resources/wire-heavy.svg";
+
 export interface GenericFabricatorState<D> {
 	startTime: D;
 	blueprint: BlueprintType;
@@ -9,19 +12,34 @@ export interface GenericFabricatorState<D> {
 
 export enum BlueprintType {
 	wire = "wire",
+	heavyWire = "heavyWire",
 }
 
 export interface Blueprint {
+	name: string;
 	interval: number;
 	cost: { item: ResourceType; count: number }[];
 	output: { item: ResourceType; count: number }[];
+	icon: string;
 }
 
 export const Blueprints: { [index in BlueprintType]: Blueprint } = {
 	[BlueprintType.wire]: {
+		name: "Wire",
 		interval: 3 * 1000,
 		cost: [{ item: ResourceType.metal, count: 3 }],
 		output: [{ item: ResourceType.wire, count: 1 }],
+		icon: WireIcon,
+	},
+	[BlueprintType.heavyWire]: {
+		name: "Heavy Wire",
+		interval: 6 * 1000,
+		cost: [
+			{ item: ResourceType.wire, count: 6 },
+			{ item: ResourceType.metal, count: 1 },
+		],
+		output: [{ item: ResourceType.heavyWire, count: 1 }],
+		icon: HeavyWireIcon,
 	},
 };
 
@@ -38,6 +56,11 @@ export const FabricationHandler: { [s in BlueprintType]: FabricationHandler } = 
 		// 		wire: (state.resources.wire || 0) + 0,
 		// 	},
 		// } as GameState);
+		return state;
+	},
+	[BlueprintType.heavyWire]: ({ state, start, target }) => {
+		const { cost, output } = Blueprints[BlueprintType.heavyWire];
+		const gain = getFabricatorDelta(state, start, target, BlueprintType.heavyWire);
 		return state;
 	},
 };
