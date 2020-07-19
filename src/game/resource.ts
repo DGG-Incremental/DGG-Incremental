@@ -1,22 +1,24 @@
-export interface HasResources<R extends string> {
-  resources: Map<R, number>
+import { get, constant, set } from 'lodash/fp'
+import { set as s} from 'ramda'
+
+
+
+export type ResourceCollection<R extends string> = Record<R, number>
+
+interface IResourceModule<R extends string> {
+  createResourceCollection(): ResourceCollection<R>
+  getResource( resource: R, collection: ResourceCollection<R> )
+  setResource( resource: R, n: number, collection: ResourceCollection<R> )
 }
 
-export const createResources = <R extends string>(): HasResources<R> => {
+export const createResourceModule = <R extends string>() => {
   return {
-    resources: new Map()
-  }
+    createResourceCollection: constant( {} as Record<R, number> ),
+    getResource: get,
+    setResource: set
+  } as IResourceModule<R>
 }
 
-export const getResource = <R extends string>(game: HasResources<R>, resource: R) => {
-  return game.resources.get(resource) || 0
-}
+export type GameResource = 'metal' | 'wire'
+export default createResourceModule<GameResource>()
 
-export const setResource =  <R extends string>(game: HasResources<R>, resource: R, n: number): HasResources<R> => {
-  return {
-    ...game,
-    resources: game.resources.set(resource, n)
-  }
-}
-
-export type Resource =  'wire' | 'metal'

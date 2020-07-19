@@ -1,19 +1,32 @@
+import { dateGen } from './helpers'
 import * as Game from '../game'
+import * as Fabricator from '../fabricators'
+import * as Resource from '../resource'
+import { flow } from 'lodash/fp'
+import { curry, curryRight } from 'lodash'
 
+const setResource = curryRight( Resource.setResource )
 
-describe('Game', () => {
-    const resource: Game.GameResources = 'wire'
-    let game = Game.createGame()
+const addFabricator = Fabricator.addFabricator
 
-    beforeEach(() => game = Game.createGame())
-    describe('resources', () => {
-        test('it should have empty resources', () => {
-            expect(Game.getResource(game, resource)).toEqual(0)
-        })
-        test('it should set resource', () => {
-            const updated = Game.setResource(game, resource, 1)
-            expect(Game.getResource(game, resource)).toEqual(1)
-        })
-    })
+const setFabricator = curryRight( Fabricator.setFabricator )
 
-})
+const setupGame = flow(
+  Game.createGame,
+  setResource( Resource.Resource.metal, 4 ),
+  addFabricator,
+  setFabricator( { start: null, finish: null, blueprint: Fabricator.GameBlueprint.wireFabricator }, 1 )
+)
+
+describe( 'Game', () => {
+  let game = setupGame()
+  const [FABRICATOR_START, MAKE_WIRE] = dateGen()
+  beforeEach( () => game = setupGame() )
+
+  describe( 'fabricators ', () => {
+    test( 'pause when no resources', () => {
+
+    } )
+  } )
+
+} )

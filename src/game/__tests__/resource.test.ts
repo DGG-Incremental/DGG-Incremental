@@ -1,40 +1,41 @@
-import * as Resource from '../resource'
+import { createResourceModule } from '../resource'
+type Resource = 'metal' | 'wire'
+const Resource = createResourceModule<Resource>()
 
 
-describe("resources", () => {
-    type Resource = 'metal' | 'wire'
-    let resources = Resource.createResources<Resource>()
+describe( "resources", () => {
+    let resources = Resource.createResourceCollection()
 
-    beforeEach(() => {
-        resources = Resource.createResources()
-    })
+    beforeEach( () => {
+        resources = Resource.createResourceCollection()
+    } )
 
-    describe('creation', () => {
-        test('should start with no metal', () => {
-            expect(Resource.getResource(resources, 'metal')).toEqual(0)
-        })
+    describe( 'creation', () => {
+        test( 'should start with no metal', () => {
+            expect( Resource.getResource( 'metal', resources ) ).toEqual( 0 )
+        } )
 
-        test('should start with no resources', () => {
-            expect(Resource.getResource(resources, 'metal')).toEqual(0)
-            expect(Resource.getResource(resources, 'wire')).toEqual(0)
-        })
-    })
+        test( 'should start with no resources', () => {
+            expect( Resource.getResource( 'metal', resources ) ).toEqual( 0 )
+            expect( Resource.getResource( 'wire', resources ) ).toEqual( 0 )
+        } )
+    } )
 
-    describe('setting resource', () => {
-        test('should set resource to 0', () => {
-            const result = Resource.setResource(resources, 'wire', 0)
-            expect(Resource.getResource(result, 'wire')).toEqual(0)
-        })
+    describe( 'setting resource', () => {
+        test( 'should set resource to 0', () => {
+            const result = Resource.setResource( 'wire', 0, resources )
+            expect( Resource.getResource( 'wire', result ) ).toEqual( 0 )
+        } )
 
-        test('should set resource to 1', () => {
-            const result = Resource.setResource(resources, 'wire', 1)
-            expect(Resource.getResource(result, 'wire')).toEqual(1)
-        })
+        test( 'should set resource to 1', () => {
+            const result = Resource.setResource( 'wire', 1, resources )
+            expect( Resource.getResource( 'wire', resources ) ).toEqual( 1 )
+        } )
 
-        test('should set resource to any number', () => {
-            const result = Resource.setResource(resources, 'wire', 10)
-            expect(Resource.getResource(result, 'wire')).toEqual(10)
-        })
-    })
+        test( 'should set resource to any number', () => {
+            const result = Resource.setResource( 'wire', 10, resources )
+            expect( Resource.getResource( 'wire', resources ) ).toEqual( 10 )
+        } )
+    } )
 
-})
+} )

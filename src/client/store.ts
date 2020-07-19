@@ -1,7 +1,7 @@
 import Axios from "axios";
 import { GameState, Game, SerializedGameState } from "@game";
 import merge from "lodash/merge";
-import { GenericAction } from "../game/actions";
+import { GenericAction } from "../game/actions/actions";
 import { GenericTaskState } from "../game/tasks";
 
 interface ISyncResponse {
@@ -19,20 +19,20 @@ const localStorage = window.localStorage;
 
 const getApiState = async (): Promise<ISyncResponse | undefined> => {
 	try {
-		const res = await Axios.get("/api/sync/state");
+		const res = await Axios.get( "/api/sync/state" );
 		const state = res.data as IApiResponseData;
-		const parsedActions = state.gameState.actions.map((a: GenericAction<string>) => ({
+		const parsedActions = state.gameState.actions.map( ( a: GenericAction<string> ) => ( {
 			...a,
-			timestamp: new Date(a.timestamp),
-		}));
-		const parsedTaskStates = state.gameState.tasks.map((a: GenericTaskState<string>) => ({
+			timestamp: new Date( a.timestamp ),
+		} ) );
+		const parsedTaskStates = state.gameState.tasks.map( ( a: GenericTaskState<string> ) => ( {
 			...a,
-			startTime: new Date(a.startTime),
-		}));
+			startTime: new Date( a.startTime ),
+		} ) );
 
-		return merge(state, { gameState: { actions: parsedActions, tasks: parsedTaskStates } });
-	} catch (err) {
-		if (err.response.status === 404) {
+		return merge( state, { gameState: { actions: parsedActions, tasks: parsedTaskStates } } );
+	} catch ( err ) {
+		if ( err.response.status === 404 ) {
 			return undefined;
 		}
 		throw err.response.data;
@@ -40,9 +40,9 @@ const getApiState = async (): Promise<ISyncResponse | undefined> => {
 };
 
 const getLocalState = (): ISyncResponse => {
-	const s = localStorage.getItem("gameData") as string | null;
-	if (s) {
-		return JSON.parse(s);
+	const s = localStorage.getItem( "gameData" ) as string | null;
+	if ( s ) {
+		return JSON.parse( s );
 	} else {
 		const game = new Game();
 		return {
@@ -59,9 +59,9 @@ interface syncGameOptions {
 	sentAt: Date;
 }
 
-const localSync = (options: syncGameOptions) => {
+const localSync = ( options: syncGameOptions ) => {
 	const now = new Date();
-	const state = options.game.getStateAt(now);
+	const state = options.game.getStateAt( now );
 	state.lastSynced = now;
 	state.actions = [];
 
@@ -70,45 +70,45 @@ const localSync = (options: syncGameOptions) => {
 		name: "LocalUser",
 		version: options.version,
 	};
-	localStorage.setItem("gameData", JSON.stringify(gameData));
+	localStorage.setItem( "gameData", JSON.stringify( gameData ) );
 	return {
-		game: new Game(state),
+		game: new Game( state ),
 		version: options.version,
 	};
 };
 
 
-const apiSync = async ({ game, version, sentAt }: syncGameOptions) => {
+const apiSync = async ( { game, version, sentAt }: syncGameOptions ) => {
 	try {
-		const res = await Axios.patch("/api/sync/state", {
+		const res = await Axios.patch( "/api/sync/state", {
 			actions: game.state.actions,
 			sentAt,
 			version,
-		});
+		} );
 		const data = res.data as ISyncResponse;
 		return {
-			game: new Game(data.gameState),
+			game: new Game( data.gameState ),
 			version: data.version,
 		};
-	} catch (err) {
+	} catch ( err ) {
 		debugger
-		if (err.response.status === 404) {
-			window.location.replace("/api/auth");
+		if ( err.response.status === 404 ) {
+			window.location.replace( "/api/auth" );
 		}
 		throw err.response.data;
 	}
 };
 
-export const syncGame = (options: syncGameOptions) => {
-	if (process.env.REACT_APP_STORAGE_TYPE === "local") {
-		return localSync(options);
+export const syncGame = ( options: syncGameOptions ) => {
+	if ( process.env.REACT_APP_STORAGE_TYPE === "local" ) {
+		return localSync( options );
 	} else {
-		return apiSync(options);
+		return apiSync( options );
 	}
 };
 
 export const getInitialState = async () => {
-	if (process.env.REACT_APP_STORAGE_TYPE === "local") {
+	if ( process.env.REACT_APP_STORAGE_TYPE === "local" ) {
 		return await getLocalState();
 	} else {
 		return await getApiState();
