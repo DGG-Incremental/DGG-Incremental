@@ -1,43 +1,13 @@
-import { chain as ActionQueue } from "lodash"
-import { Action, GameAction } from "./types"
+import { append, __, curry, lensProp, set, head, pipe, compose, sortBy, path, call, prop, slice } from "ramda"
+import { Game, Action } from "../types"
 
-export interface AbstractActionQueue<A> {
-  actionQueue: Action<A>[]
+const queueLens = lensProp('actionQueue')
+const appendAndSortAction = (action: Action, queue: Array<Action>) => {
+    const actionSortProp = (action: Action) => action.timestamp.getTime()
+    return sortBy(actionSortProp, append(action, queue))
 }
 
-export const createActionQueue = <A>(): AbstractActionQueue<A> => {
-  return {
-    actionQueue: []
-  }
-}
-
-export const getActionQueue = <A, G extends AbstractActionQueue<A>>( queue: G ): Action<A>[] => queue.actionQueue
-
-export const pushActionQueue = <A, G extends AbstractActionQueue<A>>( queue: G, action: Action<A> ): G => {
-  return {
-    ...queue,
-    actionQueue: [...queue.actionQueue, action]
-  }
-}
-
-export interface AbstractActionService<A, G extends AbstractActionQueue<A> = AbstractActionQueue<A>> {
-  ( game: G, action: Action<A> ): G
-}
-
-interface ReduceActionArgs<A, G extends AbstractActionQueue<A>> {
-  game: G
-  targetTime: Date
-  actionService: AbstractActionService<A, G>
-}
-
-export const reduceActions = <A, G extends AbstractActionQueue<A>>( { actionService, game, targetTime }: ReduceActionArgs<A, G> ) => {
-  return ActionQueue( getActionQueue<A, G>( game ) )
-    .filter( action => action.timestamp <= targetTime )
-    .orderBy( action => action.timestamp )
-    .reduce( ( accGame, action ) => {
-      return actionService( accGame, action )
-    }, game )
-    .value() as G
-}
-
-export type ActionQueue = AbstractActionQueue<GameAction>
+export const getActionQueueSize = (game: Game) => game.actionQueue.length
+export const peekAction = (game: Game) => head(game.actionQueue)
+export const enqueueAction = curry((action: Action, game: Game) => set(queueLens, appendAndSortAction(action, game.actionQueue), game))
+export const dequeueAction = (game: Game) => [peekAction(game), set(queueLens, slice(1, Infinity, game.actionQueue), game)] as [Action | undefined, Game]

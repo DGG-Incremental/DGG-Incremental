@@ -1,19 +1,13 @@
-import * as ActionQueue from './actions'
-import * as Fabricators from './fabricators'
-import * as Resources from './resource'
-export { setResource, getResource } from './resource'
-export { addFabricator, createFabricators } from './fabricators'
+import {Game} from './types'
 
-export interface Game extends
-  ActionQueue.ActionQueue,
-  Fabricators.Fabricators,
-  Resources.GameResources {
-}
 
-export const createGame = (): Game => {
+export const createGame = () => {
   return {
-    ...ActionQueue.createActionQueue(),
-    ...Fabricators.createFabricators(),
-    ...Resources.createResources()
-  }
+    actionQueue: [],
+    fabricators: [],
+    resources: {
+      metal: 0,
+      wire: 0
+    }
+  } as Game
 }
