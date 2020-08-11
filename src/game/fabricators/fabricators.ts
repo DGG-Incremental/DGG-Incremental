@@ -1,4 +1,4 @@
-import { identity, set, lensProp, append, curry, pipe, adjust, update, assoc, path, assocPath, compose, always, cond, prop, __, T, times, isNil, map, tap } from "ramda";
+import { identity, set, lensProp, append, curry, pipe, update, assoc, assocPath, always, cond, prop, __, T, times, isNil, map } from "ramda";
 import { Game, Fabricator } from "../types";
 
 const EMPTY_FABRICATOR: Fabricator = {

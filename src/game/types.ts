@@ -24,3 +24,5 @@ export interface Game {
     actionQueue: Array<Action>
     fabricators: Array<Fabricator>
 }
+
+export const isResource = (s: string): s is Resource => ['metal', 'wire'].includes(s)
