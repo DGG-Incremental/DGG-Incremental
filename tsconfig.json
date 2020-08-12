@@ -1,9 +1,22 @@
 {
-    "extends": "./tsconfig.build.json",
     "compilerOptions": {
-        "baseUrl": "./packages",
-        "paths": {
-            "@game/*": ["src/game/*"],
-        }
-    }
+        "module": "commonjs",
+        "declaration": true,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "target": "ES2019",
+        "sourceMap": true,
+        "lib": [
+            "es6"
+        ],
+        "strict": true,
+    },
+    "include": ["./src"],
+    "exclude": [
+        "node_modules",
+        "build"
+    ]
 }

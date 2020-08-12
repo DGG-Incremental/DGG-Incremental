@@ -9,10 +9,12 @@
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true,
-		"outDir": "../../dist/game",
+		"outDir": "../../dist/shared",
 		"lib": ["ES2019"],
 		"composite": true,
 		"strictNullChecks": true,
+		"downlevelIteration": true
 	},
-	"exclude": ["../client", "../serial", "../server"]
+	"include": ["./**/*.ts"], 
+	"exclude": ["./**/*.test.ts"],
 }
