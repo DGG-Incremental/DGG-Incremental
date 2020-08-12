@@ -3,9 +3,7 @@
     "compilerOptions": {
         "baseUrl": "./packages",
         "paths": {
-            "clicker-game": ["clicker-game/lib"],
-            "clicker-server": ["clicker-server/lib"],
-            "clicker-ui": ["clicker-ui/src"]
+            "@game/*": ["src/game/*"],
         }
     }
 }
