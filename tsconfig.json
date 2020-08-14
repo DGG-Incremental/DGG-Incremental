@@ -17,6 +17,7 @@
     "include": ["./src"],
     "exclude": [
         "node_modules",
-        "build"
+        "build",
+        "__tests__"
     ]
 }

@@ -1,4 +1,5 @@
 export * from './actions'
 export * from './fabricators'
 export * from './game'
+export * from './resource'
 export type { Game } from './types'
