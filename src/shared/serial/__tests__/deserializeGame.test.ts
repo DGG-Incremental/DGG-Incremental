@@ -1,7 +1,6 @@
 import * as R from 'ramda'
 import * as Joi from 'joi'
 import * as Game from '../../game'
-import { serializeGame } from '../serializeGame'
 import { deserializeGame } from '../deserializeGame'
 
 
@@ -46,10 +45,7 @@ describe('deserializeGame', () => {
     }, true)
 
     testValidString('should serialize actions',
-        R.pipe(
-            Game.enqueueAction({ timestamp: new Date(0), type: 'craftWire' }),
-            JSON.stringify
-        )(game),
+        JSON.stringify(Game.enqueueAction({ timestamp: new Date(0), type: 'craftWire' }, game)),
         { actionQueue: [{ type: 'craftWire', timestamp: new Date(0) }] }
     )
 

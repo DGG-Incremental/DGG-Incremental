@@ -3,6 +3,7 @@ import { mutateGame } from '../mutators'
 import { getResource, addResource, setResource } from '../resource'
 import { pipe, compose } from 'ramda'
 import { getFabricatorSize, getFabricatorDetails } from '../fabricators/fabricators'
+import { Game } from '../types'
 
 describe('mutators', () => {
     let game = createGame()
@@ -15,7 +16,7 @@ describe('mutators', () => {
     })
 
     test('craftWire', () => {
-        const result = pipe(
+        const result = pipe<Game, Game, Game>(
             setResource('metal', 2),
             mutateGame('craftWire')
         )(game)
@@ -29,7 +30,7 @@ describe('mutators', () => {
     })
 
     test('setCraftWireFabricator', () => {
-        const result = pipe(
+        const result = pipe<Game, Game, Game>(
             mutateGame('makeFabricator'),
             mutateGame({ action: 'setFabricator', blueprint: 'craftWire', index: 0 })
         )(game)

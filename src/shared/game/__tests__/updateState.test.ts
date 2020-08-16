@@ -1,7 +1,7 @@
 import progressState from '../updateState'
 import { createGame } from '../game'
 import { dateGen } from './helpers'
-import { Action } from '../types'
+import { Action, Game } from '../types'
 import { enqueueAction, peekAction } from '../actions/actionQueue'
 import { pipe, tap } from 'ramda'
 import * as Resources from '../resource'
@@ -22,7 +22,7 @@ describe('updateState', () => {
     })
 
     test('it should mutate game with action when it is in time-bound', () => {
-        const result = pipe(
+        const result = pipe<Game, Game, Game>(
             enqueueAction(SCAVENGE_METAL),
             progressState(a, c)
         )(game)
@@ -31,7 +31,7 @@ describe('updateState', () => {
     })
 
     test('it should not mutate game with action when it is in not time-bound', () => {
-        const result = pipe(
+        const result = pipe<Game, Game, Game>(
             enqueueAction(SCAVENGE_METAL),
             progressState(a, b)
         )(game)
@@ -40,7 +40,7 @@ describe('updateState', () => {
     })
 
     test('it should mutate game with all actions when they are in time-bound', () => {
-        const result = pipe(
+        const result = pipe<Game, Game, Game>(
             enqueueAction(SCAVENGE_METAL),
             progressState(a, c)
         )(game)
@@ -48,7 +48,7 @@ describe('updateState', () => {
         expect(peekAction(result)).toEqual(undefined)
     })
     test('it should apply fabricators', () => {
-        const result = pipe(
+        const result = pipe<Game, Game, Game, Game, Game>(
             Resources.setResource('metal', 2),
             Fabricators.addFabricator,
             Fabricators.setFabricator(0, 'craftWire'),

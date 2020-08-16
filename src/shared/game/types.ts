@@ -2,11 +2,15 @@
 
 export type Resource = 'metal' | 'wire'
 export type Blueprint = 'craftWire'
+
+
 export type SetFabricatorAction<B extends Blueprint> = {
     action: 'setFabricator',
     index: number,
     blueprint: B
 }
+export const isSetFabricatorAction = (a: any): a is SetFabricatorAction<Blueprint> => a && a.action === 'setFabricator'
+
 export type ActionType = 'scavengeMetal' | 'craftWire' | 'makeFabricator' | SetFabricatorAction<'craftWire'>
 
 export interface Action {

@@ -1,4 +1,4 @@
-import { identity, set, lensProp, append, curry, pipe, update, assoc, assocPath, always, cond, prop, __, T, times, isNil, map } from "ramda";
+import { identity, set, lensProp, append, curry, pipe, update, assoc, assocPath, __, times, map } from "ramda";
 import { Game, Fabricator } from "../types";
 
 const EMPTY_FABRICATOR: Fabricator = {
@@ -17,13 +17,18 @@ export const getFabricatorSize = (game: Game) => {
 export const addFabricator = (game: Game) => setGameFabricators(append(EMPTY_FABRICATOR, game.fabricators), game)
 
 
-const propIsNill = curry((p: string, obj: Object) => isNil(prop(p, obj)))
 
-const getFabricatorStatus = cond([
-    [propIsNill('blueprint'), always('inactive')],
-    [propIsNill('startTime'), always('waiting')],
-    [T, always('pending')]
-])
+const getFabricatorStatus = (fabrcitaor: Fabricator) => {
+    if (!fabrcitaor.blueprint) {
+        return 'inactive'
+    }
+    else if (!fabrcitaor.startTime) {
+        return 'waiting'
+    }
+    else {
+        return 'pending'
+    }
+}
 
 export const setFabricator = curry((fabricicatorIndex: number, blueprint: string, game: Game) => {
     const fabricators = update(fabricicatorIndex, { blueprint, startTime: null, endTime: null } as Fabricator, game.fabricators)
@@ -51,7 +56,7 @@ export const stopFabricator = curry((fabricatorIndex: number, game: Game) => {
     return pipe(setStartTime, setEndTime)(game)
 })
 
-export const getAllFabricatorDetails = (game: Game) => pipe(
+export const getAllFabricatorDetails = (game: Game) => pipe<Game, number, number[], FabricatorDetails[]>(
     getFabricatorSize,
     times(identity),
     map(getFabricatorDetails(__, game))

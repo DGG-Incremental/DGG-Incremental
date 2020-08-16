@@ -1,14 +1,14 @@
-import { pipe, equals, cond, __, CurriedFunction2, curry, T, identity, propEq, props, apply } from "ramda";
+import { pipe, equals, cond, __, curry, T, identity, propEq, props, apply } from "ramda";
 import { addResource } from "./resource";
-import { Blueprint, Game, ActionType, SetFabricatorAction } from "./types";
+import { Blueprint, Game, ActionType, SetFabricatorAction, isSetFabricatorAction } from "./types";
 import * as Fabricator from "./fabricators";
 
 type Mutation = Blueprint | ActionType
-type Handler = CurriedFunction2<Mutation, Game, Game>
+type Handler = CurriedFn2<Mutation, Game, Game>
 
 
 const scavengeMetal = addResource('metal', 1)
-const craftWire = pipe(
+const craftWire = pipe<Game, Game, Game>(
     addResource('metal', -2),
     addResource('wire', 1)
 )
@@ -26,11 +26,11 @@ const simple = curry((fn: (game: Game) => Game, _m: Mutation, game: Game) => fn(
 
 
 
-const mutatorPairs: Array<[(mutation: Mutation) => boolean, CurriedFunction2<Mutation, Game, Game>]> = [
+const mutatorPairs: Array<[(mutation: Mutation) => boolean, Handler]> = [
     [eq('scavengeMetal'), simple(scavengeMetal)],
     [eq('craftWire'), simple(craftWire)],
     [eq('makeFabricator'), simple(Fabricator.addFabricator)],
-    [propEq('action', 'setFabricator'), setFabricator],
+    [isSetFabricatorAction, setFabricator],
     [T, simple(identity)]
 ]
 

@@ -8,25 +8,27 @@
 		"moduleResolution": "node",
 		"importHelpers": true,
 		"outDir": "../../dist/server",
-		"types": ["node", "jest"],
-		"lib": ["ES2019"],
+		"types": [
+			"node",
+			"jest"
+		],
+		"lib": [
+			"ES2019"
+		],
 		// For typeorm
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"strictPropertyInitialization": false,
 		"composite": true,
 		"baseUrl": "./",
-		"paths": {
-			"@game": ["../game/"],
-			"@sync": ["../sync"]
-		},
-		"rootDir": "../"
+		"paths": {},
+		"rootDir": "../",
+		"allowSyntheticDefaultImports": true
 	},
-	"include": ["**/*.ts", "**/*.js", "../sync"],
-
-	"references": [
-		{
-			"path": "../game"
-		}
-	]
+	"include": [
+		"**/*.ts",
+		"**/*.js",
+		"../shared/game",
+		"../shared/serial",
+	],
 }

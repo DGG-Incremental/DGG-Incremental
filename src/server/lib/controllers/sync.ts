@@ -1,5 +1,5 @@
 import PlayerGameState from 'lib/db/entity/PlayerGameState';
-import { syncPlayerGameState } from 'lib/syncService';
+import { syncPlayerGameState } from 'lib/services/syncService';
 import Joi from '@hapi/joi';
 import { StateSyncSchema } from 'lib/validation';
 import { getUserInfo } from 'lib/services/auth';

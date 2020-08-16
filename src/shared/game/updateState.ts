@@ -26,16 +26,16 @@ const getNextActionEvent = (game: Game): ProgressionEvent | undefined => {
 }
 
 
-const getNextFabricatorEvent = curry((current: Date, game: Game): ProgressionEvent | undefined => pipe(
+const getNextFabricatorEvent = curry((current: Date, game: Game): ProgressionEvent | undefined => pipe<any, any, any, any, any, any>(
     Fabricators.getAllFabricatorDetails,
-    addIndex<any, any, any>(map)((fabricator: FabricatorDetails, index) => {
+    addIndex<any, any>(map)((fabricator: FabricatorDetails, index) => {
         const { blueprint } = fabricator
         if (!blueprint) {
             return undefined
         }
 
         //TODO clean up this mess
-        const statusIs = propEq('status', __, fabricator)
+        const statusIs = (status: string) => propEq('status', status, fabricator)
         if (statusIs('waiting')) {
             const { start, end } = calcBlueprintTimes(blueprint, current, game)
             if (start && end) {
@@ -48,7 +48,7 @@ const getNextFabricatorEvent = curry((current: Date, game: Game): ProgressionEve
         if (statusIs('pending')) {
             return {
                 timestamp: fabricator.endTime,
-                apply: () => compose(Mutators.mutateGame(blueprint), Fabricators.stopFabricator(index))(game)
+                apply: () => pipe<Game, Game, Game>(Fabricators.stopFabricator(index), Mutators.mutateGame(blueprint))(game)
             }
         }
 
@@ -62,7 +62,7 @@ const getNextFabricatorEvent = curry((current: Date, game: Game): ProgressionEve
 const findNextEvent = (maxTimestamp: Date, events: Array<ProgressionEvent | undefined>) => pipe(
     (events: Array<ProgressionEvent | undefined>) => reject(isNil, events) as ProgressionEvent[],
     filter((event: ProgressionEvent) => event.timestamp <= maxTimestamp),
-    sortBy<ProgressionEvent>(prop('timestamp')),
+    (event) => sortBy(prop('timestamp'), event),
     head
 )(events) as ProgressionEvent | undefined
 

@@ -5,15 +5,15 @@ import * as R from 'ramda'
 const GameSchema = Joi.object({
     actionQueue: Joi
         .array().items(Joi.object({
-           type: Joi.string(),
-           timestamp: Joi.date() 
+            type: Joi.string(),
+            timestamp: Joi.date()
         }))
         .required(),
     fabricators: Joi
         .array().items(Joi.object({
-           blueprint: Joi.string(),
-           endTime: Joi.date(),
-           startTime: Joi.date()
+            blueprint: Joi.string(),
+            endTime: Joi.date(),
+            startTime: Joi.date()
         }))
         .required(),
     resources: Joi
@@ -30,7 +30,7 @@ interface DeserializeGameResult {
 
 export const deserializeGame = (s: string): DeserializeGameResult => {
     try {
-        return R.pipe(
+        return R.pipe<string, any, any, any, DeserializeGameResult>(
             R.unary(JSON.parse),
             R.curry(Joi.attempt)(R.__, GameSchema),
             R.objOf('game'),
