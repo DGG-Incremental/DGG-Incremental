@@ -66,7 +66,7 @@ const findNextEvent = (maxTimestamp: Date, events: Array<ProgressionEvent | unde
     head
 )(events) as ProgressionEvent | undefined
 
-const progressState = curry((start: Date, end: Date, game: Game): Game => {
+export const progressState = curry((start: Date, end: Date, game: Game): Game => {
     const events = [
         getNextFabricatorEvent(start, game),
         getNextActionEvent(game),
@@ -79,5 +79,3 @@ const progressState = curry((start: Date, end: Date, game: Game): Game => {
     }
     return game
 })
-
-export default progressState

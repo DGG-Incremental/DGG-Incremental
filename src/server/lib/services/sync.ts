@@ -1,22 +1,16 @@
 import * as Game from '../../../shared/game'
-import { getPlayerProfile } from '../playerProfile'
+import * as PlayerProfile from '../data/playerProfile'
+import * as R from 'ramda'
 
 
 export const syncPlayerGameState = async (
 	name: string,
 	actions: Game.Action[],
 	syncTime: Date,
-	version: number
+	version: number = 0
 ) => {
-	const playerState = await PlayerGameState.getOrCreate(name);
-	const lastSync =
-		process.env.NODE_ENV !== "development" ? playerState.gameState.lastSynced : new Date(0);
-	const game = new Game(playerState.gameState);
-	game.state.actions = actions;
-	game.validate();
-	const newState = game.getStateAt(syncTime);
-	playerState.gameState = newState;
-	playerState.version = version + 1;
-
-	return await playerState.save();
+	const { game, lastSynced } = await PlayerProfile.getPlayerProfile(name) 
+	const queued = Game.enqueueActions(actions, game)
+	const synced = Game.progressState(lastSynced, syncTime, queued)
+	return synced
 };

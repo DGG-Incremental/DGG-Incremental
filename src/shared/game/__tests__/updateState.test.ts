@@ -1,4 +1,4 @@
-import progressState from '../updateState'
+import { progressState } from '../updateState'
 import { createGame } from '../game'
 import { dateGen } from './helpers'
 import { Action, Game } from '../types'
@@ -9,7 +9,7 @@ import * as Fabricators from '../fabricators'
 
 describe('updateState', () => {
     let game = createGame()
-    const [a, b, c, d] = dateGen(10*1000)
+    const [a, b, c, d] = dateGen(10 * 1000)
     const SCAVENGE_METAL: Action = {
         timestamp: c,
         type: 'scavengeMetal'
